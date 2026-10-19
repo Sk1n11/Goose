@@ -1,7 +1,3 @@
-# sd-fi.md
-
-Topic: My GitHub knowledge
-
 # Sd fi
 
 Topic: Turkey
@@ -45,14 +41,6 @@ Key Integration (Sidebar)
 | Field / Element | Description / Example |
 |---|---|
 | Sales Organization (VKORG) | e.g. DE01 (Germany), TR01 (Turkey) |
-| Distribution Channel (VTWEG) | e.g.
-
-x
- * Analysis (e.g. RD00/RD04)
-1. Sales Order – Key Elements
-| Field / Element | Description / Example |
-|---|---|
-| Sales Organization (VKORG) | e.g. DE01 (Germany), TR01 (Turkey) |
 | Distribution Channel (VTWEG) | e.g. WH (Wholesale), DT (DTC) |
 
 4)
@@ -73,11 +61,6 @@ x
 | K007 | Customer Discount | % or amount | Customer / Material |
 | K008 | Material Discount | % or amount | Material |
 | K017 | Header Discount | % or amount | Sales order header |
-| BRTO | Gross Value | System | Calculated |
-| MWST | Output Tax | VAT / KDV | Tax code, country, region |
-| SKTO | Cash Discount | Payment terms | Term of payment |
-
-Header Discount | % or amount | Sales order header |
 | BRTO | Gross Value | System | Calculated |
 | MWST | Output Tax | VAT / KDV | Tax code, country, region |
 | SKTO | Cash Discount | Payment terms | Term of payment |
@@ -112,12 +95,6 @@ Tax Determination
 > 
 4. Material – 5 Level Hierarchy (Example)
  * Level 1: Product Category (e.g. Strollers)
- * Level 2: Product Family (e.g.
-
-dition types. Pricing procedure (V/08, V/07) defines sequence, calculation type and account key.
-> 
-4. Material – 5 Level Hierarchy (Example)
- * Level 1: Product Category (e.g. Strollers)
  * Level 2: Product Family (e.g. Priam, Balios)
  * Level 3: Product Group (e.g. Seat, Frame, Accessories)
  * Level 4: Material Group (e.g. Textile, Metal, Plastic)
@@ -149,14 +126,6 @@ OBYC – Automatic Postings (FI)
 | Inventory (BSX) | | 300000 |
 | GR/IR (WRX) | | 310000 |
 | Expense (PRO) | | 500000 |
-
-n | OBYC Key | Example G/L |
-|---|---|---|
-| Customer posting | D | 140000 (A/R) |
-| Output tax (sales) | MWS / KDV | 177000 (VAT) |
-| Inventory (BSX) | | 300000 |
-| GR/IR (WRX) | | 310000 |
-| Expense (PRO) | | 500000 |
 | Stock clearing (GBB) | | 300000 |
 6. Automatic Postings – RD00 & RD04
  * RD00 – Master Data:
@@ -180,10 +149,6 @@ n | OBYC Key | Example G/L |
  * Schedules via background job
  * Reduces manual posting efforts
 > Cybex Use Case: Factory invoice automation and periodic posting can be executed via RD04 (e.g. for intercompany or scheduled billing). Ensure account determination is correctly configured.
-> 
-7. MM Integration – Purchase Order to GR/IR
-
-Factory invoice automation and periodic posting can be executed via RD04 (e.g. for intercompany or scheduled billing). Ensure account determination is correctly configured.
 > 
 7. MM Integration – Purchase Order to GR/IR
  * Create PO (ME21N, Account assignment (e.g. stock))
@@ -220,17 +185,6 @@ Pricing Calculation
 | Sales Revenue | - | 900.00 |
 | Output Tax | - | 171.00 |
 3. Incoming Payment
-
-| Account | Debit | Credit |
-|---|---|---|
-| Bank (100000) | 1,071.00 | - |
-
-|
-|---|---|---|
-| Accounts Receivable (140000) | 1,071.00 | - |
-| Sales Revenue | - | 900.00 |
-| Output Tax | - | 171.00 |
-3. Incoming Payment
 | Account | Debit | Credit |
 |---|---|---|
 | Bank (100000) | 1,071.00 | - |
@@ -247,15 +201,6 @@ Pricing Calculation
  * Billing & FI Integration: Document type, number range, posting keys
  * Automatic Posting Jobs: RD00 / RD04 (scheduling via SM35)
  * Reporting: FBL5N, VA05, MB5B, CD-PA (if used)
-10. Reporting and Reconciliation
-| Report | Purpose |
-|---|---|
-| FBL5N | Customer line items (A/R) |
-| VA05 | Sales orders overview |
-| VF03 | Billing document details |
-| MB5B | Stock movements (Goods Issue) |
-
-f used)
 10. Reporting and Reconciliation
 | Report | Purpose |
 |---|---|
@@ -281,11 +226,6 @@ line items (A/R) |
  * OBYC ensures automatic account determination (FI & MM).
  * RD00 and RD04 help with automatic postings and mass processing.
  * Master data (customer, material, pricing) is critical for correct accounting.
- * The same order flows through SD, MM and FI with full transparency.
- * Always reconcile with reports and test to end-end scenarios.
-Objective & References (Footer)
-
-aterial, pricing) is critical for correct accounting.
  * The same order flows through SD, MM and FI with full transparency.
  * Always reconcile with reports and test to end-end scenarios.
 Objective & References (Footer)
