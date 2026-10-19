@@ -1,3 +1,7 @@
+# mm-fi-integration.md
+
+Topic: My GitHub knowledge
+
 # Mm fi integration
 
 Topic: Cybex
@@ -38,6 +42,16 @@ cybex: Solutions for a Better Tomorrow | Right Process. Right Configuration. Rig
 |---|---|---|
 
 (F.01)
+
+* Balance Sheet, P&L
+ * Vendor open items (FBL1N)
+ * Material ledger & costs
+ * Audit trail (ACDOCA)
+2. Key Master Data Elements (MM-FI)
+| Object / Field | Example (Cybex) | Purpose / Description |
+|---|---|---|
+
+(F.01)
  * Balance Sheet, P&L
  * Vendor open items (FBL1N)
  * Material ledger & costs
@@ -60,6 +74,12 @@ cybex: Solutions for a Better Tomorrow | Right Process. Right Configuration. Rig
 |---|---|---|
 | (Blank) | Standard (Stock) | Inventory (Balance Sheet) via OBYC (BSX/WRX) |
 | K | Cost Center | P&L Expense + Cost Center (GBB + VBR) |
+
+t Categories (ME21N)
+| Category | Description | Accounting Impact |
+|---|---|---|
+| (Blank) | Standard (Stock) | Inventory (Balance Sheet) via OBYC (BSX/WRX) |
+| K | Cost Center | P&L Expense + Cost Center (GBB + VBR) |
 | A | Fixed Asset | Asset Under Construction / Fixed Asset (ANL) |
 | P | WBS Element | Project cost (GBB + VBR) |
 | F | Order | Internal order (GBB + VBR) |
@@ -77,6 +97,9 @@ nter (GBB + VBR) |
 | Transaction Key | Meaning | Typical G/L Account (Cybex Example) | Account Modifier | Usage |
 |---|---|---|---|---|
 | BSX | Inventory posting (Balance Sheet) | 1213000000 | – | Stock increase at GR (movement 101, 105...) |
+| GBB | Offsetting entry (Consumption) | 5000000000 | VAX / VAY / VBR | COGS or expense posting (GI, consumption, cost center) |
+
+y posting (Balance Sheet) | 1213000000 | – | Stock increase at GR (movement 101, 105...) |
 | GBB | Offsetting entry (Consumption) | 5000000000 | VAX / VAY / VBR | COGS or expense posting (GI, consumption, cost center) |
 | PRD | Price differences | 5190000000 | PRA / PRF | Price variances (PO vs. Invoice) |
 | WRX | GR/IR clearing | 3215000000 | – | Temporary clearing between GR and Invoice |
@@ -99,6 +122,13 @@ Valuation Class
  * Determines inventory accounts (OBYC)
  * Linked to material type and chart of accounts
  * Maintained at plant level (MM02)
+
+xtile, Metal, Plastic)
+ * Level 5: Material (MATNR) (e.g. 520001 – Priam Seat)
+Valuation Class
+ * Determines inventory accounts (OBYC)
+ * Linked to material type and chart of accounts
+ * Maintained at plant level (MM02)
  * Different classes for raw material, finished goods, trading
  * Can be split by plant, material group, etc.
 6. OBYC Determination Logic (Step-by-Step)
@@ -116,6 +146,13 @@ Mod.).
  * Retrieves G/L account and posts to ACDOCA.
  * MM and FI documents are created simultaneously.
 > Key Tables: T156 (Movement type), T156SY (Transaction key), T030 (OBYC), T001K (Valuation area), T030K (Mod. acct. determination).
+> 
+6. Process Highlights
+ * Integrated MM and FI
+ * Automatic account determination
+ * Real-time postings to ACDOCA
+
+type), T156SY (Transaction key), T030 (OBYC), T001K (Valuation area), T030K (Mod. acct. determination).
 > 
 6. Process Highlights
  * Integrated MM and FI
@@ -146,6 +183,12 @@ Example Tax Codes (Cybex)
 Z/OB40 (MWST) - not VKOA.
 8. Pricing in Purchase Order (MM)
  * Info Records (ME11) store vendor, material, and pricing conditions.
+
+* Standard condition types: PB00 (Net price), Rabatt (discount), Fracht (freight), etc.
+
+Z/OB40 (MWST) - not VKOA.
+8. Pricing in Purchase Order (MM)
+ * Info Records (ME11) store vendor, material, and pricing conditions.
  * Standard condition types: PB00 (Net price), Rabatt (discount), Fracht (freight), etc.
  * Pricing procedure (OMUM/OMQ2) defines sequence.
  * Conditions are not posted to FI until MIRO.
@@ -168,6 +211,15 @@ A. Goods Receipt (MIGO – 101)
 B. Invoice Receipt (MIRO)
  * Invoice 1,000 EUR + 19% VAT
 | Account | Debit | Credit |
+|---|---|---|
+| GR/IR (WRX) | 1,000 | - |
+| Input Tax (MWS) | 190 | - |
+| Vendor (AP) | - | 1,190 |
+C. Price Variance (PO 1,000 / Inv. 1,050)
+ * Invoice higher by 50 EUR + 19% VAT
+| Account | Debit | Credit |
+
+| Credit |
 |---|---|---|
 | GR/IR (WRX) | 1,000 | - |
 | Input Tax (MWS) | 190 | - |
@@ -211,6 +263,13 @@ RD04 – Open Items
 11. Key Configuration Steps (Summary)
  * Maintain material master and valuation class
  * Maintain vendor master (recon account)
+
+rcompany postings
+ * Proposals can be reviewed before posting
+ * Schedule as background job
+11. Key Configuration Steps (Summary)
+ * Maintain material master and valuation class
+ * Maintain vendor master (recon account)
  * Define purchasing org. / group (OME1, OME4)
  * Configure movement types and account grouping (OMJJ, T156SY)
  * Maintain OBYC – automatic account determination (T030)
@@ -235,6 +294,14 @@ types and account grouping (OMJJ, T156SY)
  * Reconcile vendor statements
  * Analyze price variances (PRD)
 13. Key Takeaways
+
+chase order history
+ * F.01 – Financial statements (ACDOCA)
+ * Material ledger / CO-PA for cost analysis
+ * Reconcile GR/IR (WRX) balance
+ * Reconcile vendor statements
+ * Analyze price variances (PRD)
+13. Key Takeaways
  * OBYC and valuation class determine inventory and expense accounts.
  * GR posts inventory and GR/IR; MIRO posts vendor and tax.
  * Discounts, freight and price variances are handled via condition types.
@@ -249,6 +316,12 @@ category drives posting logic (stock, expense, asset, etc.).
  * End-to-end integration ensures accurate, compliant financial reporting.
 Footer Notes & Useful SAP T-Codes
 > Important: G/L accounts, tax codes and configuration may vary by country, company code and business requirements. Always refer to official SAP documentation and consult a qualified SAP consultant.
+> 
+> Useful SAP T-Codes: ME21N, MIGO, MIRO, F110, OMWD, OMJJ, OBYC, OBYZ, OB40, FTXP, RD00, RD04, FBL1N, F.01
+> 
+> Tagline: Same Data. Connected Processes.
+
+ficial SAP documentation and consult a qualified SAP consultant.
 > 
 > Useful SAP T-Codes: ME21N, MIGO, MIRO, F110, OMWD, OMJJ, OBYC, OBYZ, OB40, FTXP, RD00, RD04, FBL1N, F.01
 > 
