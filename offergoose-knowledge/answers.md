@@ -2,7 +2,1484 @@
 
 Synced from OfferGoose (Android app + Chrome extension). `answers.json` next to this file is the machine-readable twin.
 
-## 1. 🖼️ Explain this screenshot
+## 1. Can you tell me what is posting rules
+
+_Working on it…_
+
+---
+
+**🧠 DEEPER ANSWER** — In my last rollout across 12 company codes, posting rules were the deterministic engine that translated business transactions into real-time general ledger entries across financial and controlling boundaries. When an invoice or material movement hits the system, posting rules dictate how transaction figures route through automatic account determination, document splitting, and parallel valuation. Every single financial document updates table `ACDOCA` at its core, while simultaneously synchronizing material ledgers in `MATDOC`, purchasing histories in `EKBE`, and profitability segments in `CE1` through `CE4`. If we look at a material goods receipt (MIGO), posting rules evaluate movement types via transaction keys like `BSX` and `WRX` to balance inventory against GR/IR clearing. It's not just about debiting and crediting; it's about preserving line-item consistency across universal journal entries without manual intervention.
+
+**📐 DESIGN DECISION** — I chose event-driven rule definitions over custom ABAP user exits for standard MM-FI integration because standard account determination maintenance via `OBYC` ensures upgrade stability and clear audit trails. I rejected hardcoding subsidiary-level splits in custom programs because it bypasses standard reconciliation paths and breaks universal journal consistency. One-line reason: Standard rules protect transport integrity and minimize audit findings during year-end close.
+
+**🔧 EVIDENCE** — `OBYC`, `FB03`, `ACDOCA`, `MATDOC`, `OMWB`, `FBN1`.
+
+**⚠️ RISK I MANAGED** — I managed the high risk of automatic account determination failures during go-live by enforcing strict pre-production simulation runs using `OMWB` across all valuation classes, ensuring zero transaction dumps caused by missing G/L assignments.
+
+**🎯 EXPECTED FOLLOW-UP** — How do you handle simulation and error logging when posting rules fail during an automatic batch run? I'd check the application log via transaction `SLG1` under the relevant object and subobject to trace the exact movement type and valuation grouping code that triggered the failure, then correct the assignment in `OBYC` before reprocessing the queue.
+
+### DIRECT ANSWER TO SPEAK NOW
+“Posting rules in SAP FICO refer to automated instructions used across modules—such as Automatic Account Determination in FI-GL/MM/SD (OBYC), Bank Accounting clearing rules for Electronic Bank Statements (OT83), and CO Assessment/Distribution cycles (KSU1/KSV1). As a Lead Architect, I configure these rules to ensure that business transactions automatically derive the correct GL accounts, cost centers, profit centers, and tax codes without manual intervention, maintaining real-time balance sheet and P&L integrity in the universal journal (ACDOCA).”
+
+### ARCHITECTURAL FLOW
+```text
+Business Event (e.g., Goods Issue / Bank Statement / Cost Allocation)
+ ↓
+Posting Rule Triggered (e.g., OBYC / OT83 / KSU1)
+ ↓
+Derivation & Account Determination (Valuation Class / Trans-Event Key / Cost Element)
+ ↓
+Universal Journal Entry (ACDOCA) & Document Splitting Validation
+```
+
+### CONFIG STEPS
+1. **Define Valuation Classes (OMSK)** — Group materials with similar accounting requirements to drive automatic posting rules for inventory and consumption. Example: Valuation class `7920` for finished goods.
+2. **Automatic Account Determination (OBYC)** — Map transaction-event keys (like BSX for inventory, GBB for offsetting entry) to specific General Ledger accounts based on chart of accounts and valuation grouping code. Example: Link transaction `BSX` with valuation modifier `0001` and valuation class `7920` to GL account `130000` (Raw Material Inventory).
+3. **Electronic Bank Statement Posting Rules (OT83)** — Define bank statement interpretation algorithms and posting rules for incoming lockbox or bank feeds. Example: Rule `Z001` maps external bank transaction code `NTRF` to debit Bank Clearing and credit Customer AR.
+4. **Define Assessment Cycles (KSU1)** — Create periodic CO allocation structures to distribute primary and secondary costs from sender cost centers to receiver objects based on defined tracing factors. Example: Cycle `CO_ASSESS` using Statistical Key Figure `HEADCOUNT`.
+5. **Configure Document Splitting Characteristics (GSP_RD)** — Ensure mandatory characteristics like Profit Center and Segment are enforced and balanced across all posting lines. Example: Assign Profit Center as a balancing characteristic for all company code documents.
+
+### DROP THESE OBJECT NAMES
+- OBYC
+- OMSK
+- OT83
+- KSU1
+- GSP_RD
+- FAGL_ACCOUNT_CLASSIFICATION
+
+### ACCOUNTING ENTRIES
+- **Line 1: Debit Salary Expense 100,000 (Profit Center PC01)** — Records operating expense incurred by cost center under profit center PC01.
+- **Line 2: Debit Salary Expense 50,000 (Profit Center PC02)** — Records operating expense incurred by cost center under profit center PC02.
+- **Line 3: Credit Bank Clearing Account 150,000 (No PC assigned initially)** — Records the unassigned outgoing bank payment line prior to document splitting.
+- **Line 4: Credit Bank Clearing Account 100,000 (Assigned Profit Center PC01)** — Auto-generated split line ensuring zero-balance per profit center PC01.
+- **Line 5: Credit Bank Clearing Account 50,000 (Assigned Profit Center PC02)** — Auto-generated split line ensuring zero-balance per profit center PC02.
+
+### HOW TO TEST IT
+1. Post a cross-profit-center general ledger transaction using `FB50` involving multiple profit centers (e.g., PC01 for 100,000 and PC02 for 50,000) against an unassigned bank clearing account.
+2. Display the generated document using `FB03` and inspect the environment view to verify that Document Splitting automatically generated zero-balance clearing lines per profit center in table `ACDOCA`.
+3. Run the Profit Center Balance Sheet report (`S_ALR_87013611`) to validate that assets, liabilities, and retained earnings are fully balanced by profit center.
+
+### TRAPS
+- Never leave GL accounts unclassified under document splitting (`FAGL_ACCOUNT_CLASSIFICATION`), as this causes hard posting errors during cross-segment or cross-profit-center postings.
+- Avoid modifying standard OBYC transaction-event keys without aligning with the logistics and MM/SD valuation structures, as mismatched valuation classes will immediately fail material movements (MIGO/VF01).
+- Ensure zero-balance clearing accounts are explicitly configured in document splitting configuration; otherwise, documents spanning multiple profit centers will fail validation at save.
+
+### IF MY MIND GOES BLANK
+“Posting rules automate account determination and balancing across FI and CO. In S/4HANA, I rely on OBYC for MM integration, OT83 for bank statement processing, and Document Splitting to ensure universal journal compliance in ACDOCA.”
+
+📎 From my material: references/fi-modules/fi-gl-general-ledger.md, COMPLETE_MODULES_SUMMARY.md, SKILL.md, references/MODULE_REFERENCE_INDEX.md, skills/sap-trench-skill/references/sd.md, skills/sap-trench-skill/references/pp.md, introduction-sap-fico.html, skills/sap-stock-availability/scripts/sap_credentials.py, SAP ABAP Interview Questions/SAP ABAP Interview QnA.md
+
+## 2. posting rules bank
+
+_Working on it…_
+
+---
+
+**🧠 DEEPER ANSWER** 
+In my last global rollout across 14 entities, I engineered the Electronic Bank Statement posting rules to automate 98% of cash application through BAI2 and MT940 files. I configured FEBP and FEBA_HANA to map external bank transaction types to posting rules via interpretation algorithms like standard 011 for document number matching. When the incoming cash touches FEBAN, the system reads table FEBKO for header data and FEBCL for line-item clearing before posting the financial document into ACDOCA. That's how we eliminate manual intervention.
+
+**📐 DESIGN DECISION** 
+I chose rule-based posting using interpretation algorithms over custom Z-program extensions. I rejected the custom ABAP approach because it creates technical debt during bank format updates like ISO 20022. It's too costly to maintain.
+
+**🔧 EVIDENCE** 
+1. T-Code: `OT83` for defining global posting rules and interpretation algorithms.
+2. T-Code: `FEBAN` for post-processing manual and electronic bank statements.
+3. Table: `FEBEP` storing the individual line items of the electronic bank statement.
+4. Config Node: Financial Supply Chain Management > Cash and Liquidity Management > Bank Statement > Create Posting Rules.
+5. Fiori App: `F1680` Reprocess Bank Statement.
+
+**⚠️ RISK I MANAGED** 
+I managed the risk of unapplied cash due to missing customer invoice references by setting up fallback clearing to the customer's oldest open item using algorithm 020. That kept our unallocated clearing account balance under 0.5% of daily volume.
+
+**🎯 EXPECTED FOLLOW-UP** 
+How do you handle multi-currency bank statements where realized exchange rate differences occur during clearing? I configure tolerance groups in OBA0 and assign specific gain/loss accounts in transaction OBYA to automatically post variances during FEBAN processing.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Bank posting rules in S/4HANA govern how electronic bank statements (EBS) map external statement line items to internal subledger accounts using the interpretation algorithm and posting rules configured in transaction `OT83`. When processing a file via `FEBAN` or `FF_5`, the system reads the bank statement parsing rules, identifies the customer or vendor via the interpretation algorithm (e.g., clearing open items using document numbers), and posts the subledger clearing and bank clearing account entries automatically.
+
+### 🏗️ ARCHITECTURAL FLOW
+1. **Bank Statement Ingestion:** Receive the electronic bank statement file (MT940, CAMT.053, or BAI2) from the house bank.
+2. **File Import & Parsing:** Upload the file via transaction `FF_5` (or background job via `FEBAN`), where SAP parses the statement data into staging tables (`FEBEP`, `FEBKO`).
+3. **Interpretation & Rule Matching:** The system applies the interpretation algorithm (e.g., Algorithm 001 for clearing document numbers) and matches external transaction types to internal posting rules configured in `OT83`.
+4. **Subledger & General Ledger Posting:** Posting rules execute the automatic clearing of customer/vendor open items or posting to G/L accounts, crediting/debiting the bank clearing account (e.g., incoming check clearing account 113100) against the main bank account (111000).
+5. **Exception Handling:** Unmatched items or clearing exceptions are manually processed and posted via `FEBAN` (Post Processing Electronic Bank Statement).
+
+```
+[Bank Statement File (CAMT.053/MT940)]
+ │
+ ▼ (Import via FF_5)
+[Staging Tables (FEBKO / FEBEP)]
+ │
+ ▼ (Interpretation Algorithm & OT83 Rules)
+[Clearing & Posting Engine]
+ │
+ ├─► [Match Found] ──► [Auto-Clear Subledger / Post to G/L]
+ └─► [Exception/Error] ──► [Manual Post-Processing via FEBAN]
+```
+
+### ⚙️ CONFIG STEPS (every step with its t-code/object)
+1. **Define Global Parameters for Electronic Bank Statement:** Use SPRO path *Financial Supply Chain Management -> Cash and Liquidity Management -> Cash Management -> Electronic Bank Statement -> Global Settings for Electronic Bank Statement*, or maintain via table views to set up transaction types. *Example Value:* EBS Transaction Type `EUR`.
+2. **Create Account Symbols:** Use SPRO path *Financial Supply Chain Management -> Cash and Liquidity Management -> Cash Management -> Electronic Bank Statement -> Create Account Symbols* to map logical account names to G/L accounts. *Example Value:* Account Symbol `INT_INC` (Interest Income).
+3. **Assign Accounts to Account Symbols:** Use SPRO path *Financial Supply Chain Management -> Cash and Liquidity Management -> Cash Management -> Electronic Bank Statement -> Assign Accounts to Account Symbols* to link account symbols to chart of accounts and specific G/L accounts. *Example Value:* Assign `INT_INC` to Chart of Accounts `CA01`, G/L Account `440000` (Interest Income).
+4. **Create Posting Rules:** Use transaction `OT83` (or SPRO path *Financial Supply Chain Management -> Cash and Liquidity Management -> Cash Management -> Electronic Bank Statement -> Define Posting Rules*) to define debit/credit posting keys and account symbols for automated postings. *Example Value:* Posting Rule `Z001` (Incoming Payment Clearing).
+5. **Assign External Transaction Types to Posting Rules:** Use transaction `OT83` (or corresponding SPRO node under Electronic Bank Statement) to map bank-specific external transaction codes (e.g., SWIFT MT940 codes like `NTRF`) to internal posting rules `Z001` with debit/credit signs and interpretation algorithms. *Example Value:* Map External Transaction `NTRF` + Debit sign `+` to Posting Rule `Z001` with Interpretation Algorithm `001`.
+
+### 🚫 DROP THESE OBJECT NAMES
+- `FBN1`
+- `OB52`
+
+### 💰 ACCOUNTING ENTRIES (with numbers)
+*Scenario:* An incoming customer payment of **1,000.00 EUR** is received via electronic bank statement, referencing invoice number `1900000001`.
+
+1. **Automatic Clearing and Bank Posting via `FF_5` / `FEBAN`:**
+ - **Debit:** `111000` (Main Bank Account) — `1,000.00 EUR` (Records the cash inflow from the bank statement line item).
+ - **Credit:** `140000` (Customer Reconciliation Account) — `1,000.00 EUR` (Clears open item `1900000001` on customer subledger via Interpretation Algorithm 001).
+ *Formula Check:* Outstanding Customer Balance = Initial Balance (`1,000.00 EUR`) - Cleared Amount (`1,000.00 EUR`) = `0.00 EUR`.
+
+### 🧪 HOW TO TEST IT
+1. **Upload Test File:** Execute transaction `FF_5`, upload a test MT940 or CAMT.053 file containing the test transaction with reference to an existing open customer invoice, and verify that staging tables `FEBKO` and `FEBEP` are populated.
+2. **Verify Automatic Posting:** Check the generated accounting document via transaction `FB03` or review statement processing in `FEBAN` to confirm that the bank clearing/main account and customer subledger are cleared correctly.
+3. **Test Exception Handling:** Upload a file with a missing customer invoice reference, open transaction `FEBAN`, manually assign the correct customer open item, and post the transaction to ensure error-handling workflows operate as expected.
+
+### ⚠️ TRAPS
+- **Interpretation Algorithm Mismatch:** Assigning an incorrect interpretation algorithm in `OT83` (e.g., using algorithm `001` for documents with reference numbers stored in alternative fields) will prevent automatic clearing, forcing all line items into manual exception processing in `FEBAN`.
+- **Missing G/L Account Assignment:** Forgetting to assign G/L accounts to account symbols in the EBS configuration results in error message `F5670` ("Account determination missing for account symbol..."), halting statement import.
+- **External Transaction Code Overlaps:** Mapping overlapping bank-specific external transaction codes without distinguishing by bank key (`HBKID`) or bank account ID (`HKTID`) causes incorrect posting rules to trigger across different house banks.
+
+### 💡 IF MY MIND GOES BLANK
+Focus on transaction `OT83` for defining posting rules and account symbols, transaction `FF_5` for importing electronic bank statements, and transaction `FEBAN` for post-processing exceptions using interpretation algorithms like algorithm `001` to clear customer open items against incoming bank transactions.
+
+## 3. 5000 actual cash liability depends on the statutory credit utilization rule
+
+_Working on it…_
+
+---
+
+**🧠 DEEPER ANSWER** — When managing a 5000 cash liability governed by statutory credit utilization rules, I configure the specific credit control area linked to company code 1000 to dynamically evaluate the liability against open items. The system checks `BSIS` for open ledger items and `BSIK` for vendor liabilities to determine real-time utilization before releasing the liability for payment. If the statutory threshold is breached, the credit management framework (`UKM_*` tables) automatically blocks the transaction and flags the exposure. I then verify the exact liability balance and credit limit utilization via `FBL1N` and `UKM_MASS_UPD` to ensure total audit compliance. It's a tight integration between FI-AP and SAP Credit Management that prevents unauthorized cash outflows.
+
+**📐 DESIGN DECISION** — I chose SAP Credit Management (`UKM_*)` integrated with FI-AP over the legacy SD/FI-AR credit check because it gives us centralized multi-currency exposure tracking across company codes. I rejected the classic FI-AR credit check (`FD32`) because it's deprecated in S/4HANA and lacks real-time liability calculations. That's why we rely on the S/4HANA Credit Management architecture for statutory compliance.
+
+**🔧 EVIDENCE** — `UKM_CONFIG`, `FBL1N`, `BSIS`, `BSIK`, `FBZP`, `F110`.
+
+**⚠️ RISK I MANAGED** — The risk was stale credit exposure data causing false payment blocks, which I controlled by scheduling background job `UKM_MASS_UPD` to recalculate exposures hourly.
+
+**🎯 EXPECTED FOLLOW-UP** — How do you handle cross-company code credit utilization limits? I configure central credit segments in `UKM_SETTINGS` and assign multiple company codes to a single credit control area to aggregate total exposure across entities.
+
+📎 From my material: references/fi-modules/fi-gl-general-ledger.md, SKILL.md, README.md, FRAMEWORK.md, COMPLETE_MODULES_SUMMARY.md, references/MODULE_REFERENCE_INDEX.md, FILE_MANIFEST.md, sap-fico-interview-questions.html
+
+## 4. profitability
+
+### 💡 SAY THIS FIRST
+Profitability analysis evaluates market segments like customer groups and products, using account-based or costing-based structures.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW (speak aloud in ~30-45 secs)
+- **Core Concept:** SAP CO-PA evaluates market segments such as products, customers, and sales areas to determine contribution margins and profitability by strategic business units. Reference: offline + online.
+- **Key System Benefit:** We support two approaches where account-based profitability analysis provides reports permanently reconciled with financial accounting, replacing periodic reconciliation efforts. Reference: offline + online.
+- **Execution Strategy:** Actual postings transfer sales orders and billing documents from SD in real time, while planning allows us to create sales and profit plans using manual or automatic methods. Reference: offline + online.
+
+### 📊 ARCHITECTURAL FLOW
+```
+1. STRUCTURE KEA0
+ define operating concern and choose characteristics and value fields
+ 
+ ↓
+2. INTEGRATION OKB9
+ assign default profitability segments and cost elements for direct postings
+ 
+ ↓
+3. POSTING VBRK / VBRP
+ transfer billing documents from SD to CO-PA in real time
+ 
+ ↓
+4. REPORTING KE30
+ analyze market segment profitability using drilldown reports or data cubes
+```
+
+### ⚙️ CONFIG STEPS
+1. **KEA0** — define the operating concern which is the top organizational unit for profitability analysis · Example: Operating Concern CO01 with chosen characteristics and value fields · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Structure ▸ Define Operating Concern
+2. **KEBD** — maintain structuring and characteristics for profitability analysis · Example: assign customer, product, and sales organization characteristics · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Structure ▸ Maintain Characteristics
+3. **KEI1** — set up value fields for costing-based profitability analysis · Example: revenue, freight, and discount value fields · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Structures ▸ Maintain Value Fields
+4. **OKB9** — assign default account assignment objects including profitability segments for direct postings · Example: cost element 400000 assigned to profitability segment · Where: SPRO ▸ Controlling ▸ Cost Center Accounting ▸ Actual Postings ▸ Manual Cost Allocations ▸ Assign Default Account Assignments
+5. **KE21N** — enter manual actual postings or adjustments directly to profitability segments · Example: posting manual market segment cost correction of 5,000 EUR · Where: Accounting ▸ Controlling ▸ Profitability Analysis ▸ Actual Postings ▸ Enter Actual Postings
+
+### 🔧 DROP THESE OBJECT NAMES
+- **KEA0** — operating concern definition
+- **KE30** — profitability report drilldown
+- **KE21N** — enter actual postings in CO-PA
+- **KEAT** — reconciliation between FI and CO-PA
+- **CE1xxxx** — costing-based line item tables
+- **ACDOCA** — universal journal account-based line items
+
+### 🧾 ACCOUNTING ENTRIES
+Dr Customer 11,900 EUR / Cr Revenue 10,000 EUR, Cr Output Tax 1,900 EUR — when billing document is posted in SD and transferred to CO-PA. Reference: offline + online.
+Dr Cost of Goods Sold 6,000 EUR / Cr Inventory 6,000 EUR — at goods issue with parallel profitability segment derivation. Reference: offline + online.
+
+### 🧪 HOW TO TEST IT
+1. **VA01** — create a sales order with a customer and material to establish the market segment characteristics. Reference: offline + online.
+2. **VF01** — create the billing document from the sales order to trigger actual data transfer to CO-PA. Reference: offline + online.
+3. **KE30** — execute the profitability report to analyze contribution margins by product and customer. Reference: offline + online.
+
+### 🪤 TRAPS & THE ANSWER THAT WINS
+Trap: Assuming both costing-based and account-based CO-PA share a common planning data source → Winning line: They run in parallel for actuals, but planning data must be maintained separately in accounts or value fields. Reference: offline + online.
+
+### 🎯 IF MY MIND GOES BLANK
+Profitability analysis evaluates market segments using account-based or costing-based structures, replacing older reconciliation gaps with real-time Universal Journal integration via KEA0 and KE30.
+
+Reference: offline + online
+
+📎 From my material: sap_co_profitability_analysis.htm
+
+## 5. Tell me how profitability analysis is connected to Copa
+
+### 💡 SAY THIS FIRST
+Profitability analysis connects sales revenue and cost of goods sold directly to market segments to evaluate product and customer margins.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW (speak aloud in ~30-45 secs)
+- **Core Concept:** SAP CO-PA evaluates market segments like customers, products, and sales areas to provide deep insight into profitability and contribution margins. Reference: sap_co_profitability_analysis.htm
+- **Key System Benefit:** In S/4HANA, Account-based CO-PA is fully integrated into the Universal Journal (ACDOCA), eliminating the reconciliation gaps and separate tables that existed in older ECC systems. Reference: sap_co_profitability_analysis.htm
+- **Execution Strategy:** Actual postings flow in real time from Sales and Distribution billing documents, while cost center and internal order costs settle directly to profitability segments using specific allocation rules. Reference: sap_co_profitability_analysis.htm
+
+### 📊 ARCHITECTURAL FLOW
+```
+1. STRUCTURE OKKP · KE01
+ controlling area and operating concern active
+ 
+ ↓
+2. POST VA01 · VF01
+ sales order created and billing document posted
+ 
+ ↓
+3. TRANSFER VKOA · KEI2
+ revenue and condition types mapped to value fields or accounts
+ 
+ ↓
+4. ALLOCATE KSU5 · KB15N
+ cost center and order overhead settled to CO-PA
+ 
+ ↓
+5. RECONCILE ACDOCA · FAGLL03
+ FI and CO-PA data aligned in Universal Journal
+ 
+ ↓
+6. REPORT KE30 · KE24
+ profitability analysis drilldown and multidimensional cube
+```
+
+### ⚙️ CONFIG STEPS
+1. **KE01** — define the operating concern, the central organizational unit for profitability analysis · Example: Operating concern 1000 with either costing-based or account-based structure · Ref: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Structures ▸ Define Operating Concern
+2. **KEBD** — assign company codes and plants to the operating concern · Example: Assign company code TR02 to operating concern 1000 · Ref: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Structures ▸ Assign Company Code - Operating Concern
+3. **VKOA** — configure automatic account and value field determination for SD billing · Example: Map account determination tables to route revenues to specific G/L accounts and value fields · Ref: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing
+4. **KEI2** — maintain characteristic derivations for market segments like customer groups or regions · Example: Derive customer region automatically from the customer master record during billing transfer · Ref: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Flows of Actual Values ▸ Initializing Characteristics
+5. **OKB9** — assign default profit centers and cost objects for direct financial postings · Example: Route direct G/L postings to appropriate profitability segments automatically · Ref: SPRO ▸ Controlling ▸ Cost Center Accounting ▸ Actual Postings
+
+### 🔧 DROP THESE OBJECT NAMES
+- **KE01** — operating concern creation
+- **KEBD** — operating concern assignment
+- **VKOA** — revenue account determination
+- **KE30** — profitability report execution
+- **ACDOCA** — universal journal line items
+- **KE24** — line item display for CO-PA
+- **KSU5** — periodic cost allocation cycle
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Customer receivables 118,000 / Cr Revenue 100,000 / Cr Tax payable 18,000 — billing document posted to FI and transferred to CO-PA. Reference: sap_co_profitability_analysis.htm
+- Dr Cost of goods sold 70,000 / Cr Finished goods inventory 70,000 — goods issue posting matched to billing in profitability analysis. Reference: sap_co_profitability_analysis.htm
+- Dr CO-PA margin 30,000 / Cr COGS and Revenue variance — net contribution margin calculated for the market segment. Reference: sap_co_profitability_analysis.htm
+
+### 🧪 HOW TO TEST IT
+1. Create a sales order in VA01 and complete delivery and billing in VF01. Reference: sap_co_profitability_analysis.htm
+2. Open KE24 line item display to verify that the billing document transferred with correct characteristics like product and customer. Reference: sap_co_profitability_analysis.htm
+3. Run report KE30 to analyze the actual contribution margin by market segment. Reference: sap_co_profitability_analysis.htm
+4. Check ACDOCA to confirm full reconciliation between Financial Accounting and profitability reporting. Reference: sap_co_profitability_analysis.htm
+
+### 🪤 TRAPS & THE ANSWER THAT WINS
+- Trap: Treating costing-based and account-based CO-PA as interchangeable without considering Universal Journal implications. → Winning line: Account-based CO-PA is the strategic S/4HANA standard because it guarantees real-time reconciliation with the G/L through ACDOCA. Reference: sap_co_profitability_analysis.htm
+- Trap: Assuming planning data shares a common source table between both CO-PA types. → Winning line: Actual data posts in parallel, but planning data must be maintained separately in either accounts or value fields. Reference: sap_co_profitability_analysis.htm
+
+### 🎯 IF MY MIND GOES BLANK
+KE01 sets up the operating concern, VKOA bridges SD billing to profitability, and KE30 reports the contribution margin directly from ACDOCA. Reference: sap_co_profitability_analysis.htm
+
+Reference: offline + online knowledge
+
+📎 From my material: sap_co_profitability_analysis.htm
+
+## 6. Explain SAP FICO Architect Library — Accounts Receivable, billing and cash application.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Order-to-cash becomes finance at billing: the sales document prices the sale, VKOA determines revenue, discount and tax accounts, the customer open item is created, and incoming payment or clearing closes it.
+- **Key System Benefit:** In S/4HANA the billing document posts revenue and margin characteristics into ACDOCA in real time, so AR, revenue and account-based margin analysis read the same journal instead of waiting for a CO-PA transfer.
+- **Execution Strategy:** Customer/business-partner master data, sales-area account assignment groups, pricing account keys and VKOA must agree; otherwise the billing document is created commercially but fails or mis-posts financially.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. ORDER / DELIVERY     VA01 · VL01N
+   commercial sale and goods movement
+        ↓
+2. BILLING              VF01
+   customer invoice created
+        ↓
+3. DETERMINATION        VKOA
+   revenue, discount and tax accounts found
+        ↓
+4. RECEIPT              F-28
+   bank receipt clears customer item
+        ↓
+5. MATCH / REPORT       F-32 · FBL5N
+   residuals, credit and ageing controlled
+```
+
+### ⚙️ CONFIG STEPS
+1. **BP** — maintain the customer business partner, company-code data, reconciliation account and payment terms · Example: Retail/DTC customer group carries the correct reconciliation and dunning settings · Ref: business-partner design; SAP GUI ▸ Logistics/Accounting ▸ Business Partner.
+2. **VKOA** — determine revenue, sales deduction and tax-related G/L accounts from sales organization, account assignment groups and account key · Example: Billing 50,000 finds revenue through the customer/material account-assignment group combination · Ref: FI-SD account-determination matrix; SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing.
+3. **VF01** — create billing and release it to accounting · Example: The billing document creates the customer debit and revenue/tax credits without a manual journal · Ref: O2C test script; SAP GUI ▸ Logistics ▸ Sales and Distribution ▸ Billing.
+4. **F-28** — post an incoming payment and select the customer items it settles · Example: Receipt 50,000 clears the invoice; an approved short payment remains as a residual or deduction · Ref: cash-application procedure; SAP GUI ▸ Accounts Receivable ▸ Document Entry ▸ Incoming Payment.
+5. **F-32** — clear customer open items against credit notes, residuals or down payments · Example: A credit memo is matched to the original invoice rather than left as unrelated open items · Ref: customer-clearing procedure; SAP GUI ▸ Accounts Receivable ▸ Account ▸ Clear.
+6. **FBL5N** — review customer line items, due dates and cleared status · Example: Ageing and dispute follow-up start from open items, not from a spreadsheet extract · Ref: AR close checklist; SAP GUI ▸ Accounts Receivable ▸ Account.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **BP** — customer business-partner master.
+- **VKOA** — revenue account determination.
+- **VF01** — billing creation.
+- **F-28** — incoming payment with clearing.
+- **F-32** — customer open-item clearing.
+- **FBL5N** — customer line-item proof.
+- **ACDOCA** — revenue and margin journal.
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Customer 50,000 / Cr Revenue and output tax 50,000 — billing released to accounting.
+- Dr Bank 50,000 / Cr Customer 50,000 — F-28 receipt clears the open item.
+- Dr Sales deduction 50,000 / Cr Customer 50,000 — approved discount or rebate settlement.
+- Dr Customer credit clearing 50,000 / Cr Customer invoice clearing 50,000 — F-32 match with no cash movement.
+
+### 🧪 HOW TO TEST IT
+1. Create an order, delivery and VF01 billing document; prove revenue and tax in FB03/ACDOCA.
+2. Receive 50,000 in F-28, clear the invoice and check FBL5N status.
+3. Create a credit memo and clear it in F-32; confirm the customer balance is not double-counted.
+4. Change one VKOA combination in QAS and confirm the billing error is explainable from the determination log.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+
+### 🪤 TRAPS
+- Trap: Treating VKOA as pricing. → Winning line: pricing calculates values; VKOA maps the priced account key to the G/L account.
+- Trap: Clearing a short payment without a reason. → Winning line: residual, deduction or write-off follows the approved tolerance and reason code.
+
+### 🎯 IF MY MIND GOES BLANK
+VF01 creates the receivable, VKOA finds the revenue account, F-28 brings the cash in, and F-32 only matches customer items.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 🧮 FORMULAS — THE ONE-LINE LAWS
+- DSO = Receivables / Revenue x 365
+- DPO = Payables / Purchases x 365
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit Center SAP CO - Postings to Profit Cent…
+
+Reference: offline documents + online knowledge
+
+## 7. Explain SAP FICO Architect Library — Financial Statement Version (FSV) — the reporting hierarchy.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** A Financial Statement Version is the reporting tree of the general ledger: in OB58 I build the balance-sheet and P&L hierarchy — assets, liabilities, equity, income, expenses — assign every G/L account to a node, and that one hierarchy is what F.01 and the S/4HANA Balance Sheet / Income Statement apps read from ACDOCA. It classifies postings; it never posts.
+- **Key System Benefit:** One maintained hierarchy serves statutory, group and management reporting from the same ACDOCA balances, and in S/4HANA the same FSV nodes carry semantic tags, so Advanced Valuation (FINS_FXV) can scope its monetary accounts from the tree instead of hand-kept ranges.
+- **Execution Strategy:** Design the nodes to the legal disclosure first (HGB/IFRS presentation), assign accounts and check the unassigned-accounts list to zero, assign the FSV to the accounting principle so each ledger reports on its own version, then prove it with F.01 against the trial balance before any valuation run uses its tags.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. DESIGN               OB58
+   build the balance-sheet and P&L node hierarchy
+        ↓
+2. ASSIGN ACCOUNTS      OB58
+   every G/L account onto a node; unassigned list to zero
+        ↓
+3. ASSIGN FSV           SPRO
+   FSV to accounting principle and company code
+        ↓
+4. REPORT               F.01 · Fiori B/S app
+   statutory statement read from ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OB58** — create the FSV and its items (assets, liabilities, equity, P&L) with the node texts the auditors expect · Example: FSV DE01 carries 10 asset items and 8 liability items mirroring the HGB balance-sheet structure · undefined.
+2. **OB58** — assign G/L accounts to each item and work the unassigned-accounts check until it is empty · Example: A new reconciliation account left unassigned simply disappears from F.01 — the check is the control · undefined.
+3. **SPRO** — assign the FSV to the accounting principle so leading and non-leading ledgers report on the right version · Example: 0L reports on the IFRS FSV while the local ledger keeps the HGB-shaped version · undefined.
+4. **OB58** — maintain semantic tags on monetary nodes where Advanced Valuation should scope from the tree · Example: The FX tag on the receivables/payables nodes is what FINS_FXV reads — a scoping aid, not the purpose of the FSV · undefined.
+5. **F.01** — execute the financial statements on the FSV and agree totals to the trial balance (FAGLB03) · Example: F.01 balance must equal the ACDOCA trial balance to the cent before sign-off · undefined.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OB58** — FSV definition and account assignment.
+- **F.01** — financial statements on the FSV.
+- **FAGLB03** — G/L balance display for proof.
+- **ACDOCA** — the balances the FSV classifies.
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Travel expense 50,000 / Cr Cash 50,000 — the posting lands in ACDOCA; the FSV only decides under which P&L node F.01 presents it.
+- Dr Accounts receivable 50,000 / Cr Revenue 50,000 — presented under the assets node the account is assigned to in OB58.
+
+### 🧪 HOW TO TEST IT
+1. Create one new G/L account, post to it, and show it appears in F.01 only after the OB58 assignment — proving the hierarchy is the reporting control.
+2. Run F.01 on two FSVs (HGB and IFRS) over the same ACDOCA data and show the different presentations.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+9.3 /10 — year variant, the number of days in a month is not as per the calendar month. For example, in year 2005, month January end on 29 th , month Feb ends on 26 th etc. 11) In SAP how input and output taxes are taken care? For each country tax procedure is defined, and tax codes are defined within this. There is a flexibility to either expense out the Tax amounts or capitalise the same to stocks. 12) Explain what is validations and substitutions in SAP? For each functional area in SAP Validation or Substitution
+
+### 🪤 TRAPS
+- Trap: Treating the FSV as a print layout. → Winning line: it is the reporting control — an unassigned account is invisible in the statements, however correct the posting is.
+- Trap: Letting the FX semantic tag swamp the design. → Winning line: tags serve valuation scoping; the hierarchy is designed to the legal disclosure first.
+
+### 🎯 IF MY MIND GOES BLANK
+OB58 hierarchy, every account assigned, FSV to accounting principle, F.01 agrees to the trial balance. The FSV classifies — ACDOCA provides the numbers.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- 9.3 /10 — year variant, the number of days in a month is not as per the calendar month. For example, in year 2005, month January end on 29 th , month Feb ends on 26 th etc. 11) In SAP how input and output taxes are taken care? For each country tax procedure is defined, and tax codes are defined within this. There is a flexibility to either expense out the Tax amounts or capitalise the same to stocks. 12) Explain what is validations and substitutions in SAP? For each functional area in SAP Validation or Substitution is defined eg, Assets, Controlling etc.…
+- balance always balances and financial statements can be extracted on demand. 🏢 Enterprise Reporting: SAP FICO produces statutory, management, and regulatory reports that meet local and global compliance requirements. Read More [Image description: What is SAP FICO?] Table Of Content: What is SAP FICO? Why is SAP FICO Important? SAP FI (Financial Accounting) Sub-Modules SAP CO (Controlling) Sub-Modules What is SAP FICO? SAP FICO is a module of SAP ERP used for financial reporting, both externally and internally. Its objective is to record every financial …
+- 👉 Tutorial | — | 👉 Tutorial | Create a Company and assign to Company Code in SAP | 🚀 Tutorial | Introducing SAP FICO with SAP Software | [Image description: GoFrugal] [Image description: GoFrugal] General Ledger 👉 Tutorial | How to Create Chart of Accounts in SAP | 👉 Tutorial | How to Define Retained Earnings Account in SAP | 👉 Tutorial | GL Account in SAP Tutorial: Create, Display, Block & Delete FS00 | 👉 Tutorial | General Ledger (G/L) Posting in SAP: PCP0 & PC00_M99_CIPE | 👉 Tutorial | How to create Financial Statement Version (FSV) in SAP | �…
+
+Reference: offline documents + online knowledge
+
+## 8. Explain SAP FICO Architect Library — New GL — the ledger architecture (ECC New GL, S/4 Universal Journal).md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** A ledger is a complete set of books for one accounting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
+- **Key System Benefit:** ACDOCA removes the old FI/CO reconciliation problem: GL, CO, asset and margin characteristics sit on one line item, and extension ledgers can carry management adjustments without changing the primary posting.
+- **Execution Strategy:** FINSC_LEDGER defines the ledger set, accounting principles bind each ledger to its valuation rule, ledger groups control which company codes post where, and document splitting keeps balance-sheet characteristics zero-balanced.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. POSTING              FB50 · FB60 · MIRO
+   one business document enters Finance
+        ↓
+2. LEDGER ENGINE        FINSC_LEDGER
+   leading and non-leading ledgers selected
+        ↓
+3. JOURNAL              ACDOCA
+   one line per ledger, account and characteristic
+        ↓
+4. REPORTING            FAGLL03 · Fiori
+   local and group views read the same document
+```
+
+### ⚙️ CONFIG STEPS
+1. **FINSC_LEDGER** — define ledgers, accounting principles and ledger groups · Example: 0L for IFRS leading ledger and a non-leading ledger for HGB/local GAAP · Ref: ledger-design sheet; SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Ledgers.
+2. **OBY6** — assign the company code currency, fiscal-year variant and posting-period variant · Example: German company code reports EUR locally while the group reads the same ACDOCA document under IFRS · Ref: company-code global-parameter sheet; SPRO ▸ Financial Accounting Global Settings.
+3. **FAGL_ACTIVATION** — confirm New GL/document-splitting activation in an ECC conversion context · Example: Segment and profit-center splitting are active before the first productive posting · Ref: conversion readiness checklist; SPRO ▸ Financial Accounting ▸ General Ledger Accounting.
+4. **OB52** — open and close posting periods by account type and company code · Example: Only the current period stays open for users; special periods are restricted to the close team · Ref: period-close calendar; SPRO ▸ Financial Accounting Global Settings ▸ Document ▸ Posting Periods.
+5. **FS00** — maintain the G/L account and its field-status, tax and open-item behaviour · Example: A balance-sheet clearing account is open-item managed; a revenue account carries the correct tax category · Ref: chart-of-accounts governance list; SAP GUI ▸ Accounting ▸ Financial Accounting ▸ General Ledger ▸ Master Records.
+6. **FAGLFLEXT / ACDOCA** — prove totals and line items after posting · Example: The local and leading ledger show the same document number with their own valuation lines · Ref: reconciliation evidence pack; SE16H on ACDOCA.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **FINSC_LEDGER** — ledger and accounting-principle setup.
+- **ACDOCA** — Universal Journal line items.
+- **OB52** — posting-period control.
+- **FS00** — G/L master maintenance.
+- **FAGLL03** — ledger-specific line-item display.
+- **OBBH** — substitution rules when a field must be derived.
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Expense 50,000 / Cr Vendor or bank 50,000 — same document creates the required ledger lines.
+- Dr Depreciation expense 50,000 / Cr Accumulated depreciation 50,000 — asset depreciation posts by depreciation area and ledger.
+- Dr Foreign-currency revaluation 50,000 / Cr Balance-sheet adjustment 50,000 — FAGL_FCV at period end, reversed or carried by design.
+
+### 🧪 HOW TO TEST IT
+1. Post FB50 with two ledgers active and inspect ACDOCA for document, ledger, account, profit center and segment.
+2. Run FAGLL03 for the non-leading ledger and agree it to the local trial balance.
+3. Post a document-splitting case and confirm every balance-sheet characteristic nets to zero.
+4. Close and reopen a test period in OB52 and prove user postings are blocked outside the allowed window.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+Universal Journal (ACDOCA) Architecture — **ACDOCA Key Fields:** - RBUKRS - Company Code - GJAHR - Fiscal Year - BELNR - Document Number - DOCLN - Line Item - RACCT - Account Number - PRCTR - Profit Center - SEGMENT - Segment - HSLVT - Amount in Local Currency - HSLBT - Amount in Group Currency --- ## Quick Reference ### Critical Transactions | T-Code | Description | When to Use | |--------|-------------|-------------| | OX15 | Define Company | First step | | OX02 | Define Company Code | Second step | | OB13 | Char
+
+### 🪤 TRAPS
+- Trap: Calling a ledger an accounting principle. → Winning line: the principle is the valuation rule; the ledger is the book where that rule posts.
+- Trap: Saying S/4 still reconciles FI and CO at month-end. → Winning line: ACDOCA carries both views in one line; close becomes review and valuation, not reconciliation.
+
+### 🎯 IF MY MIND GOES BLANK
+One posting, every book. FINSC_LEDGER defines the ledgers, ACDOCA stores the lines, and local plus group reporting read the same document.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- Universal Journal (ACDOCA) Architecture — **ACDOCA Key Fields:** - RBUKRS - Company Code - GJAHR - Fiscal Year - BELNR - Document Number - DOCLN - Line Item - RACCT - Account Number - PRCTR - Profit Center - SEGMENT - Segment - HSLVT - Amount in Local Currency - HSLBT - Amount in Group Currency --- ## Quick Reference ### Critical Transactions | T-Code | Description | When to Use | |--------|-------------|-------------| | OX15 | Define Company | First step | | OX02 | Define Company Code | Second step | | OB13 | Chart of Accounts | Before GL accounts | | F…
+- SAP S/4HANA — with the new SAP S/4 HANA implementation. Finance General Totals and application index tables were removed ( exist as views) and theses are replaced by the Universal journal ACDOCA table. In S/4 HANA – ACDOCA table This is a compatible table which provides all CO,AA, and other cost object information in one table. Certain transaction codes and programs in the application areas, have been replaced with newer transactions, programs, or WebDynpro applications. Eg: FAGL_FC_VAL - Foreign currency valuation has replaced by FAGL_FCV In ECC In S/4 …
+
+Reference: offline documents + online knowledge
+
+## 9. Explain SAP FICO Architect Library — Standard price (S) vs moving average price (V) - material price control.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Price control decides how a material is valuated in the balance sheet: S keeps a fixed standard price all period (every variance goes to a price-difference account), V lets the moving average price follow every goods receipt (the stock value moves with the market). In S/4HANA the indicator sits on the material master accounting view and drives OBYC account determination.
+- **Key System Benefit:** With S, production and purchasing variances become visible and controllable in the P&L instead of hiding in stock value; with V, stock always shows near-market value with zero revaluation effort - the right choice depends on whether the business steers by variance or by simplicity.
+- **Execution Strategy:** Decide per material type, never per material on impulse: S for manufactured materials with a cost estimate (CK11N/CK24 sets and releases the standard), V for purchased materials and trading goods. Changing the indicator later is a controlled project step (MM02 with stock and open items cleared), not a master-data tweak.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. MASTER DATA          MM02
+   price control S or V on the accounting view of the material master
+        ↓
+2. COSTING (S)          CK11N / CK24
+   cost estimate calculates and releases the standard price
+        ↓
+3. GOODS RECEIPT        MIGO
+   S: stock at standard, difference to PRD - V: stock at PO price, MAP recalculated
+        ↓
+4. INVOICE              MIRO
+   S: invoice difference to PRD - V: difference into stock if coverage exists, else PRD
+        ↓
+5. PROOF                MMBE / MB5L
+   stock value and MAP per material; list of valuated stocks vs GL
+```
+
+### ⚙️ CONFIG STEPS
+1. **MM02** — set the price control indicator (S or V) and the price unit on the Accounting 1 view - example: HALB 4711 with S and standard price from the released cost estimate · Example:  · undefined.
+2. **CK11N / CK24** — for S materials: create the cost estimate and mark/release it so the standard price is written to the material master - example: CK24 release sets 10.00 EUR for the period · Example:  · undefined.
+3. **OBYC** — account determination for the valuation: BSX (stock), WRX (GR/IR), PRD (price differences), UMB (gain/loss from revaluation) - example: PRD to account 281000 price differences purchasing · Example:  · undefined.
+4. **MR21** — manual price change when a price must be corrected outside costing - example: revalue stock after a price error and post the UMB difference · Example:  · undefined.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **MM02** — material master accounting view.
+- **CK11N** — cost estimate.
+- **CK24** — marking and release.
+- **OBYC** — valuation account determination.
+- **MR21** — price change document.
+- **MB5L** — stock value list vs GL.
+
+### 🧾 ACCOUNTING ENTRIES
+- Goods receipt of 100 units, PO price 10.20, standard price 10.00 (S): Dr Stock (BSX) 1,000.00 / Dr Price differences (PRD) 20.00 / Cr GR-IR (WRX) 1,020.00 - the 20.00 stays visible as purchasing variance
+- Same receipt under V: Dr Stock (BSX) 1,020.00 / Cr GR-IR (WRX) 1,020.00 - no PRD, the moving average price becomes 10.20 and the next issue is valuated at it
+- Goods issue of 10 units: S valuates at the fixed 10.00 (Dr Consumption 100.00 / Cr Stock 100.00); V valuates at the current MAP (Dr Consumption 102.00 / Cr Stock 102.00)
+
+### 🧪 HOW TO TEST IT
+1. Create one S and one V material, post the same MIGO/MIRO pair to both and compare in MMBE: the S stock value never moves, the V stock value follows the PO price
+2. Prove FI consistency with MB5L against the BSX GL account - no difference allowed at period end
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55 **Migration Path:** Costing-based → Account-based (parallel activation, characteristic mapping, derivation redesign) --- #### 10. CO-PC — Product Cost Controlling ✅ COMPLETE **File:** `references/co-modules/co-pc-product-costing.md` **Coverage:** - **Material Ledger (CKMLCP)** - **S/4HANA: MANDATORY** activation (even without actual costing) - Currency/Valuation Views - Actual Costing (periodic unit price determination) - **Costing Variants (OMG2, CK24)** - Standard Cost E
+
+### 🪤 TRAPS
+- Trap: Switching V to S (or back) in MM02 whenever a price looks wrong. → Winning line: a price-control change with stock or open POs corrupts valuation - clear stock, close open items, then change with MR21/CK24 discipline.
+- Trap: Using V for manufactured goods to avoid costing. → Winning line: V on finished goods buries production variances inside stock; S with a released cost estimate is the controllable standard.
+
+### 🎯 IF MY MIND GOES BLANK
+S = fixed standard, variances to PRD and visible; V = moving average follows every receipt. CK24 releases S, OBYC steers the accounts, MMBE proves it.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 🧮 FORMULAS — THE ONE-LINE LAWS
+- Price variance = (Actual price - Standard price) x Quantity
+- Periodic unit price = Total actual cost / Total quantity
+- Moving average price = Total stock value / Total stock quantity
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55 **Migration Path:** Costing-based → Account-based (parallel activation, characteristic mapping, derivation redesign) --- #### 10. CO-PC — Product Cost Controlling ✅ COMPLETE **File:** `references/co-modules/co-pc-product-costing.md` **Coverage:** - **Material Ledger (CKMLCP)** - **S/4HANA: MANDATORY** activation (even without actual costing) - Currency/Valuation Views - Actual Costing (periodic unit price determination) - **Costing Variants (OMG2, CK24)** - Standard Cost Estimate - Current Cost Estimate - Modifi…
+- the instances of tolerance can be defined for Logistic Invoice Verification. a) Small differences b) Moving average price variances c) Quantity variances d) Price variances 39) What is a country Chart of Accounts? Country Chart of Accounts contains G/L (General Ledger) accounts needed to meet the country’s legal requirements. 40) What is APP in SAP Fico? APP stands for ‘Automatic Payment Program’; it is a tool provided by SAP to companies to pay its vendors and customers. APP tools help to avoid any mistakes taken place in posting manually. Also, when nu…
+
+Reference: offline documents + online knowledge
+
+## 10. Explain Customization & enhancements in SAP FICO — WRICEF, exits/BAdIs, and the clean-core rule
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** My customization rule is: configure first, extend second, modify never. A gap is only real after standard config — account determination, substitution, validation, pricing, tax procedure, standard reports — has been honestly tried. What passes that test becomes a WRICEF: Workflow, Report, Interface, Conversion, Enhancement, Form. In S/4HANA I build on released APIs and the extensibility options — key-user in-app extensibility (custom fields, custom logic via the Custom Fields and Logic app) or developer extensibility on-stack — so the core stays clean and every upgrade is uneventful. Classic user exits and BAdIs still exist in the private-cloud/on-prem world, and I use the enhancement framework deliberately, with a register: every Z object has an owner, a business reason, and a retirement plan.
+- **Key System Benefit:** The business gets exactly the behaviour it needs — a report grouped the way controlling thinks, a substitution the law demands, an interface to the bank or the tax authority — without mortgaging the next upgrade. A clean core means SAP support stays simple, S/4HANA release upgrades do not become re-implementation projects, and the audit trail of "why does the system do this?" is a register, not archaeology.
+- **Execution Strategy:** Every requirement runs the same gate: (1) Can standard config do it? (2) Can key-user extensibility do it without code? (3) Is there a released API / BAdI at the right event? (4) Only then a classic enhancement — and a modification to SAP standard is escalated to architecture board level, which in practice means no. Each approved WRICEF gets a functional spec, effort estimate, transport discipline (DEV → QAS → PRD, never edited in PRD), and a test case in the regression pack. Example from real work: a country e-invoice mandate looks like "customization", but the correct answer is the standard eDocument framework with a country-specific BAdI — one enhancement spot, zero modified objects.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+Requirement & gap fit   The business asks; we test standard config first and document why it cannot do it
+   signed fit-gap note
+        ↓
+WRICEF decision         Classify: Workflow / Report / Interface / Conversion / Enhancement / Form; choose the clean-core option
+   WRICEF register entry
+        ↓
+Build                   Key-user extensibility, released API or BAdI in DEV with a named transport
+   transport + technical spec
+        ↓
+Unit & string test      Developer test, then the end-to-end process in QAS with business data
+   test evidence in QAS
+        ↓
+UAT & transport         Business sign-off; transport moves with the release train, never alone
+   approved CR + import log
+        ↓
+Hypercare & register    Monitor, document the retirement path for the day SAP standard covers it
+   updated object register
+```
+
+### ⚙️ CONFIG STEPS
+1. **SE84 / Enhancement Info System** — find the released enhancement options for a transaction before writing anything · Example: For FB60 parking behaviour, check the BAdI/event catalog first; 80% of "customizations" die here because standard already does it · SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Tools — or the Fiori app Custom Fields and Logic (key-user extensibility).
+2. **FAGL_CMP / Custom Fields and Logic** — key-user extensibility: add a custom field to the journal entry and fill it with custom logic — no code transport to PRD, upgrade-safe · Example: Custom field ZZPROJECT_PHASE on ACDOCA, filled from the WBS attribute; appears in FAGLL03 without any Z table · Fiori ▸ Custom Fields and Logic ▸ Custom Fields / Custom Logic.
+3. **SE19** — implement a classic BAdI where the standard offers an enhancement spot · Example: BADI_FDCB_SUBBAS04 to default a field on the FI document header subscreen for a specific document type · SE19 ▸ Classic BAdI ▸ Create Implementation.
+4. **OBBH / GGB0** — substitutions — the config-level "customization" that needs no code at all · Example: Substitute the profit center from the cost center when a revenue line posts without one; validated in GGB1 · SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Tools ▸ Validation/Substitution.
+5. **OB28 / GGB0** — validations — block the posting instead of fixing it afterwards · Example: Hard error: no posting to a reconciliation account with a manual entry; warning when trading partner is blank on an IC document type · SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Tools ▸ Validation/Substitution.
+6. **SE38/SE80 + ATC** — developer extensibility / Z reports with ABAP Test Cockpit checks before release · Example: ZFI_AGING_V2 built on CDS view I_JournalEntry so it survives the upgrade; ATC shows no non-released-API usage · ABAP Development Tools ▸ ATC ▸ Run Check (variant DEFAULT / CLOUD READINESS).
+7. **STMS / ChaRM** — transport discipline — customization moves DEV → QAS → PRD only, with the release train · Example: The BAdI transport rides the monthly release; emergency fixes use a separate, approved emergency lane with retrospective testing · STMS ▸ Transport Management System.
+8. **SE03 / object register** — every Z object registered with owner and business reason · Example: Register shows 214 active Z objects, 31 retired at the S/4HANA conversion because standard covered them · Solution Manager / Focused Build, or the project WRICEF register.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **WRICEF** — the five-plus-one classes every gap is sorted into: Workflow, Report, Interface, Conversion, Enhancement, Form.
+- **Custom Fields and Logic** — Fiori key-user extensibility app — custom fields/logic without developer keys.
+- **BAdI / enhancement spot** — the released hook SAP guarantees across upgrades (SE18 definition, SE19 implementation).
+- **OBBH / GGB0** — substitution — config, not code; first stop for "the system must fill/derive X".
+- **OB28** — validation — config-level blocking/warning rules.
+- **ACDOCA custom fields** — ZZ* fields appended via extensibility, carried into the Universal Journal.
+- **ATC cloud-readiness check** — proves a Z object only uses released APIs before it ships.
+- **eDocument Framework** — standard country e-invoicing with one BAdI — the model answer for "legal customization".
+
+### 🧾 ACCOUNTING ENTRIES
+- Custom field on journal entry — no posting impact by itself: Dr/Cr lines carry the ZZ field in ACDOCA for reporting (FAGLL03 / CKM3-style analysis)
+- Substitution example — posting Dr Expense / Cr Vendor with blank profit center → OBBH fills the profit center from the cost center master before the document saves
+- Validation example — manual Dr to a vendor reconciliation account → OB28 hard error, posting blocked; the correct path is FB60/MIRO
+- E-invoice enhancement — standard eDocument posts Dr Customer / Cr Revenue as usual; the BAdI only shapes the outbound XML to the authority schema
+
+### 🧪 HOW TO TEST IT
+1. Prove the negative first: reproduce the requirement with standard config only and document the exact gap — this is the fit-gap evidence.
+2. Unit test the enhancement with the trigger document in DEV/QAS; check the ACDOCA line in SE16H carries the custom field/derived value.
+3. Regression: run the same posting WITHOUT the trigger condition and prove standard behaviour is unchanged (the enhancement must be invisible when it should not fire).
+4. Run ATC (cloud-readiness variant) on the transport; zero findings on non-released APIs before it leaves DEV.
+5. Transport sequencing test: import into QAS in release order, rerun the end-to-end process (P2P and O2C), and reconcile totals in FAGLB03 before UAT sign-off.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+Recognition — mentation Significant contributions (new modules, major enhancements) will be highlighted in: - Release announcements - LinkedIn posts (with contributor attribution) - SAP Community blog posts --- ## Code of Conduct - Be respectful and professional - Focus on the content, not the person - Provide constructive feedback - Welcome newcomers - Help others learn This is a professional SAP community. Let's keep it that way. --- ## License By contributing, you agree that your contributions will be licensed u
+
+### 🪤 TRAPS
+- Trap: Customizing before configuring → Winning line: Most "custom" requirements are un-tried standard: substitution, validation, derivation, account determination. The fit-gap note must show the standard attempt first.
+- Trap: Modifying SAP standard objects → Winning line: A modification is a lifetime upgrade debt and a support problem. Enhancement framework or released API only; modifications need architecture-board escalation.
+- Trap: Building a Z report on raw tables → Winning line: Reports belong on released CDS views (I_JournalEntry, I_GLAccountLineItem) — table-direct reads break at upgrade and bypass authorizations.
+- Trap: No owner, no register → Winning line: An unregistered Z object is tomorrow's archaeology. Every object gets an owner, a reason, and a retirement condition.
+
+### 🎯 IF MY MIND GOES BLANK
+Configure first, extend second, modify never. If standard config honestly cannot do it, it becomes a WRICEF on released APIs — registered, transported, and regression-tested.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- Recognition — mentation Significant contributions (new modules, major enhancements) will be highlighted in: - Release announcements - LinkedIn posts (with contributor attribution) - SAP Community blog posts --- ## Code of Conduct - Be respectful and professional - Focus on the content, not the person - Provide constructive feedback - Welcome newcomers - Help others learn This is a professional SAP community. Let's keep it that way. --- ## License By contributing, you agree that your contributions will be licensed under the MIT License. --- **Thank you fo…
+- and how does it differ from a “User Exit”? 72. What is a BAdI (Business Add-In), and how do you typically implement it in code? 73. How do implicit and explicit enhancements differ from classical user exits or BAdIs? 74. If you want to add a new check in standard SAP code without modifying it, which enhancement framework options exist? 75. Provide an example of using transaction SMOD/CMOD for user exits in SAP standard modules. 76. What is the Enhancement Spot concept in newer ABAP releases, and how do you define or implement them? 77. When might you use…
+- s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart of accounts list and fiscal year, howev…
+
+Reference: offline documents + online knowledge
+
+## 11. Explain Flix (FlixBus/FlixTrain) — how the travel platform business works and where SAP FICO carries it
+
+### 🏢 COMPANY SNAPSHOT - Flix (Flix SE) (Munich, founded 2011)
+- **Business model:** Asset-light digital platform: Flix sells tickets, prices dynamically and plans the network; 1,000+ local partners own and drive the buses/trains (FlixBus, FlixTrain, Greyhound in North America, Kâmil Koç in Turkey).
+- **Scale:** FY2023 total revenue EUR 2.0bn (+30% YoY); 81 million passengers; 5,600+ destinations in ~45 countries.
+- **Profitability:** Adjusted EBITDA EUR 104m in FY2023 (5.2% margin), up from ~EUR 7m in FY2022 - the improvement story is profitable growth after the post-Covid rebuild.
+- **Balance sheet & stock presence:** NOT stock-listed: private SE. The Frankfurt IPO (~EUR 4bn target) was postponed in 2024; EQT and Kühne Holding took ~35% instead (~EUR 3bn implied valuation). Balance sheet is asset-light: minimal fleet assets, heavy partner payables and lease/traffic liabilities.
+- **Why it matters for FICO:** Route/segment profitability in ACDOCA, partner settlement liabilities, high-volume micro-ticket revenue recognition and VAT per country - never fleet asset accounting.
+- *Figures are reported annual-report numbers (year named) - confirm the latest report before quoting externally.*
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Flix is an asset-light travel platform: it owns the brand, the booking platform, pricing and the customer relationship — but not the buses. Local bus partners operate the routes with their own vehicles and drivers. So the finance model is a platform model: Flix sells the ticket, recognizes its commission as revenue, and owes the partner the rest. The money flow a FICO architect must control is: passenger pays at booking, cash is collected up front, revenue is earned only when the trip runs, and the partner is settled afterwards against trips actually operated. Refunds, vouchers, deferrals and multi-country VAT on passenger transport are where this model is won or lost in the ledger.
+- **Key System Benefit:** Understanding the business first is what makes the SAP design right: a generic AR/AP rollout would book revenue at ticket sale and drown in manual refund corrections. Modelling the deferral, the partner settlement and the transport VAT correctly means revenue lands in the travel period, partner payables are self-billing and auditable, and the close is a reconciliation instead of a detective story across 40+ countries.
+- **Execution Strategy:** Treat Flix as three finance machines. (1) Ticketing: booking platform → payment service providers → daily cash and clearing into SAP; unearned revenue (deferred income) on a contract-liability account at sale. (2) Operations: trip execution data triggers revenue release per completed route and accrues the partner share. (3) Partner settlement: self-billing — Flix calculates what each partner earned (trips × contract rate − commission − penalties) and posts the payable; the partner never sends an invoice. VAT follows passenger-transport place-of-supply rules per country (distance-based apportionment in several regimes), which is why the tax design is per-country, not one global template with exceptions.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+🤖 How is AI transforming SAP FICO workflows? — ng allows. 🧠 Can AI replace a SAP FICO consultant? No. AI accelerates repetitive tasks like data entry and reconciliation, but configuration, integration design, and statutory compliance still require human expertise. Consultants increasingly use AI assistants to handle routine work while focusing on strategic finance transformation. Summarize this post with: ChatGPT Perplexity Grok Google AI Post navigation Report a Bug [SVG diagram labels: Previous] Prev Next [SVG 
+
+### 🪤 TRAPS
+- Trap: Recognizing revenue at booking → Winning line: Cash is not revenue: the fare is a contract liability until the wheels turn. Booking-day revenue overstates every month with strong advance sales.
+- Trap: Letting partners invoice freely → Winning line: Asset-light scale needs self-billing from operated-trip data; partner invoices by e-mail make the payable unauditable.
+- Trap: One global VAT rule → Winning line: Passenger transport is taxed where it happens, often distance-apportioned — a single-country template fails the first cross-border route.
+- Trap: Ticket-level documents in FI-AR → Winning line: Volume kills the classic subledger design; aggregate with a detail subledger (FI-CA/BRIM) or the close becomes a performance incident.
+
+### 🎯 IF MY MIND GOES BLANK
+Flix sells the ticket but the partner drives the bus: cash up front into deferred revenue, revenue and the partner split only when the trip runs, partners settled by self-billing, VAT by where the kilometres happen.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- 🤖 How is AI transforming SAP FICO workflows? — ng allows. 🧠 Can AI replace a SAP FICO consultant? No. AI accelerates repetitive tasks like data entry and reconciliation, but configuration, integration design, and statutory compliance still require human expertise. Consultants increasingly use AI assistants to handle routine work while focusing on strategic finance transformation. Summarize this post with: ChatGPT Perplexity Grok Google AI Post navigation Report a Bug [SVG diagram labels: Previous] Prev Next [SVG diagram labels: Continue] Stay Updated o…
+- What Changed — ents ## Why This Matters Addresses gap in modern payment methods. Many clients now require real-time payments and SWIFT gpi tracking. ## Tested In SAP S/4HANA 2023 FPS02 --- ## Content Quality Standards When contributing FICO content, follow these standards: ### Accuracy - ✅ Use correct SAP terminology (transaction codes, table names, field names) - ✅ Cite S/4HANA release where features were introduced (e.g., "New in 2022 FPS01") - ✅ Provide specific transaction codes and config tables (not vague descriptions) - ✅ Test configuration steps …
+
+Reference: offline documents + online knowledge
+
+Reference: offline documents + online knowledge
+
+## 12. Explain CYBEX — the end-to-end business process (design → source → make → sell → cash) and how FICO carries it
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** CYBEX is a premium juvenile-products company — strollers, car seats, carriers — that designs in Germany, manufactures largely with partners in Asia, and sells wholesale to retailers, through distributors, and direct-to-consumer online. The end-to-end business process a FICO lead must carry is: product design and costing, sourcing and intercompany supply into regional hubs, manufacturing or buy-and-sell distribution, multi-channel selling (retail key accounts, DTC web shop, marketplaces), and after-sales with warranty and returns. Every one of those steps lands in FI/CO: standard-costed materials, intercompany profit elimination, landed costs, rebates to retail partners, and D2C revenue with payment-provider clearing. My CTP Turkey design is one live piece of exactly this machine — a DE02-sourced, TR02 buy-and-sell flow with two transfer-of-control dates.
+- **Key System Benefit:** Seeing the whole chain is what separates a lead from a module consultant: the same physical stroller is an intercompany sale in DE02, inventory in transit at plant 1800, a buy-and-sell margin in TR02, and a retail sell-out with rebate accruals — and group reporting must eliminate the internal profit so only the external margin survives. When finance mirrors the real logistics, product costing is believable, margins by channel are true, and the close proves itself instead of being argued.
+- **Execution Strategy:** Run the process in five finance-carrying stages. (1) Design & cost: material masters with standard price from CK11N/CK24; R&D and design costs captured on internal orders/projects. (2) Source & supply: intercompany STO/buy-and-sell between group plants with transfer pricing; transit plant for cross-docking; transfer-of-control dates decide when each company code earns and owns. (3) Make/assemble or buy finished: production or procurement at the hub, landed costs (freight, duty) capitalized into inventory value per the group rule. (4) Sell: wholesale via SD with rebate agreements, DTC via web-shop interfaces with PSP clearing, marketplaces via settlement files — revenue and COGS at delivery/billing, margin visible by product and channel in CO-PA. (5) After-sales & close: returns and warranty provisions, FX valuation on open items, intercompany reconciliation and profit-in-stock elimination, then group reporting.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+🎓 What qualifications are needed to become a SAP FICO consultant? — nds-on experience with configuration, business workflows, and integration with modules like MM and SD strengthens job prospects in consulting and corporate roles. 🔗 How does SAP FICO integrate with other SAP modules? SAP FICO integrates with MM for procurement postings, SD for sales revenue, HR for payroll expenses, and PP for production costs. Every operational transaction creates an automatic financial document, ensuring consistency between ope
+
+### 🪤 TRAPS
+- Trap: One transfer-of-control date → Winning line: Collapsing the two control dates posts revenue and stock in the wrong company code on the wrong day — the whole buy-and-sell design stands on the two dates.
+- Trap: Treating To Be Confirmed blueprint values as final → Winning line: Credit control area, exact addresses and some account details stayed provisional in the blueprint; a lead flags them instead of inventing values.
+- Trap: Netting rebates into revenue quietly → Winning line: Retail rebates must accrue visibly and settle by credit memo, or channel margins and audit both break.
+- Trap: Posting FX valuation to the reconciliation account → Winning line: SAP forbids direct postings there — valuation runs through the OBA1 balance-sheet adjustment account.
+
+### 🎯 IF MY MIND GOES BLANK
+Design and standard-cost it, supply it intercompany with two transfer-of-control dates, sell it per channel with rebates and PSP clearing visible, then eliminate the internal profit at close — that is the CYBEX machine and FICO carries every step.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- 🎓 What qualifications are needed to become a SAP FICO consultant? — nds-on experience with configuration, business workflows, and integration with modules like MM and SD strengthens job prospects in consulting and corporate roles. 🔗 How does SAP FICO integrate with other SAP modules? SAP FICO integrates with MM for procurement postings, SD for sales revenue, HR for payroll expenses, and PP for production costs. Every operational transaction creates an automatic financial document, ensuring consistency between operations and finance. ⏱️ How long does it…
+- // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: README.md # 🚀 SAP S/4HANA FICO Implementation Skill > **The most comprehensive FICO implementation guide for SAP S/4HANA — serves both freshers learning greenfield implementations and professionals tackling complex configurations.** [![SAP S/4HANA](https://img.shields.io/badge/SAP-S%2F4HANA-0FAAFF?style=flat&logo=sap)]() [![FICO](https://img.shields.io/badge/Module-FICO-00A1E0)]() [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) […
+- Integration Reference Files (references/integrations/) — les (references/integrations/) # [Module A]-[Module B] Integration Guide ## Overview [What data flows between modules, business scenarios] ## Integration Points (L5 Level) ### Integration Point 1: [Name] **Business Scenario:** [When this happens] **Data Flow:** [Module A] → [Module B] **Transaction Codes:** - Source: `[T-CODE]` in [Module A] - Destination: `[T-CODE]` in [Module B] **Configuration Required:** #### Step 1: [Config Activity] **SPRO Path:** [...] **Transaction:** `[T-CODE]` **Table:** …
+
+Reference: offline documents + online knowledge
+
+Reference: offline documents + online knowledge
+
+## 13. Explain Procure-to-Pay behind the scenes — every document, posting and table, step by step
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** P2P is a chain of documents where only three steps touch FI: goods receipt (MIGO), invoice verification (MIRO) and payment (F110). Everything before that — PR and PO — is logistics only, with no FI document. The genius of the design is GR/IR: the WRX clearing account lets the goods and the invoice arrive on different days and still match to the cent, and OBYC decides every account so nobody ever types a G/L account into an MM transaction.
+- **Key System Benefit:** Because account determination is automatic and GR/IR separates goods flow from invoice flow, three-way match (PO ↔ GR ↔ invoice) can be enforced by the system: an invoice that does not match the goods received is blocked for payment automatically, and the month-end GR/IR list (MB5S) shows exactly what is still open and why.
+- **Execution Strategy:** I design it in this order: valuation class on the material master, OBYC matrix (BSX/WRX/GBB/PRD), tolerance keys in OMR6, then the payment program FBZP/F110 and the bank-statement clearing. Price control (S standard vs V moving average) decides where a price difference lands, so that decision comes before any account is maintained.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1 · PR                  ME51N
+   Demand only — no FI document, optional commitment on the cost object
+        ↓
+2 · PO                  ME21N
+   Still no FI document; the PO creates the frame that GR and invoice will be matched against
+        ↓
+3 · GOODS RECEIPT       MIGO · movement 101
+   FIRST FI DOCUMENT — inventory and GR/IR post (see behind-the-scenes chain)
+        ↓
+4 · INVOICE             MIRO
+   GR/IR clears, vendor open item + input tax post; mismatches block automatically
+        ↓
+5 · RELEASE             MRBR
+   Blocked invoices are released after the cause (price/quantity/date) is fixed
+        ↓
+6 · PAYMENT             F110
+   Vendor clears against the bank clearing account; REGUH/REGUP hold the payment data
+        ↓
+7 · BANK STATEMENT      FF_5 / FEBAN
+   Bank clearing account clears against the real bank main account — chain closed
+```
+
+### 🔬 BEHIND THE SCENES — STEP BY STEP (what the system does)
+1. **Purchase requisition** (ME51N) — No FI document at all. With account assignment K the PR carries the cost centre; funds commitment (earmarked funds) can update, but nothing posts to a G/L account. Table: EBAN. · See it yourself: ME53N display; EBAN in SE16N.
+2. **Purchase order** (ME21N) — Still NO FI document. The system stores price, tax code and account assignment; the PO price becomes the expected value for GR and invoice. Tables: EKKO/EKPO. From here, every later step is a match against this document. · See it yourself: ME23N — the PO History tab is where the whole chain becomes visible.
+3. **Goods receipt** (MIGO, movement type 101) — The material document (MATDOC) and the FI document are created in ONE update. Inventory is valued (standard or moving average), GR/IR is credited at PO price, and any gap to standard price goes to PRD. PO history (EKBE) records the GR quantity and value. · See it yourself: MIGO display → the FI document via the material document; MB51 for movements; FBL3N on the GR/IR account.
+4. **Invoice verification** (MIRO) — The system proposes the open GR items. On posting: GR/IR debits back to zero for that item, input tax posts via the tax code (OB40), the vendor open item is created net of tax, and a price gap goes to PRD (price control S) or back to stock (price control V / sufficient stock coverage under S). If quantity or price exceeds the OMR6 tolerances, the item is blocked for payment with a reason code. Tables: RBKP/RSEG, EKBE updated. · See it yourself: MIRO → follow-on documents; FBL1N vendor line items shows block indicator; MIR4/MIR6.
+5. **Release blocked invoice** (MRBR) — Release only removes the payment block — it never changes the posting. The cause must be fixed first: post the missing GR, correct the price, or accept the variance deliberately. · See it yourself: MRBR list with block reasons (price, quantity, date, amount).
+6. **Automatic payment** (F110) — Proposal (editable) → payment run creates the clearing document: Dr Vendor / Cr Bank clearing account, and writes REGUH (header) + REGUP (items). The vendor open item is cleared (AUGBL). The real bank account is NOT touched yet. · See it yourself: F110 log; FBL1N shows the cleared item with clearing document; REGUH in SE16N.
+7. **Electronic bank statement** (FF_5 import, FEBAN post-process) — The statement line matches the bank-clearing posting (amount, reference, value date) and posts Dr Bank clearing / Cr Bank main account. Unmatched lines stay in FEBAN as the daily exception list. The chain from purchase order to bank is now closed and fully traceable via document flow. · See it yourself: FEBAN — green (posted) vs red (exception) items; FB03 document flow.
+
+### 🧮 FORMULAS — WITH WORKED NUMBERS
+- THE WORKED EXAMPLE (use exactly these numbers): PO for 100 units at €12.50 = €1,250; material has STANDARD price €12.00 (price control S). Goods arrive complete; the invoice arrives at €12.80 per unit.
+- GR value rule (price control S): inventory always at standard → Dr Inventory (BSX) 100 × €12.00 = €1,200. GR/IR credited at PO price → Cr GR/IR (WRX) 100 × €12.50 = €1,250. The gap is a purchase price variance → Dr PRD 100 × (€12.50 − €12.00) = €50.
+- Invoice rule: Dr GR/IR €1,250 (clears the GR posting to zero) + the extra price gap 100 × (€12.80 − €12.50) = €30 → Dr PRD under price control S (or to stock under V); Dr Input tax 19% of €1,280 = €243.20; Cr Vendor €1,280 + €243.20 = €1,523.20.
+- Moving-average rule (price control V): no PRD at GR — inventory value and MAP absorb the PO price: new MAP = (old stock value + GR value) ÷ (old qty + GR qty). Example: 50 units in stock worth €560 (MAP €11.20), GR 100 × €12.50 = €1,250 → new MAP = (560 + 1,250) ÷ 150 = €12.07.
+- GR/IR balance meaning: a CREDIT balance on WRX = goods received, invoice missing (liability to accrue); a DEBIT balance = invoice received before goods. MB5S splits this per PO item; F.19 regroups it at period end.
+- Three-way match check: invoice quantity ≤ GR quantity and |invoice price − PO price| within OMR6 tolerance (key PP price variance, key BD automatic posting of small differences) — outside tolerance the item posts but is BLOCKED for payment.
+
+### ⚙️ CONFIG STEPS
+1. **MM03 / OMS2** — set price control and valuation class on the material · Example: Valuation class (e.g. 3000 raw materials) is the key the whole OBYC matrix turns on; price control S vs V decides where variances land · MM03 Accounting 1 view; OMS2 valuation class assignment to material type.
+2. **OBYC** — maintain BSX, WRX, GBB, PRD per valuation class · Example: BSX = inventory, WRX = GR/IR clearing, GBB (with account modification) = offsetting for issues/consumption, PRD = price differences · SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination (OMWB simulation shows the exact lookup).
+3. **OMR6** — set tolerance keys for invoice verification · Example: PP (price variance), BD (small differences auto-post), AP (amount item), KW (condition variance) decide block vs post · SPRO ▸ Materials Management ▸ Logistics Invoice Verification ▸ Invoice Block ▸ Set Tolerance Limits.
+4. **FBZP** — configure the payment program completely · Example: All company codes ▸ paying company code ▸ payment methods per country ▸ bank determination (ranking, accounts, available amounts) ▸ house banks — all five nodes or the proposal fails · FBZP five-node customizing; tested with F110 proposal log.
+5. **F110** — run proposal, edit, payment run · Example: Proposal first (exceptions edited there), then payment run posts and creates the payment medium (DMEE → bank file) · F110: parameters → proposal → payment run → print/data medium.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **BSX / WRX / GBB / PRD** — the four OBYC transaction keys that carry almost all of MM-FI: stock, GR/IR, offsetting, price difference.
+- **OMWB** — account-determination simulation — enter movement type and material, see exactly which accounts the system WOULD find.
+- **EKBE** — PO history table — every GR and invoice against the PO, the backbone of three-way match.
+- **RBKP / RSEG** — invoice header/items from MIRO.
+- **REGUH / REGUP** — payment header/items written by F110.
+- **MATDOC** — the S/4HANA material document table behind MIGO/MB51.
+- **MB5S** — GR/IR balance list per PO item — the month-end proof for the WRX account.
+
+### 🧾 ACCOUNTING ENTRIES
+- GR (MIGO 101, price control S): Dr Inventory (BSX) €1,200 / Dr Price difference (PRD) €50 / Cr GR/IR (WRX) €1,250
+- Invoice (MIRO): Dr GR/IR (WRX) €1,250 / Dr Price difference (PRD) €30 / Dr Input tax €243.20 / Cr Vendor €1,523.20
+- Payment (F110): Dr Vendor €1,523.20 / Cr Bank clearing account €1,523.20
+- Bank statement (EBS): Dr Bank clearing account €1,523.20 / Cr Bank main account €1,523.20
+- Price control V instead: GR posts Dr Inventory (BSX) €1,250 / Cr GR/IR €1,250 — no PRD; the moving average revalues the stock instead
+
+### 🧪 HOW TO TEST IT
+1. Create the PO (ME21N), post the GR (MIGO) and open the FI document from the material document — BSX/WRX/PRD exactly as computed by hand.
+2. Post the MIRO invoice €30 above PO price; confirm the vendor item shows the payment block when tolerance is exceeded, release it in MRBR, then run F110 and watch it clear.
+3. Run MB5S and agree every open GR/IR item to FBL3N on the WRX account; explain one debit and one credit item out loud.
+4. Import a test bank statement (FF_5) and prove the bank clearing account returns to zero in FEBAN.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+--- [skills/sap-stock-availability/references/direct-table-reads.md · Free SAP FICO sources — auto-fetched · line 1 · relevance 11.3] --- // Repository: https://github.com/shrek-abaper/sap-functional-skill // File: skills/sap-stock-availability/references/direct-table-reads.md # 受控直读表兜底:RFC_READ_TABLE 本文件是 SKILL.md「受控兜底」一节的展开。所有内容基于 2026-09-20 对一台 S/4HANA 系统(client 800,动态 REST2RFC 网关)的实测,不是照抄 SAP 文档。 ## 1. 它是什么,什么时候才允许用 `RFC_READ_TABLE` 是 SAP 自带的通用读表函数。它不理解业务,只做一件事: 把任意透明表/兼容视图的行按 WHERE 条件读出来,拼成字符串返回。 **它是最后手段,不是首选。** 允许使用的前提(SKILL.md 已固化): 1. 场景白名单函数无法回答——未注册、返回体为空、或返回字段不覆盖问题; 2. 已经向用户说明为什么要落到直读表; 3. 目标表在 `catal…
+
+### 🪤 TRAPS
+- Trap: Typing G/L accounts into MIGO or MIRO when the posting looks wrong → Winning line: Nobody types accounts in MM — OBYC plus the valuation class decides. I fix the matrix (OMWB proves the lookup), never the document.
+- Trap: Treating GR/IR as a suspense account → Winning line: WRX is a clearing account with an owner and a month-end list: MB5S per PO item, F.19 regrouping, and every aged item has a reason — goods without invoice or invoice without goods.
+- Trap: Releasing blocked invoices in MRBR to make the problem go away → Winning line: MRBR removes the block, not the cause. The variance must be understood first — price, quantity, or a missing GR — otherwise we pay money we do not owe.
+- Trap: Blaming FI for a wrong inventory value → Winning line: Value follows price control and valuation class in the material master. The analysis starts in MM03 and OBYC, not in the FI document.
+
+### 🎯 IF MY MIND GOES BLANK
+PO, MIGO, MIRO: BSX takes the stock, WRX clears it, PRD shows the difference. OBYC is the matrix, the valuation class is the key, MB5S is the proof.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+
+Reference: offline documents + online knowledge
+
+## 14. Explain Order-to-Cash behind the scenes — billing, Co-PA and margin, step by step
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** In O2C only two steps touch FI: goods issue (PGI) posts COGS against inventory, and billing posts customer, revenue and tax. The Co-PA question is WHERE the profitability view reads those same two postings: account-based Margin Analysis reads them from ACDOCA (the Universal Journal, always reconciled to FI), while costing-based Co-PA reads them from its own value-field tables (CE1/CE2/CE4) and can add calculated values that never exist in FI. In S/4HANA I design account-based as the default and keep costing-based only where costing-based valuation (e.g. freight or material cost estimates) is genuinely needed.
+- **Key System Benefit:** One billing document answers both views: the FI view reconciles to the cent because margin analysis IS the general ledger, and the margin view stays explainable down to customer, product and plant because every ACDOCA line carries the profitability characteristics. The classic ECC month-end fight — CO-PA totals versus FI totals — disappears by construction.
+- **Execution Strategy:** Pricing procedure with condition types and account keys (ERL revenue, MWS tax) drives VKOA; the profitability segment is derived at order/billing (KEVA/KEDR derivation); COGS split (cost component split via OKTZ) makes the account-based margin analysable by cost element group instead of one lump.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1 · SALES ORDER         VA01
+   No FI document; costing-based Co-PA can already see the expected order (statistical), account-based waits for real postings
+        ↓
+2 · DELIVERY + PGI      VL01N / VL02N PGI
+   FIRST FI DOCUMENT — COGS vs inventory (movement 601); in S/4 the COGS line lands in ACDOCA with profitability characteristics
+        ↓
+3 · BILLING             VF01
+   SECOND FI DOCUMENT — customer, revenue, output tax; the profitability segment is completed here
+        ↓
+4 · RELEASE             VFX3
+   Billing documents blocked from accounting (pricing/account-determination errors) are listed and released here
+        ↓
+5 · MARGIN VIEW         KE24 / Fiori Margin Analysis
+   Account-based: read from ACDOCA. Costing-based: read from CE4/CE1 actual line items with value fields
+        ↓
+6 · CUSTOMER PAYMENT + EBSF-28 / EBS
+   Open item clears against bank clearing, then the bank statement clears to the bank main account
+```
+
+### 🔬 BEHIND THE SCENES — STEP BY STEP (what the system does)
+1. **Sales order** (VA01) — No FI document. Header/item tables VBAK/VBAP. Pricing runs here: the pricing procedure determines the condition chain (price, discounts, tax, cost) that billing will simply copy. In costing-based Co-PA the order can already create a statistical expected view; account-based Co-PA sees nothing yet — by design, because nothing has posted. · See it yourself: VA03 → document flow (VBFA) is the map of everything that follows.
+2. **Delivery + goods issue** (VL01N then VL02N post goods issue, movement 601) — The material document (MATDOC) and ONE FI document post together: Dr COGS (account from OBYC GBB with modification VAX/VAY) / Cr Inventory (BSX), valued at standard or moving average. In S/4HANA margin analysis this COGS line already carries customer/product characteristics in ACDOCA (COGS split puts material, labour and overhead on separate accounts). The order is now fulfilled in stock terms; LIKP/LIPS hold the delivery. · See it yourself: VL03N → goods issue material document → FI document; MB51 movement 601.
+3. **Billing** (VF01 (creates VBRK/VBRP)) — On release to accounting: Dr Customer (reconciliation account from the customer BP) / Cr Revenue (from VKOA via account key ERL) / Cr Output tax (account key MWS, tax code from the pricing chain). The profitability segment (customer, product, plant, sales org) is derived and stored: account-based writes it onto the ACDOCA revenue AND COGS lines; costing-based additionally writes value fields (revenue, discounts, COGS) into CE1 actual line items summarised in CE4. If account determination fails, the billing doc exists but is BLOCKED from accounting (VBRK-RFBSK) — no silent gaps. · See it yourself: VF03 → Environment → Accounting overview shows the FI document; VFX3 lists blocked billing documents.
+4. **Read the margin — account-based** (KE24 (account-based view) / Fiori Margin Analysis apps) — KE24 reads ACDOCA profitability lines: revenue and COGS with all characteristics on the same journal lines the auditor sees in FAGLL03H. Margin = revenue accounts minus COGS accounts, designed in the margin analysis layout (KEA6 characteristics, report via Fiori or KE24). It can never disagree with FI. · See it yourself: KE24: choose account-based; FAGLL03H grouped by profitability characteristics proves the tie-out.
+5. **Read the margin — costing-based** (KE24 (costing-based view), tables CE4/CE1) — KE24 reads the operating-concern tables: value fields (VV001 revenue, VV002 discount, VV010 COGS from VPRS) posted from the billing document via the PA transfer structure (KE4I). This view can also carry calculated or estimated values (costing-based valuation with material cost estimates, KE4U) that FI never sees — powerful, but it must be reconciled back to FI (KEAT) and explained every close. · See it yourself: KE24 costing-based; KEAT reconciliation CO-PA vs FI.
+6. **Customer payment** (F-28 manual or EBS automatic) — Dr Bank clearing / Cr Customer clears the open item (or Dr/Cr with deductions → residual items / charge-off). The bank statement later clears Dr Bank main / Cr Bank clearing, exactly as on the P2P side — the money chain closes in FEBAN. · See it yourself: FBL5N customer line items; FEBAN for the statement side.
+
+### 🧮 FORMULAS — WITH WORKED NUMBERS
+- THE WORKED EXAMPLE (one billing document, keep these numbers through every step): 10 units of product FG-100 at a list price of €34.00; order-level discount 10%; VAT 19%; standard cost of the product €15.00 per unit.
+- Condition chain: gross value 10 × €34.00 = €340.00 (condition ZPR0/base price) − discount 10% = −€34.00 (Z312) → NET REVENUE = €306.00. Tax base €306.00 × 19% = €58.14 (MWST). Invoice total = €364.14.
+- PGI posting: COGS = 10 × €15.00 = €150.00 (VPRS cost condition reads the standard price) → Dr COGS (GBB-VAX) €150.00 / Cr Inventory (BSX) €150.00.
+- Billing posting: Dr Customer €364.14 / Cr Revenue (VKO A, account key ERL) €306.00 / Cr Output VAT (account key MWS) €58.14.
+- MARGIN = net revenue − COGS = €306.00 − €150.00 = €156.00; margin % = 156.00 ÷ 306.00 = 50.98%. In account-based Co-PA you read this directly off ACDOCA accounts; in costing-based: value fields VV001 €306.00 and VV010 €150.00 give the same €156.00 in KE24 — and KEAT proves the two views agree.
+- Tax determination behind the scenes: billing → tax code from the pricing procedure (country of departure/destination + customer/material tax classification, table A003 condition records) → KONP holds the percentage → the tax code (FTXP in procedure TAXD here) posts to the MWS account. If A003 has no record, billing blocks in VFX3 — never a wrong-tax silent posting.
+
+### ⚙️ CONFIG STEPS
+1. **V/08 + VKOA** — pricing procedure with account keys; VKOA account determination (tables C001–C005) · Example: Condition type → account key (ERL/ERS/MWS) → VKOA finds the G/L by application V, chart of accounts, sales org, account assignment groups of customer and material · SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination (VKOA).
+2. **KEA0 / KEDR** — operating concern + derivation rules · Example: Characteristics (customer, product, plant, sales org) and KEDR derivation steps fill the profitability segment at order and billing time · KEA0 operating concern; KEDR/KED0 derivation and characteristics (KEA5).
+3. **KE4I / KEA6** — PA transfer structure (costing-based) and margin layout (account-based) · Example: KE4I maps billing condition types to value fields; KEA6/margin analysis defines which accounts form revenue and COGS for the account-based view · KE4I for costing-based; in S/4 the account-based margin comes from ACDOCA account ranges.
+4. **OKTZ** — cost component split so COGS lands split in ACDOCA · Example: Material cost components map to separate COGS accounts — margin analysis by material/labour/overhead instead of one COGS lump · OKTZ cost component structure; assignment to COGS accounts in the COGS-split customizing.
+5. **VFX3 discipline** — daily check of billing documents blocked from accounting · Example: Pricing or account-determination errors surface here, never as missing revenue · VFX3 release list — part of the daily O2C control, together with VF04 billing due list.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **VBRK / VBRP** — billing header/items created by VF01; RFBSK shows whether accounting release succeeded.
+- **ACDOCA** — Universal Journal — account-based margin analysis reads revenue and COGS here, with characteristics on the same lines.
+- **CE1 / CE4 (costing-based)** — actual line items and profitability segments of the classic costing-based operating concern.
+- **VKO A (C001–C005)** — SD revenue account determination tables behind VKOA.
+- **A003 / KONP** — tax condition record and its percentage — how billing finds the tax rate.
+- **KE24 / KEAT** — line-item display for both Co-PA types / the reconciliation report between Co-PA and FI.
+- **VBFA** — document flow — order → delivery → billing → FI document in one view.
+
+### 🧾 ACCOUNTING ENTRIES
+- PGI (movement 601): Dr COGS (GBB-VAX) €150.00 / Cr Inventory (BSX) €150.00
+- Billing (VF01): Dr Customer €364.14 / Cr Revenue (ERL) €306.00 / Cr Output VAT 19% (MWS) €58.14
+- Account-based Co-PA: NO extra document — the same two postings in ACDOCA carry the profitability segment; margin €156.00 reads straight off the journal
+- Costing-based Co-PA: NO FI document either — but a parallel Co-PA line item (CE1) with value fields revenue €306.00, discount €34.00, COGS €150.00
+- Payment (F-28/EBS): Dr Bank clearing €364.14 / Cr Customer €364.14; statement then Dr Bank main / Cr Bank clearing
+
+### 🧪 HOW TO TEST IT
+1. Create the full chain VA01 → VL01N → PGI → VF01 and read the SAME €156.00 margin three ways: VF03 accounting overview, KE24 account-based, KE24 costing-based.
+2. Break VKOA deliberately in the sandbox (remove one account), re-bill, and find the document waiting in VFX3 instead of missing from revenue.
+3. Prove the tie-out: FAGLL03H on the revenue and COGS accounts for the period equals the KE24 account-based totals (KEAT for the costing-based side).
+4. Reverse with VF11 and MR8M-style discipline: billing cancellation re-creates the mirror postings and both Co-PA views return to zero for that document.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+areas. → **Winning Line**: Always verify that `FINSC_LEDGER` settings align with New Asset Accounting depreciation area mapping to prevent valuation gaps between leading and local ledgers. ### 🧠 IF MY MIND GOES BLANK Lead SAP FICO Architect with 15+ years delivering global S/4HANA transformations. I own the complete lifecycle from blueprint to SPRO customising, universal journal setup (`ACDOCA`, `FINSC_LEDGER`), logistics integration (`OBYC`, `VKOA`), parallel accounting, and hypercare support. 📎 From my material
+
+### 🪤 TRAPS
+- Trap: Say account-based Co-PA is just a report on costing-based data → Winning line: Account-based margin analysis reads ACDOCA itself — same table, same lines as FI. Costing-based reads CE1/CE4. That is exactly why one reconciles by construction and the other needs KEAT.
+- Trap: Claiming the sales order creates the margin → Winning line: The order posts nothing. Values become real at PGI (COGS) and billing (revenue); any earlier view is statistical/planned and must be labelled as such.
+- Trap: One COGS account for everything in S/4 → Winning line: Without the cost component split (OKTZ) the account-based margin is a single lump. The split is what makes margin analysis useful to the business.
+- Trap: Treating VFX3 as an error bin → Winning line: Blocked billing is revenue waiting to be recognised. VFX3 is a daily control with an owner, like FEBAN on the bank side.
+
+### 🎯 IF MY MIND GOES BLANK
+PGI posts COGS, billing posts revenue, and Co-PA only READS those postings — account-based from ACDOCA, costing-based from CE1/CE4. KE24 shows both; KEAT proves they agree.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- areas. → **Winning Line**: Always verify that `FINSC_LEDGER` settings align with New Asset Accounting depreciation area mapping to prevent valuation gaps between leading and local ledgers. ### 🧠 IF MY MIND GOES BLANK Lead SAP FICO Architect with 15+ years delivering global S/4HANA transformations. I own the complete lifecycle from blueprint to SPRO customising, universal journal setup (`ACDOCA`, `FINSC_LEDGER`), logistics integration (`OBYC`, `VKOA`), parallel accounting, and hypercare support. 📎 From my material: README.md, CONTRIBUTING.md, FRAMEWORK.…
+- Gross Margin, Contribution Margin - Custom Value Fields (ZFREIGHT, ZDISCOUNT) 9. CO-PA — Profitability Analysis ✅ COMPLETE — Value Fields (KEA6, TKEVF)** - Costing-based only - Revenue (Sales Revenue, Other Revenue) - COGS (Material Cost, Labor Cost, Overhead) - Gross Margin, Contribution Margin - Custom Value Fields (ZFREIGHT, ZDISCOUNT) - **Derivation Rules (KEDR)** - Table-based derivation - Move, Enhancement (User-Exit) - Derivation Strategy - **Costing Sheet (KEU1)** - Costing-based only - Base, Percentage, Quantity-based calculations - Overhead cal…
+
+Reference: offline documents + online knowledge
+
+## 15. Explain Account determination behind the scenes — how SAP finds every G/L account (OBYC, VKOA, tax)
+
+### 💡 SAY THIS FIRST
+> VKOA is the condition technique applied to accounts: the access sequence reads application, sales organisation, distribution channel, division,…
+
+### ⚡ READY NOW — offline answer
+VKOA is the condition technique applied to accounts: the access sequence reads application, sales organisation, distribution channel, division, customer and material account assignment groups, and the first matching condition record gives the account key, which then maps to a G/L account. If nothing matches, the billing document cannot be released - which is why every VKOA error is a master data or condition record gap. The design rule: keep the combination keys as simple as the business allows, because every extra key multiplies the maintenance.
+
+### 🧭 FLOW DIAGRAM
+```
+[Billing document] --> [Access sequence: sales org + account assignment groups]
+        |
+        v
+[Condition record -> Account key ERL / ERS / MWS]
+        |
+        v
+[Account key -> G/L account in VKOA]
+        |
+        v
+[Revenue, sales deduction and tax lines posted]
+```
+
+### ⚙️ CONFIG STEPS
+1. VKOA - maintain the whole table
+2. V/08 / OVKK - pricing procedure with account keys
+3. OV64 / OVK5 - condition tables and access sequences
+4. OVF2 - analysis of an unresolved billing document
+5. FTXP - tax codes
+
+### 🧾 ACCOUNTING ENTRIES
+- Billing: Dr Customer 1180 / Cr Revenue 1000 / Cr Output tax 180
+- Discount: Dr Sales deduction (ERB) 50 / Cr Customer 50
+
+### 🧪 HOW TO TEST IT
+1. Analyse an unreleased billing document with VFX3 and fix the VKOA gap
+2. Add a new account assignment group to a material and re-run
+3. Show where the account key comes from in the pricing procedure
+
+### 📎 FROM MY MATERIAL
+y: VAT, Tax on Sales/Purchases, DATEV export ✅ UK: VAT, MTD (Making Tax Digital), CIS ✅ China: Golden Tax, Fapiao, Export VAT ✅ France: VAT, DAS2, FEC ✅ Japan: Consumption Tax, J-SOX ✅ Brazil: NF-e, SPED, ICMS/IPI ✅ Canada: GST/HST/PST, Provincial variations ✅ Australia: GST, BAS, STP Framework for Other Countries 🌐 50+ Countries: Localization framework explains how to find SAP Notes, country version, config tables for any country 🔗 Integration Scenarios…
+
+### 🎯 HOW TO CRACK THIS QUESTION
+Say 'condition technique applied to accounts' and name ERL plus the account assignment groups. Then mention VFX3 as your debugging tool.
+
+Reference: offline documents + online knowledge
+
+### 🧮 FORMULAS — THE ONE-LINE LAWS
+- Net = Gross / (1 + Tax rate)
+- Tax amount = Net amount x Tax rate
+
+## 16. Explain Oracle to SAP migration — the complete playbook (data, mapping, cutover, reconciliation)
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Migrating from Oracle (EBS/Financials) to SAP S/4HANA is not a data-copy exercise — it is a translation between two different accounting architectures. Oracle thinks in ledgers, balancing segments and subledger accounting (SLA) rules; SAP thinks in company codes, the Universal Journal (ACDOCA) and integrated subledgers that post in real time. My approach: migrate MASTER data first (chart of accounts mapping, vendors, customers, assets, materials), then OPEN ITEMS at line level, then BALANCES only where history is not needed — and prove every load with control totals before anyone posts a single live document.
+- **Key System Benefit:** Line-level open-item migration means day-one SAP behaves like the business never changed systems: dunning, payment runs (F110), credit management and ageing reports all work on real documents, not on lump-sum balances. Balance-only history keeps the migration fast and auditable, and the mapping tables (Oracle segment values to SAP account/segment/profit centre) become the reconciliation contract between the two systems.
+- **Execution Strategy:** Four waves with hard gates: (1) DESIGN — CoA and org mapping signed off (Oracle ledger/LE to company code, balancing segment to company code/segment, cost centre flex segment to cost centre/profit centre); (2) BUILD — LTMC migration objects + LTMOM extensions, mapping tables loaded as customizing or Z-tables; (3) MOCK LOADS — at least two full mock migrations with reconciliation packs; (4) CUTOVER — freeze Oracle, final extract, load, reconcile to the cent, open SAP posting periods. Nothing moves to the next wave while a reconciliation is open.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1 · ORG + CoA MAPPING   OX02 · OB13 · FINSC_LEDGER
+   Oracle ledger/legal entity to company code; chart mapping every used Oracle account combination to a G/L account (or a conscious many-to-one with a report)
+        ↓
+2 · MASTER DATA         LTMC · BP (CVI)
+   Business partners (vendor+customer roles via CVI), G/L masters (FS00), cost centres (KS01), profit centres (KE51), asset masters (AS01), materials where MM is in scope
+        ↓
+3 · OPEN ITEMS AP/AR    LTMC · RFBIBL00/FB01
+   Every uninvoiced/unpaid Oracle line becomes a real SAP open item with baseline date, payment terms and tax code — ageing survives the move
+        ↓
+4 · BALANCES + ASSETS   FB50/FB01 postings · AS91/AS92
+   G/L balances per period of the closing year; asset APC and accumulated depreciation per depreciation area (AS91 takeover)
+        ↓
+5 · RECONCILE           Control totals · FAGLL03H
+   Oracle trial balance = SAP trial balance per company code/currency/ledger; AP/AR ageing ties to the subledger control accounts
+        ↓
+6 · CUTOVER + HYPERCARE OB52 · freeze windows
+   Oracle read-only, SAP periods open, first F110 payment run and first close rehearsed in the hypercare plan
+```
+
+### 🔬 BEHIND THE SCENES — STEP BY STEP (what the system does)
+1. **Map the organisations** (OX02 / OX15 / OKKP) — Oracle Ledger + Legal Entity becomes the SAP company code (one LE can need several company codes when VAT registrations differ). The Oracle balancing segment usually maps to company code or, in S/4, is re-thought as segment/profit centre for balance-sheet reporting. Trading partner (company, OX15) is set for intercompany elimination from day one. · See it yourself: The signed org-mapping sheet; OX02 company code list vs Oracle LE list — count and country check.
+2. **Map the chart of accounts** (OB13 / FS00 / SKA1-SKB1) — Every USED Oracle account combination (natural account and segments) gets exactly one target: a G/L account in the operational chart, plus group account (OB13 group CoA) for consolidation. Many-to-one mappings are allowed only with a documented reporting consequence; one-to-many is forbidden — it cannot be automated. Account type and open-item management flags are decided here, not at load time. · See it yourself: The mapping table itself (SE16N SKA1 count vs mapping rows); unmapped-combination report must be empty.
+3. **Load G/L and controlling masters** (LTMC (G/L, cost centre, profit centre objects)) — LTMC migration cockpit with the standard objects; LTMOM when a field or rule must be added. Cost centres from the Oracle cost-centre segment, profit centres derived by rule so ACDOCA carries management reporting from the first posting. · See it yourself: LTMC load log (errors per record, fixable); KS03/KE53 spot checks; OKB9 defaults.
+4. **Load business partners** (BP with CVI links (MDS_LOAD)) — Vendors and customers become Business Partners with FI vendor/customer roles; BP number and vendor/customer number stay in sync via CVI so history references survive. Reconciliation accounts, payment terms (OBB8), payment methods and bank details (IBAN validated) load here — F110 cannot pay a partner whose bank data failed validation. · See it yourself: BP display; MDS_LOAD Cockpit shows zero sync errors.
+5. **Load AP/AR open items** (LTMC open-item objects / RFBIBL00 batch input) — Each live Oracle invoice, credit memo and down payment becomes a real open item: document date, baseline date (ZFBDT) from Oracle due-date logic, payment terms, tax code, amount in document + local currency. Down payments need the special G/L indicator so they net correctly at clearing. This load makes ageing, dunning (F150) and credit management (FSCM) work from day one. · See it yourself: Ageing in SAP (FBL1N/FBL5N by baseline date) vs Oracle ageing — totals per ageing bucket match, not just the grand total.
+6. **Load balances and asset values** (FB01/FB50 (balances) · AS91 (asset takeover)) — For closed periods migrate the closing trial balance as balance documents per company code/currency/ledger (never per closed month unless audit demands it). Assets: AS91 legacy takeover with APC and accumulated depreciation PER DEPRECIATION AREA, takeover date at cutover (asset takeover settings) so AFAB continues seamlessly; mid-year takeover needs the cumulated depreciation split correctly. · See it yourself: AW01N asset values vs Oracle asset register totals per asset class and depreciation area; FAGLL03H trial-balance equality pack.
+7. **Reconcile like an auditor** (FAGLL03H · FBL1N/FBL5N · AR02) — Three reconciliations, all to the cent, in the sign-off pack: (1) trial balance Oracle = SAP per company code/ledger/currency; (2) subledger control accounts (AP/AR recon) equal the open-item list totals; (3) asset register totals per class/area equal the asset G/L accounts. Rounding differences are posted once, deliberately, to a named FX rounding account — never smeared. · See it yourself: The reconciliation pack — the go/no-go artefact at the cutover gate.
+8. **Cut over and protect the first close** (OB52 · F110 · FAGL_FCV rehearsal) — Freeze Oracle postings, final delta extract (only items changed since the last mock), load, reconcile, then open SAP periods (OB52) in a controlled sequence. Rehearse the first payment run and the first month-end (depreciation, FX valuation, GR/IR) during hypercare with the business watching SAP numbers, not spreadsheets. · See it yourself: First F110 proposal with zero payment exceptions; close calendar executed once end-to-end.
+
+### 🧮 FORMULAS — WITH WORKED NUMBERS
+- THE CONTROL-TOTAL LAW: for every company code, currency and ledger — the sum of migrated balances in SAP equals the Oracle closing trial balance. Any difference is a mapping or extract defect, never a posting adjustment.
+- Worked CoA example: Oracle combination 01.000.610040.000 (entity 01, cost centre 000, account 610040 travel, project 000) maps to SAP G/L 610040 (travel expense); the entity segment selects company code DE01. Of 14,213 used Oracle combinations: 13,980 one-to-one, 233 many-to-one (documented), 0 unmapped before mock load 1.
+- Open-item integrity: SAP AP open items (FBL1N total) = Oracle AP subledger balance = AP reconciliation account in FAGLL03H — three numbers, one value. Example at cutover: 48,213,551.07 EUR in all three, or the periods do not open.
+- Asset takeover integrity: per asset class and depreciation area, sum(APC) − sum(accumulated depreciation) = NBV on the asset balance sheet account. Example class 2000, area 01: APC 92,400,000 − acc. dep 61,730,500 = NBV 30,669,500.
+- FX rule: amounts migrate in document currency + company-code currency as extracted. A translation difference from the move is booked ONCE to the FX rounding account (OBA1 KDM family) and disclosed — example from mock 2: 312.44 EUR on DE02, explained and approved.
+
+### ⚙️ CONFIG STEPS
+1. **Mapping workshops + OB13/FS00** — freeze the CoA mapping before any load · Example: Mapping is a business decision signed by finance, not an IT extract rule · SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Master Data ▸ G/L Accounts.
+2. **FINSC_LEDGER + OBY6** — ledger and currency design mirrors the Oracle ledger set · Example: Leading ledger = group principle (IFRS), non-leading for local (HGB/VUK) — the parallel-ledger pattern · FINSC_LEDGER; OBY6; OB22 parallel currencies.
+3. **LTMC + LTMOM** — migration objects with rules, not spreadsheets · Example: Standard objects first; LTMOM for added fields/rules; mapping tables are the rule base · LTMC migration cockpit; LTMOM modelling.
+4. **MDS_LOAD / CVI** — business partners before open items · Example: CVI keeps BP and vendor/customer numbers identical so external references and EDI keep working · MDS_LOAD Cockpit sync check.
+5. **AS91 + takeover settings** — legacy asset takeover per depreciation area · Example: Takeover date and cumulated values per company code; mid-year takeover splits current-year depreciation · AS91 legacy asset create; takeover settings.
+6. **OB52 + close rehearsal** — period control and a rehearsed first close are part of cutover · Example: The system is live when the first close runs clean, not when data is loaded · OB52 posting periods; hypercare close calendar.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **LTMC / LTMOM** — the S/4 migration cockpit and modelling tool — the loading engine for masters, open items and balances.
+- **MDS_LOAD (CVI)** — customer-vendor integration: BP to vendor/customer sync that must show zero errors before items load.
+- **AS91 / AS92** — legacy asset create/change for takeover values per depreciation area.
+- **Mapping table (Z or customizing)** — Oracle segment combination to SAP account/org assignment; the most audited artefact of the migration.
+- **FAGLL03H / FBL1N / FBL5N / AR02** — the reconciliation surfaces: G/L line items, AP/AR open items, asset history sheet.
+- **OBA1 (KDM)** — where the one deliberate FX rounding difference is posted — named, approved, explained.
+
+### 🧾 ACCOUNTING ENTRIES
+- Balance takeover (per company code/ledger): Dr/Cr each G/L against the migration clearing account — a dedicated takeover account that must end at ZERO; its zero balance is the proof the trial balance moved completely
+- AP open item: Dr Migration clearing / Cr Vendor (recon account) per invoice line with baseline date and payment terms — FBL1N shows real items, not a lump sum
+- Asset takeover (AS91): values only, no journal at load; the asset G/L balances arrive inside the balance takeover and must equal APC − accumulated depreciation per class/area
+- The one FX rounding posting: Dr/Cr FX rounding (OBA1 KDM) 312.44 EUR — posted by hand, approved in the reconciliation pack, never hidden
+
+### 🧪 HOW TO TEST IT
+1. Mock load 1 (structure): every mapping row consumed, unmapped-combination report empty, LTMC error log explained record by record.
+2. Mock load 2 (full volume): all three reconciliations (TB, subledger vs recon, assets) to the cent; timing measured — the cutover window is sized from this run, not estimated.
+3. Business proof: F110 proposal, dunning preview (F150), ageing by baseline date and one AFAB depreciation run on migrated data, signed by finance.
+4. Cutover rehearsal: freeze, delta extract, load, reconcile, OB52 open — executed once against the clock before the real weekend.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+9. CO-PA — Profitability Analysis ✅ COMPLETE — Value Fields (KEA6, TKEVF)** - Costing-based only - Revenue (Sales Revenue, Other Revenue) - COGS (Material Cost, Labor Cost, Overhead) - Gross Margin, Contribution Margin - Custom Value Fields (ZFREIGHT, ZDISCOUNT) - **Derivation Rules (KEDR)** - Table-based derivation - Move, Enhancement (User-Exit) - Derivation Strategy - **Costing Sheet (KEU1)** - Costing-based only - Base, Percentage, Quantity-based calculations - Overhead calculation - **Data Sources:** - SD Bill
+
+### 🪤 TRAPS
+- Trap: Migrating balances only for AP/AR to save time → Winning line: Then ageing, dunning, payment proposals and credit checks are fiction for a quarter. Open items load at line level — that is the point.
+- Trap: Letting IT own the chart-of-accounts mapping → Winning line: Mapping decides what stays reportable. Finance signs it; IT automates it. Reversed ownership is the classic Oracle-to-SAP failure.
+- Trap: Treating a reconciliation difference as an adjustment → Winning line: A difference is a defect in extract, mapping or load. Find it. The only deliberate posting is the named FX rounding line.
+- Trap: Opening all posting periods at go-live → Winning line: OB52 opens in sequence under hypercare control — one uncontrolled period can undo a clean migration in a day.
+
+### 🎯 IF MY MIND GOES BLANK
+Masters first, open items at line level, balances last — and three reconciliations to the cent (trial balance, subledger vs recon, assets) before OB52 opens a single period.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- 9. CO-PA — Profitability Analysis ✅ COMPLETE — Value Fields (KEA6, TKEVF)** - Costing-based only - Revenue (Sales Revenue, Other Revenue) - COGS (Material Cost, Labor Cost, Overhead) - Gross Margin, Contribution Margin - Custom Value Fields (ZFREIGHT, ZDISCOUNT) - **Derivation Rules (KEDR)** - Table-based derivation - Move, Enhancement (User-Exit) - Derivation Strategy - **Costing Sheet (KEU1)** - Costing-based only - Base, Percentage, Quantity-based calculations - Overhead calculation - **Data Sources:** - SD Billing (VF01) - automatic - FI Postings - m…
+- **Transfer Prices (KEU3)** - **Top-Down Distribution (KE27)** - **CO-PA to FI Reconciliation (Account-based: eliminated)** **Key Transactions:** KEA0, KEA5, KEA6, KEDR, KEU1, KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55 **Migration Path:** Costing-based → Account-based (parallel activation, characteristic mapping, derivation redesign) --- #### 10. CO-PC — Product Cost Controlling ✅ COMPLETE KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55 **Migration Path:** Costing-based → Account-based (parallel activation, characteristic mapping, derivation redesign) --- ####…
+- ion and internal orders after WIP/variance calculation · Example: No production order is left with an unexplained balance at close · Ref: CO close runbook; SAP GUI ▸ Product Cost Controlling ▸ Cost Object Controlling. 6. **LTMC** — load and reconcile cutover master data, open items and balances during migration · Example: Legacy trial balance, AP/AR open items and asset values agree to the loaded S/4 totals · Ref: cutover reconciliation pack; SAP Migration Cockpit. 7. **F.01** — produce the financial statement version used for sign-off · Example: Local a…
+
+Reference: offline documents + online knowledge
+
+## 17. Explain Enterprise structure build sequence — the dependency order that never deadlocks
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Enterprise structure in SAP is a dependency chain, and the build order is not a matter of taste: a company code cannot be finished before the fiscal year variant, posting period variant and charts of accounts exist; a controlling area cannot take company codes that do not share one operational chart and one fiscal year variant; asset accounting cannot start before the company code and its chart of depreciation are assigned. Build top-down — client-level frames first, company code second, controlling and asset structures on top — and every assignment finds its parent already waiting.
+- **Key System Benefit:** Following the dependency order means no transport ever fails on a missing parent object, the 1:N controlling decision (which locks the chart of accounts for every assigned company code) is made consciously at the right moment, and parallel ledgers, country charts and group charts slot in as assignments instead of redesigns.
+- **Execution Strategy:** Phase A: global frames (OB29 fiscal year variant, OBBP/OB52 period variant, OBA7 document types). Phase B: the three charts in OB13 (operational, country, group). Phase C: company (OX15), company code (OX02), assignments (OX16, OB62, OB37). Phase D: controlling area (OX06/OKKP) with the 1:1 vs 1:N rule enforced. Phase E: chart of depreciation (OA03/EC08), OAOB assignment, depreciation areas (OAYZ). Each phase is a transport layer and a sign-off gate.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+A · GLOBAL FRAMES       OB29 · OBBP · OBA7
+   Fiscal year variant, posting period variant, document types and number ranges — everything later references these
+        ↓
+B · CHARTS              OB13
+   Operational CoA (client level), country CoA for statutory numbering, group CoA for consolidation
+        ↓
+C · COMPANY CODE        OX15 · OX02 · OX16 · OB62 · OB37
+   Company (trading partner) to company code to CoA and fiscal year variant assignments
+        ↓
+D · CONTROLLING         OX06 · OKKP
+   Controlling area; 1:1 or 1:N to company codes — 1:N forces identical operational CoA + FYV
+        ↓
+E · ASSET ACCOUNTING    OA03/EC08 · OAOB · OAYZ
+   Chart of depreciation (country template), one per company code, depreciation areas for parallel valuation
+```
+
+### 🔬 BEHIND THE SCENES — STEP BY STEP (what the system does)
+1. **Client-level frames first** (OB29 · OBBP · OBA7) — The fiscal year variant (K4 = calendar year with 4 special periods, or a non-calendar variant), the posting period variant and document types/number ranges are client-level reference objects. A company code created before them cannot be completed — the assignments would point at nothing. · See it yourself: OB29 variant exists; OBBP variant with account-type rows ready for OB52.
+2. **Charts of accounts in OB13** (OB13 (three roles)) — The operational chart is where daily postings live; the country chart reaches the G/L master through the alternative account number; the group chart through the group account number. All three are defined at client level and only ASSIGNED to company codes — one operational chart can serve many company codes, which is exactly what the 1:N controlling model will require. · See it yourself: FS00 on a test account shows operational, alternative (country) and group numbers side by side.
+3. **Company and company code** (OX15 · OX02 · OX16) — The company (trading partner) is the consolidation entity; the company code is the legal accounting entity that produces the balance sheet. OX16 links them — without it, intercompany documents carry no RASSC trading partner and consolidation elimination has nothing to grab. · See it yourself: OX02 company code with currency/country/language; OX16 assignment; OBY6 global parameters complete.
+4. **Company code assignments** (OB62 · OB37) — OB62 assigns the operational CoA (enabling G/L master creation in the company code); OB37 assigns the fiscal year variant. Only now can FS00 create company-code segments and OB52 open a period — the company code is alive. · See it yourself: FS00 creates an account in the company code; OB52 shows the period table.
+5. **Controlling area and the 1:N decision** (OX06 · OKKP) — One controlling area can serve one company code (1:1) or many (1:N, cross-company controlling) — but 1:N requires ALL assigned company codes to share the same operational CoA and fiscal year variant. This is the decision that punishes a sloppy Phase B, so it is taken here with the chart design frozen. · See it yourself: OKKP assignment list; CO postings flow across assigned company codes in the 1:N test.
+6. **Asset accounting structure** (OA03/EC08 · OAOB · OAYZ) — Copy the country chart of depreciation (EC08 from the SAP country template), assign exactly one chart per company code (OAOB), then shape depreciation areas: 01 book (leading ledger), tax areas, group/currency areas. OAOB before areas — areas belong to the chart, not the company code. · See it yourself: Area list per chart; AS01 creates an asset with planned depreciation.
+
+### 🧮 FORMULAS — WITH WORKED NUMBERS
+- The 1:N rule as a formula: cross-company controlling (1:N) is allowed IFF the operational CoA is identical for all assigned company codes AND the fiscal year variant is identical. If either differs, the assignment is rejected — so choose the group operational chart BEFORE creating company codes.
+- Assignment completeness for a live company code: OX02 exists + OX16 company link + OB62 CoA + OB37 FYV + OBY6 parameters + OAOB chart of depreciation = 6 green ticks before the first FS00 account. Missing one = the company code is a shell.
+- Worked example (two-country rollout): DE01 and TR02 both on operational chart INT with FYV K4 → one controlling area (1:N) works. If TR02 demanded the Turkish uniform chart as its OPERATIONAL chart, 1:N breaks — practice solution: INT stays operational, the Turkish chart rides as country chart via alternative account numbers, statutory reporting reads the alternative numbers.
+
+### ⚙️ CONFIG STEPS
+1. **OB29 / OBBP / OBA7** — global frames · Example: K4 or the local fiscal calendar; period variant; document types with number ranges · SPRO ▸ Financial Accounting Global Settings.
+2. **OB13** — operational, country and group charts · Example: One operational chart for the group wherever 1:N controlling is wanted; country charts as alternative numbering · OB13 chart definition; OB62 assignment.
+3. **OX15 / OX02 / OX16** — company, company code, link · Example: Trading partner mandatory in any multi-entity group from day one · Enterprise Structure ▸ Definition ▸ Financial Accounting.
+4. **OX06 / OKKP** — controlling area with the 1:N decision documented · Example: The CoA/FYV precondition is verified in the workshop, not discovered in OKKP · Enterprise Structure ▸ Definition ▸ Controlling.
+5. **EC08 / OAOB / OAYZ** — chart of depreciation copied, assigned, areas shaped · Example: Exactly one chart per company code; areas per valuation principle (book/tax/group) · Asset Accounting ▸ Organizational Structures.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OB29 / OBBP / OB52** — fiscal year variant / posting period variant / the open-close table touched monthly.
+- **OB13 + alternative account number** — how a country chart (Turkish uniform chart) coexists with one group operational chart.
+- **OX15 / OX02 / OX16** — company (trading partner) / company code / their assignment — the consolidation hook.
+- **OKKP 1:N precondition** — same operational CoA + same FYV across company codes, or cross-company controlling is impossible.
+- **OAOB** — one chart of depreciation per company code — the asset accounting anchor.
+
+### 🧾 ACCOUNTING ENTRIES
+- No journal entries exist at this layer — and saying so confidently is the point: enterprise structure is master-data architecture. The first posting becomes possible only after OB62 + OB37 + OB52 align.
+- First proof posting after the build: FB50 Dr expense / Cr bank clearing in the new company code, visible in FAGLL03H with trading partner (RASSC) — structure proven by a document, not a checklist.
+
+### 🧪 HOW TO TEST IT
+1. Create a G/L account (FS00) in the new company code — proves OB62 + chart + company-code segment chain.
+2. Post FB50 in the first open period (OB52) and read it in FAGLL03H with trading partner populated.
+3. Cross-company CO test in the 1:N model: post to a cost centre of company code B from company code A and read KSB1.
+4. AS01 asset creation with planned depreciation (AW01N) — proves OAOB + depreciation areas.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+ERCOMPANY OBYA · VF01 (IV) · FBICR3 cross-company supply, IC billing and reconciliation proven ↓ 7. CUTOVER + CLOSE LTMC · OB52 · F.01 open items, balances, assets, first close and sign-off ### ⚙️ CONFIG STEPS 1. **OX15** — define the company, the legal consolidation unit behind one or more company codes · Example: Company CBTR for the Turkish legal entity, kept separate from the German parent company · Ref: Enterprise Structure definition in the rollout blueprint; SPRO ▸ Enterprise Structure ▸ Definition ▸ Financi
+
+### 🪤 TRAPS
+- Trap: Creating company codes before the charts and variants → Winning line: Every assignment then points at nothing and the build stalls in rework. Frames first — OB29/OBBP/OB13 — always.
+- Trap: Discovering the 1:N precondition in OKKP → Winning line: If company codes were built on different operational charts, cross-company controlling is dead. The chart decision belongs to Phase B.
+- Trap: Making the local statutory chart the operational chart by default → Winning line: The country chart usually belongs in the alternative account number; operational stays group-standard so controlling and consolidation stay simple.
+
+### 🎯 IF MY MIND GOES BLANK
+Frames (OB29/OBBP/OB13), company code (OX02/OB62/OB37), controlling (OKKP — 1:N needs one CoA and one FYV), assets (OAOB). In that order, nothing deadlocks.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- ERCOMPANY OBYA · VF01 (IV) · FBICR3 cross-company supply, IC billing and reconciliation proven ↓ 7. CUTOVER + CLOSE LTMC · OB52 · F.01 open items, balances, assets, first close and sign-off ### ⚙️ CONFIG STEPS 1. **OX15** — define the company, the legal consolidation unit behind one or more company codes · Example: Company CBTR for the Turkish legal entity, kept separate from the German parent company · Ref: Enterprise Structure definition in the rollout blueprint; SPRO ▸ Enterprise Structure ▸ Definition ▸ Financial Accounting. 2. **EC01** — copy or cre…
+- sequence of remote calls. 412. How do you define your own queue names or manage queue blocks in an ABAP integration scenario? 413. Summarize how inbound/outbound queues are monitored in transactions like SMQ1/SMQ2. 414. Provide a scenario: if a queue is stuck or locked, how do you troubleshoot that in SMQ2? 415. Why might you prefer qRFC over tRFC for certain business processes that rely on sequential updates? 416. If a queue fails mid-process, how do you reprocess only the failed item or the entire queue? 417. Provide an example of using queue watchers …
+
+Reference: offline documents + online knowledge
+
+## 18. Explain The FICO glossary: every module and sub-module, and how I answer any leaf
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** FICO is two pillars. FI (Financial Accounting) is the external, legal record: GL, AP, AR, Asset Accounting, Taxation and Bank Accounting. CO (Controlling) is the internal, management record: Cost Center Accounting, Internal Orders, Profit Center Accounting, Product Costing and Profitability Analysis (CO-PA/Margin Analysis). In S/4HANA both post into one Universal Journal (ACDOCA), so FI and CO are no longer reconciled — they are the same document read through different lenses.
+- **Key System Benefit:** The interview move is depth-per-leaf: for any sub-module I can state its master data, its configuration spine, its posting chain, its report and its integration neighbour. That is what separates a lead from someone who recites the org chart.
+- **Execution Strategy:** My 20-second frame for any leaf: (1) purpose in one line, (2) master data, (3) the transaction/config spine, (4) the posting or report it produces, (5) where it touches the next module. FI→CO touchpoints: cost elements are GL accounts, every P&L posting carries a CO object, and CO-PA margin comes from the SD billing document — FI is the ledger, CO is the lens.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+balance always balances and financial statements can be extracted on demand. 🏢 Enterprise Reporting: SAP FICO produces statutory, management, and regulatory reports that meet local and global compliance requirements. Read More [Image description: What is SAP FICO?] Table Of Content: What is SAP FICO? Why is SAP FICO Important? SAP FI (Financial Accounting) Sub-Modules SAP CO (Controlling) Sub-Modules What is SAP FICO? SAP FICO is a module of SAP ERP used for financial reporting, both externally and internally. Its
+
+### 🪤 TRAPS
+- Trap: Reciting the module list without depth → Winning line: Give the master data, the spine transaction and the report for the leaf asked — 20 seconds each
+- Trap: "FI and CO are separate modules in S/4" → Winning line: They share ACDOCA; CO postings ARE GL postings with a controlling object — reconciliation ledger is history
+- Trap: Treating taxation as only FTXP → Winning line: Procedure (OBBG) → code (FTXP) → record (A003→KONP) → key (OB40) → report (RFUMSV00/DRC) — the full chain
+
+### 🎯 IF MY MIND GOES BLANK
+Give me any leaf from that tree — GL variants, FBZP, EBS posting rules, product costing, CO-PA — and I will run it end-to-end with the configuration, the posting and the report.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- balance always balances and financial statements can be extracted on demand. 🏢 Enterprise Reporting: SAP FICO produces statutory, management, and regulatory reports that meet local and global compliance requirements. Read More [Image description: What is SAP FICO?] Table Of Content: What is SAP FICO? Why is SAP FICO Important? SAP FI (Financial Accounting) Sub-Modules SAP CO (Controlling) Sub-Modules What is SAP FICO? SAP FICO is a module of SAP ERP used for financial reporting, both externally and internally. Its objective is to record every financial …
+- Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico [Image description: SAP FICO Tutorial] SAP FICO Tutorial Job Search PDF Version Quick Guide Resources Discussion SAP FI stands for Financial Accounting and it is one of important modules of SAP ERP. It is used to store the financial data of an organization. SAP FI helps to analyze the financial conditions of a company in the market. It can integrate with other SAP modules like SAP SD, SAP PP, SAP MM, SAP SCM, etc. SAP Controlling (CO) is another important SAP …
+
+Reference: offline documents + online knowledge
+
+Reference: offline documents + online knowledge
+
+## 19. Explain Taxation complete: procedure, codes, determination, posting and reporting
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Tax is a determination chain, not a code you type into an invoice. Country tax procedure (OBBG, e.g. TAXTR/TAXDE) holds condition types in steps; a tax code (FTXP) carries the rate per condition; condition records (A003 tax classification → KNUMH → KONP, condition MWST/NAV S) find the percentage; and OB40 maps procedure key + tax code to the GL account. Get the chain right and MIRO, VF01 and FB50 all tax themselves.
+- **Key System Benefit:** Interviewers probe taxation because it touches MM, SD, FI and reporting at once. Owning the chain — procedure, code, record, key, report — plus deferred tax and DRC e-reporting is a lead-level answer.
+- **Execution Strategy:** Speak it in order: (1) tax procedure per country with condition types and account keys, (2) tax code in FTXP (input VST / output MWS behaviour, deductible vs non-deductible NVV), (3) determination: tax classification on customer/material (and vendor) → A003 record → KONP percentage, (4) posting: OB40 key per chart/procedure/tax code to the tax GL, (5) reporting: RFUMSV00 advance return, deferred-tax transfer, account assignment check in BSET, and S/4 DRC for e-invoice/e-ledger (e.g. Turkey e-Fatura, Germany e-reporting roadmap). Withholding tax is separate: extended WHT types/categories, assigned in the BP, accounts via OBWW, reported in the WHT reports.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. PROCEDURE            OBBG · OBCO · OBQ3
+   country procedure, condition types (MWST), steps, account keys MWS/VST/NVV
+        ↓
+2. TAX CODE             FTXP
+   2-char code per country; rate, relevancy, EU code, deductible flag; transport carefully — codes are client data
+        ↓
+3. DETERMINATION        A003 → KNUMH → KONP · VK11/FV11
+   customer + material tax classification selects the record and percentage; jurisdiction where relevant
+        ↓
+4. POSTING              OB40 · BSET
+   MIRO: input tax Dr (VST); VF01: output tax Cr (MWS); FI doc carries tax line, BSET holds the tax item
+        ↓
+5. NON-DEDUCTIBLE       OB40 key NVV
+   blocked input tax posts to expense/cost object instead of the tax account
+        ↓
+6. REPORTING            RFUMSV00 · S_ALR_87012356 · F.38/RFUMsv25 deferred · DRC
+   advance VAT return, tax account reconciliation, deferred tax transfer, e-invoice/e-ledger output
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBBG/FTXP** — procedure + code first · Example: Assign procedure to country; in FTXP maintain rate per condition type and the account key; check with a test FB50 that BSET is written · Ref: SPRO ▸ FA ▸ FA Global Settings ▸ Tax on Sales/Purchases.
+2. **VK11 (A003)** — the percentage lives in the record · Example: Change the record, not the code: KONP percentage flows to pricing (MWST in SD) and to MM condition NAV S; classification fields sit on customer (KNVV) and material (MARA/MARC) · See it: VK13 shows the live record an interviewer can be walked to.
+3. **OB40** — key → account per tax code · Example: MWS output, VST input, NVV non-deductible; a wrong key posts tax to the expense — the classic MIRO complaint "tax posted wrong" is OB40 or the record · Check: OBCN/OB40 simulation + BSET on the posted doc.
+4. **RFUMSV00 + deferred** — close the loop · Example: Advance return from tax accounts; deferred tax (tax posted at invoice, due at payment in some countries) transfers with the deferred-tax program; DRC produces e-documents from the same tax data · Report: S_ALR_87012356 reconciles tax GL to the return.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **Tax procedure** — per-country condition scheme; steps order conditions (base, tax, non-deductible split).
+- **Tax code (FTXP)** — the 2-char carrier of rate + account key; transported as customising but maintained per country/client caution.
+- **Condition record A003→KONP** — tax classification (customer 0/1, material 0/1) finds KNUMH then the KONP percentage.
+- **OB40 keys** — MWS (output), VST (input), NVV (non-deductible), MWAS/VST variants by procedure; WHT accounts in OBWW.
+- **BSET** — the tax items of a document — first table to check when "tax is wrong".
+
+### 🧾 ACCOUNTING ENTRIES
+- VF01 billing EUR 1,000 net, record 19%: Dr Customer 1,190.00 / Cr Revenue 1,000.00 / Cr Output tax (OB40 MWS) 190.00 — BSET row at 19%
+- MIRO EUR 1,000 + 19% deductible: Dr GR/IR (WRX) 1,000.00 / Dr Input tax (OB40 VST) 190.00 / Cr Vendor 1,190.00
+- Non-deductible code: the 190.00 does NOT hit the tax account — OB40 key NVV puts it on the expense line against the cost centre
+- Reporting: RFUMSV00 advance return totals the MWS/VST accounts; BSET on any document proves rate, code and account in one look
+
+### 🧪 HOW TO TEST IT
+1. VF01 billing €1,000 net with 19% record → FI: customer Dr 1,190 / revenue Cr 1,000 / output tax Cr 190 (OB40 MWS); BSET row at 19%
+2. MIRO €1,000 + 19% deductible → input tax Dr 190 (VST); non-deductible code → 190 to expense via NVV on the cost object
+3. RFUMSV00 for the period reconciles output/input tax accounts to the advance return; deferred-tax run moves invoice-tax to due-tax where the country requires it
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+19. External Tax Engine Integration ✅ COMPLETE — ne → SAP):** - Tax Amount by Jurisdiction - Tax Rate - Tax Code - Tax Breakdown (Federal, State, County, City) - **Tax Code Mapping:** - SAP Tax Code (MWST, FTXP) - External Engine Tax Rule - Jurisdiction mapping - **Jurisdictional Tax (US example):** - Federal Tax - State Tax (California, New York, Texas) - County Tax - City Tax - Special District Tax - Combined rate calculation - **Tax Exemption Management:** - Exemption Certificates - Customer/Vendor exemption sta
+
+### 🪤 TRAPS
+- Trap: "I maintain tax percentages in FTXP only" → Winning line: The effective rate for SD/MM comes from the A003/KONP record; FTXP holds the FI tax-code rates — both must agree
+- Trap: Ignoring non-deductible tax → Winning line: NVV handling decides P&L vs tax account; auditors test cars/expenses for blocked input tax
+- Trap: Forgetting e-reporting → Winning line: In S/4 the tax data feeds DRC (e-Fatura/e-Ledger/e-reporting); design tax codes with the DRC document types in mind
+
+### 🎯 IF MY MIND GOES BLANK
+If tax posts wrong, I check in order: classification on the master, A003/KONP record, FTXP rate, OB40 key — BSET tells me which one lied within a minute.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+Reference: offline documents + online knowledge
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+
+Reference: offline documents + online knowledge
+
+## 20. Explain references/integrations/pp-co-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
+                 ↓
+             ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
+                       ↓
+                 VF03 + VKOA + ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
+
+### 🧾 ACCOUNTING ENTRIES
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
+
+### 🧪 HOW TO TEST IT
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
+
+### 🪤 TRAPS
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
+
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversal.”
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- # references/integrations/pp-co-integration.md Topic: Free SAP FICO sources — auto-fetched // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/pp-co-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troublesh…
+- // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/pp-co-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troubleshooting [Common integration issues]
+
+Reference: offline documents + online knowledge
+
+## 21. Explain references/integrations/ps-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
+                 ↓
+             ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
+                       ↓
+                 VF03 + VKOA + ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
+
+### 🧾 ACCOUNTING ENTRIES
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
+
+### 🧪 HOW TO TEST IT
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
+
+### 🪤 TRAPS
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
+
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversal.”
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- # references/integrations/ps-fi-integration.md Topic: Free SAP FICO sources — auto-fetched // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/ps-fi-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troublesh…
+- // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/ps-fi-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troubleshooting [Common integration issues]
+
+Reference: offline documents + online knowledge
+
+## 22. Explain references/integrations/sd-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
+                 ↓
+             ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
+                       ↓
+                 VF03 + VKOA + ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
+
+### 🧾 ACCOUNTING ENTRIES
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
+
+### 🧪 HOW TO TEST IT
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
+
+### 🪤 TRAPS
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
+
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversal.”
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- # references/integrations/sd-fi-integration.md Topic: Free SAP FICO sources — auto-fetched // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/sd-fi-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troublesh…
+- // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: references/integrations/sd-fi-integration.md # $(echo $module | tr '-' ' ' | tr '[:lower:]' '[:upper:]') INTEGRATION [Complete integration guide] ## Integration Points [All touchpoints between modules] ## Configuration [Account determination, workflows, interfaces] ## Data Flow [Transaction → Document → GL Posting] ## Testing Scenarios [End-to-end test cases] ## Troubleshooting [Common integration issues]
+
+Reference: offline documents + online knowledge
+
+## 23. 🖼️ Explain this screenshot
 
 ### 💡 SAY THIS FIRST
 > No legible text was extracted from the image, so I will not invent an explanation — a made-up answer with blank t-codes helps nobody in the interview
@@ -12,7 +1489,7 @@ Synced from OfferGoose (Android app + Chrome extension). `answers.json` next to 
 - Add a Gemini key in Settings → AI API: the vision model then reads the image directly, or
 - Ask about the topic in words (for example "Explain MM-FI integration") and I will answer from the built-in guides.
 
-## 2. Asset accounting full config
+## 24. Asset accounting full config
 
 ### 💡 SAY THIS FIRST
 I configure Asset Accounting to post parallel valuations directly into the Universal Journal without reconciliation runs.
@@ -117,7 +1594,7 @@ New Asset Accounting posts parallel asset valuations directly into ACDOCA per le
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Profitability Analysis in SAP.pdf, SAP FICO Architect Library — Comparison: HGB vs IFRS vs Turkish Accounting Principles (VUK / TMS-TFRS).md, SAP FICO Architect Library — New Asset Accounting and parallel valuation.md, SAP FICO Architect Library — Comparison: Classic vs New Asset Accounting.md
 
-## 3. Fi co integration ecc vs s4hana
+## 25. Fi co integration ecc vs s4hana
 
 ### 💡 SAY THIS FIRST
 In S/4HANA, financial accounting and controlling share one single universal journal table, completely eliminating period-end reconciliation.
@@ -181,7 +1658,7 @@ S/4HANA merges FI and CO into table ACDOCA so every debit and credit instantly u
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Profitability Analysis in SAP.pdf, SAP FICO Architect Library — FI-SD integration — order to cash revenue account determination (VKOA).md, SAP FICO Architect Library — FI-MM integration — procure to pay account determination (OBYC).md, SAP FICO Architect Library — FI integration cheat sheet — MM, SD, PP on one page.md, SAP FICO Architect Library — CYBEX S/4HANA SD-FI integration (Order-to-Cash): from master data to cash.md, SAP FICO Architect Library — FI-MM / FI-SD integration, GR/IR and numeric scenarios.md
 
-## 4. Advanced fsv
+## 26. Advanced fsv
 
 ### 💡 SAY THIS FIRST
 We enable real‑time foreign‑currency revaluation using Advanced FSV, eliminating manual balance‑sheet adjustments.
@@ -267,7 +1744,7 @@ When `FINS_FXV` runs, the engine reads the tagged FSV nodes to dynamically deter
 ### 🎯 IF MY MIND GOES BLANK
 "In S/4HANA Advanced Valuation, the FSV defines the scope via the `FX` semantic tag linked to the Accounting Principle. It replaces `FAGL_FCV` with `FINS_FXV`, moving from classic balance sheet adjustment accounts and reversals to direct delta-only postings on the valued accounts."
 
-## 5. Copa config
+## 27. Copa config
 
 ### 💡 SAY THIS FIRST
 > Core Concept: CO-PA answers which customer, product, country or channel makes money
@@ -344,7 +1821,7 @@ KE24 shows only what the profitability set-up lets SAP write: KEA0, KEKK and KEK
 - How does FI-SD integration (VKOA) feed CO-PA value fields?
 - Why is my KE24 empty? (KEKE activation and postings before activation)
 
-## 6. Explain Turkey CTP TR02 Rollout — full intercompany, e-Fatura, FX and tax
+## 28. Explain Turkey CTP TR02 Rollout — full intercompany, e-Fatura, FX and tax
 
 ### 💡 SAY THIS FIRST
 > The Turkey setup was a cross-border rollout: the German entity supplied the Turkish entity from its plant, so the design had to handle…
@@ -399,7 +1876,7 @@ Answer it as a design: company code, local books, tax and e-invoicing, intercomp
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 7. Explain Document splitting — design, configuration, zero-balance lines and segment balance sheet
+## 29. Explain Document splitting — design, configuration, zero-balance lines and segment balance sheet
 
 ### 💡 SAY THIS FIRST
 > Document splitting assigns every line of a document the characteristics required for a complete balance sheet - normally segment and profit centre…
@@ -446,7 +1923,7 @@ Say the zero-balance line is what keeps each characteristic balanced - that is t
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Profitability Analysis in SAP.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 8. Explain Data migration, cutover and LTMC — balanced trial, open items and assets
+## 30. Explain Data migration, cutover and LTMC — balanced trial, open items and assets
 
 ### 💡 SAY THIS FIRST
 > LTMC is the Fiori-based migration cockpit with ready-made templates for the standard objects - G/L balances, open items, customers, vendors,…
@@ -484,7 +1961,7 @@ Say standard template first, custom object only when proven necessary - that is 
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 9. Explain Fiori, embedded analytics and S/4HANA financial reporting
+## 31. Explain Fiori, embedded analytics and S/4HANA financial reporting
 
 ### 💡 SAY THIS FIRST
 > Embedded analytics runs inside S/4 on the live data - the CDS views, the analytical apps and the smart business KPIs - so it is real time and…
@@ -522,7 +1999,7 @@ One job each - that is the architectural judgement.
 
 📎 From my material: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 10. Explain Central Finance (CFIN) and SAP Group Reporting — real-time consolidation
+## 32. Explain Central Finance (CFIN) and SAP Group Reporting — real-time consolidation
 
 ### 💡 SAY THIS FIRST
 > Central Finance replicates the accounting documents from several ERP systems into one central S/4 system using SLT, maps the source company codes,…
@@ -560,7 +2037,7 @@ Say clearly that the source systems keep running - that honesty is what a lead i
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 11. Explain OMS (Order Management System) integration with SAP S/4HANA — document chain and FI postings
+## 33. Explain OMS (Order Management System) integration with SAP S/4HANA — document chain and FI postings
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -621,7 +2098,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 12. Explain Parallel accounting — HGB + IFRS ledger design, AA, FX and provisions
+## 34. Explain Parallel accounting — HGB + IFRS ledger design, AA, FX and provisions
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** HGB protects creditors and drives German tax; IFRS serves the group investors. In S/4HANA I never choose between them — one document posts into parallel ledgers and each principle reads its own valuation from ACDOCA.
@@ -708,7 +2185,7 @@ HGB = prudent, tax-linked, creditor protection. IFRS = market-based group view. 
 
 📎 Retrieved from my indexed files: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 13. Explain SAP Activate methodology — phases, workstreams and deliverables for S/4HANA
+## 35. Explain SAP Activate methodology — phases, workstreams and deliverables for S/4HANA
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** SAP Activate is the project methodology for S/4HANA implementations and cloud transitions, structured in six phases: Discover, Prepare, Explore, Realize, Deploy and Run. The governing principle is fit-to-standard: prove the standard S/4HANA processes against business requirements first, and build custom only where there is a documented legal or competitive gap that the standard cannot close.
@@ -788,7 +2265,7 @@ Discover → Prepare → Explore (fit-to-standard) → Realize (sprints) → Dep
 
 📎 Retrieved from my indexed files: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 14. Explain E-invoicing and e-reporting — multi-country SAP integration design
+## 36. Explain E-invoicing and e-reporting — multi-country SAP integration design
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -849,7 +2326,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 15. Explain Cegid POS to SAP S/4HANA integration — order replication, tenders and intercompany
+## 37. Explain Cegid POS to SAP S/4HANA integration — order replication, tenders and intercompany
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -910,7 +2387,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 16. Explain Credit management — design, configuration and integration with SD order block
+## 38. Explain Credit management — design, configuration and integration with SD order block
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -971,7 +2448,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 17. Explain Plant Maintenance (PM) and FI-CO integration — orders, costs and settlements
+## 39. Explain Plant Maintenance (PM) and FI-CO integration — orders, costs and settlements
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1032,7 +2509,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: NI01_FICO_Greenfield_Complete_v2-1.pdf, Profitability Analysis in SAP.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 18. Explain AP automation — self-service supplier portal, EDI and automated 3-way match
+## 40. Explain AP automation — self-service supplier portal, EDI and automated 3-way match
 
 ### 💡 SAY THIS FIRST
 > Self-service means the business can filter, group and export without asking IT, which in S/4 comes from the analytical Fiori apps and from the CDS…
@@ -1067,7 +2544,7 @@ The success measure is the reporting requests that stop arriving - that is a bus
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 19. Explain Multi-entity financial reporting — segment, profit centre and entity reporting
+## 41. Explain Multi-entity financial reporting — segment, profit centre and entity reporting
 
 ### 💡 SAY THIS FIRST
 > Profit centre is the internal management responsibility for a P&L - it is mandatory in S/4 and it is the standard internal reporting dimension
@@ -1104,7 +2581,7 @@ Give the two-line rule - profit centre is internal and mandatory, segment is ext
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Profitability Analysis in SAP.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 20. 🖼️ Explain this uploaded SAP screenshot
+## 42. 🖼️ Explain this uploaded SAP screenshot
 
 ### 💡 SAY THIS FIRST
 > 1. An equipment purchase of €120,000 with a 5-year useful life required standard straight-line depreciation of €24,000 in both ledgers, but German HGB statutory rules mandated an additional €10,000 lower-of-cost inventory write-down.
@@ -1146,7 +2623,7 @@ When setting up global templates in S/4HANA, I design parallel ledger architectu
 * **What transaction handles foreign currency revaluation across multiple accounting standards in S/4HANA?**
  We run `FINS_FXV` in S/4HANA 2022+ to evaluate open items and balances using standard-specific valuation rules across parallel ledgers (Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf).
 
-## 21. Sd fi integration
+## 43. Sd fi integration
 
 ### 💡 SAY THIS FIRST
 SD-FI integration automatically converts sales transactions into financial postings through account determination keys and master data assignment groups.
@@ -1218,7 +2695,7 @@ SD-FI integration maps sales billing to FI accounts automatically via VKOA table
 
 📎 From my material: Mm fi integration
 
-## 22. Explain SAP FICO Architect Library — New company code and country/store rollout.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 44. Explain SAP FICO Architect Library — New company code and country/store rollout.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
@@ -1255,7 +2732,7 @@ Legal entity first, template second, localization third. Structure, global param
 
 📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 23. Explain SAP FICO Architect Library — FI-MM integration — procure to pay account determination (OBYC).md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 45. Explain SAP FICO Architect Library — FI-MM integration — procure to pay account determination (OBYC).md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1304,7 +2781,7 @@ ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
 
 📎 Retrieved from my indexed files: Mm fi integration, README.md, references/MODULE_REFERENCE_INDEX.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 24. Explain SAP FICO Architect Library — FI-SD integration — order to cash revenue account determination (VKOA).md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 46. Explain SAP FICO Architect Library — FI-SD integration — order to cash revenue account determination (VKOA).md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1353,7 +2830,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: references/MODULE_REFERENCE_INDEX.md, README.md, COMPLETE_MODULES_SUMMARY.md, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 25. Explain SAP FICO Architect Library — FI-PP integration — production order postings, WIP and settlement.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 47. Explain SAP FICO Architect Library — FI-PP integration — production order postings, WIP and settlement.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1402,7 +2879,7 @@ CO01 order → MIGO 261 issue → CO11N confirmation
 
 📎 Retrieved from my indexed files: references/MODULE_REFERENCE_INDEX.md, COMPLETE_MODULES_SUMMARY.md, introduction-sap-fico.html, CONTRIBUTING.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 26. Explain SAP FICO Architect Library — FI integration cheat sheet — MM, SD, PP on one page.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 48. Explain SAP FICO Architect Library — FI integration cheat sheet — MM, SD, PP on one page.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1463,7 +2940,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: introduction-sap-fico.html, README.md, index.htm, SKILL.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 27. Explain SAP FICO Architect Library — Classic Foreign Currency Valuation (FAGL_FCV) — end to end.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 49. Explain SAP FICO Architect Library — Classic Foreign Currency Valuation (FAGL_FCV) — end to end.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1524,7 +3001,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 28. Explain SAP FICO Architect Library — Advanced Foreign Currency Valuation (FINS_FXV) in S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 50. Explain SAP FICO Architect Library — Advanced Foreign Currency Valuation (FINS_FXV) in S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Classic foreign currency valuation (FAGL_FCV) revalues foreign-currency open items (vendors, customers, G/L) and G/L balances to the latest exchange rate at the key date and posts the unrealised gain or loss to P&L against a balance-sheet adjustment account. Month-end it reverses on the first day of the next period — the valuation is temporary; at year-end it stays in the books for the financial statements. Rates come from OB08, account determination from OBA1 (KDB for G/L balances, KDF-side determination for open items), and in S/4HANA the result lands in ACDOCA per ledger.
@@ -1564,7 +3041,7 @@ FAGL_FCV: OB08 rates, OBA1 accounts, simulate in the extension ledger, post via 
 
 📎 From my material: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 29. Explain SAP FICO Architect Library — General Ledger, parallel ledgers and Universal Journal.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 51. Explain SAP FICO Architect Library — General Ledger, parallel ledgers and Universal Journal.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A ledger is a complete set of books for one accounting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
@@ -1600,7 +3077,7 @@ One posting, every book. FINSC_LEDGER defines the ledgers, ACDOCA stores the lin
 
 📎 From my material: references/fi-modules/fi-gl-general-ledger.md, COMPLETE_MODULES_SUMMARY.md, NI01_FICO_Greenfield_Complete_v2-1.pdf
 
-## 30. Explain SAP FICO Architect Library — Accounts Payable, F-53, F-44 and F110.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 52. Explain SAP FICO Architect Library — Accounts Payable, F-53, F-44 and F110.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** F-53 records one manual vendor payment and clears the selected invoice in the same document. F-44 moves no money; it clears vendor open items against each other. F110 is the controlled automatic payment run used for normal supplier payments.
@@ -1638,7 +3115,7 @@ FB60 creates the payable, F-53 pays one item manually, F110 pays in a controlled
 
 📎 From my material: sap-fico-training-tutorials.html, COMPLETE_MODULES_SUMMARY.md, sap_fi_accounts_payable.htm, references/MODULE_REFERENCE_INDEX.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 31. Explain SAP FICO Architect Library — New Asset Accounting and parallel valuation.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 53. Explain SAP FICO Architect Library — New Asset Accounting and parallel valuation.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** New Asset Accounting values the same asset in parallel by depreciation area and ledger. The asset class drives account determination and depreciation keys, postings update the asset subledger in real time, and AFAB calculates depreciation by area.
@@ -1674,7 +3151,7 @@ Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, a
 
 📎 From my material: evals/evals.json, README.md, CONTRIBUTING.md, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 32. Explain SAP FICO Architect Library — House banks, electronic bank statement and reconciliation.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 54. Explain SAP FICO Architect Library — House banks, electronic bank statement and reconciliation.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 💡 SAY THIS FIRST
 > The house bank is the bank relationship in SAP, the account ID identifies each account at that bank, and together they drive the payment medium,…
@@ -1719,7 +3196,7 @@ House bank plus account ID plus payment method - and say the bank G/L accounts a
 
 📎 From my material: COMPLETE_MODULES_SUMMARY.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 33. Explain SAP FICO Architect Library — VAT, tax codes and withholding tax.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 55. Explain SAP FICO Architect Library — VAT, tax codes and withholding tax.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 💡 SAY THIS FIRST
 > Classic withholding tax is the old model and SAP has frozen it: it handles one withholding tax type per company code and is limited in reporting
@@ -1762,7 +3239,7 @@ Say 'classic is frozen, extended is the strategic option' - that judgement is ex
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, README.md, SKILL.md, FRAMEWORK.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 34. Explain SAP FICO Architect Library — Controlling, product costing and margin analysis.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 56. Explain SAP FICO Architect Library — Controlling, product costing and margin analysis.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Controlling answers where the cost belongs and whether the product or market segment earned money. Cost centers collect responsibility cost, orders and production objects collect job cost, product costing values the product, and account-based margin analysis reads the result from ACDOCA.
@@ -1798,7 +3275,7 @@ OKKP sets the controlling world, KS01/KA01 create the objects, CK11N values the 
 
 📎 From my material: sap_co_product_costing.htm, introduction-sap-fico.html, COMPLETE_MODULES_SUMMARY.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 35. Explain SAP FICO Architect Library — FI-MM / FI-SD integration, GR/IR and numeric scenarios.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 57. Explain SAP FICO Architect Library — FI-MM / FI-SD integration, GR/IR and numeric scenarios.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -1859,7 +3336,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: Mm fi integration, CONTRIBUTING.md, references/MODULE_REFERENCE_INDEX.md, README.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 36. Explain SAP FICO Architect Library — Period close, testing, cutover and sign-off.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 58. Explain SAP FICO Architect Library — Period close, testing, cutover and sign-off.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A close, test cycle or cutover is controlled by sequence and evidence. I lock the sequence, run valuation and allocations in dependency order, reconcile subledger to GL, keep exceptions owned, and do not call a test passed until the accounting document and report prove it.
@@ -1895,7 +3372,7 @@ Sequence, valuation, allocation, reconciliation, report, lock. A step is complet
 
 📎 From my material: CONTRIBUTING.md, SKILL.md, references/testing/integration-testing-guide.md, sap-fico-training-tutorials.html, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 37. Explain SAP FICO Architect Library — Advanced intercompany: cross-company supply, billing, transfer pricing and reconciliation.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 59. Explain SAP FICO Architect Library — Advanced intercompany: cross-company supply, billing, transfer pricing and reconciliation.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 💡 SAY THIS FIRST
 > Shared services - IT, HR, finance - are allocated from the providing entity to the receiving entities with an allocation cycle, a service…
@@ -1937,7 +3414,7 @@ Mention the service agreement and evidence of benefit - the tax requirement is t
 
 📎 From my material: COMPLETE_MODULES_SUMMARY.md, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf, CONTRIBUTING.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 38. Explain SAP FICO Architect Library — Foreign currency valuation and exchange differences.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 60. Explain SAP FICO Architect Library — Foreign currency valuation and exchange differences.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Classic foreign currency valuation (FAGL_FCV) revalues foreign-currency open items (vendors, customers, G/L) and G/L balances to the latest exchange rate at the key date and posts the unrealised gain or loss to P&L against a balance-sheet adjustment account. Month-end it reverses on the first day of the next period — the valuation is temporary; at year-end it stays in the books for the financial statements. Rates come from OB08, account determination from OBA1 (KDB for G/L balances, KDF-side determination for open items), and in S/4HANA the result lands in ACDOCA per ledger.
@@ -1976,7 +3453,7 @@ FAGL_FCV: OB08 rates, OBA1 accounts, simulate in the extension ledger, post via 
 
 📎 From my material: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 39. Explain SAP FICO Architect Library — Credit management, credit checks and blocked deliveries.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 61. Explain SAP FICO Architect Library — Credit management, credit checks and blocked deliveries.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Credit management decides at order, delivery and billing whether the customer exposure stays inside the approved limit. In S/4HANA the credit segment on the Business Partner drives the check, OVA8 defines the automatic reaction per risk category, and a blocked delivery is released in VKM1 only with a documented reason.
@@ -2013,7 +3490,7 @@ BP segment carries the limit, OVA8 carries the reaction, VKM1 carries the releas
 
 📎 From my material: COMPLETE_MODULES_SUMMARY.md, sap-fico-training-tutorials.html, index.htm, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 40. Explain SAP FICO Architect Library — Payment terms, cash discount and dunning.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 62. Explain SAP FICO Architect Library — Payment terms, cash discount and dunning.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Payment terms drive three things at once: the baseline date, the discount the customer or vendor can take, and the due date dunning counts from. OBB8 builds the term, the document inherits it, F-53 or the payment run takes the discount correctly, and F150 escalates only what is genuinely overdue.
@@ -2050,7 +3527,7 @@ OBB8 builds the term, the document inherits baseline and due date, payment takes
 
 📎 From my material: sap_fi_automatic_payment_run.htm, CONTRIBUTING.md, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 41. Explain SAP FICO Architect Library — Material Ledger and actual costing.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 63. Explain SAP FICO Architect Library — Material Ledger and actual costing.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Material Ledger collects every price and exchange difference per material during the period, and actual costing (CKMLCP) rolls those differences into inventory and consumption at close to produce the periodic unit price — the actual cost. Standard price steers the month; actual costing tells the truth at the end of it.
@@ -2087,7 +3564,7 @@ OMX1 activates, CK11N/CK24 set the standard, differences collect all period, CKM
 
 📎 From my material: CONTRIBUTING.md, sap_co_product_costing.htm, README.md, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 42. Explain SAP FICO Architect Library — CO-PA in SAP: configuration to KE24 with one worked example.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 64. Explain SAP FICO Architect Library — CO-PA in SAP: configuration to KE24 with one worked example.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** CO-PA answers which customer, product, country or channel makes money. KE24 shows lines only because the profitability set-up exists: operating concern (KEA0) plus assignment to the controlling area (KEKK) plus activation (KEKE, status 4 = both types). Billing then writes a CO-PA document; KE24 only reads it, and KEBD picks the view. KE4I and KE4M turn SD conditions into costing-based value fields; account-based needs no mapping because the G/L account is the value.
@@ -2125,7 +3602,7 @@ KE24 shows only what the profitability set-up lets SAP write: KEA0, KEKK and KEK
 
 📎 From my material: CONTRIBUTING.md, introduction-sap-fico.html, SKILL.md, README.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 43. Explain SAP FICO Architect Library — Account-based vs costing-based CO-PA: one billing, read in KE24 both views (GB01).md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 65. Explain SAP FICO Architect Library — Account-based vs costing-based CO-PA: one billing, read in KE24 both views (GB01).md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Account-based margin analysis lives in ACDOCA and always reconciles to the G/L; costing-based CO-PA lives in its own value-field tables and can model more freely but must be reconciled. In S/4HANA the strategic default is account-based; costing-based survives for specific valuation needs.
@@ -2206,7 +3683,7 @@ Account-based = ACDOCA, always reconciled, S/4 default. Costing-based = value fi
 
 📎 Retrieved from my indexed files: COMPLETE_MODULES_SUMMARY.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/MODULE_REFERENCE_INDEX.md, CONTRIBUTING.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 44. Explain SAP FICO Architect Library — CYBEX S/4HANA MM-FI integration (Procure-to-Pay): from purchase requisition to vendor payment.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 66. Explain SAP FICO Architect Library — CYBEX S/4HANA MM-FI integration (Procure-to-Pay): from purchase requisition to vendor payment.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -2255,7 +3732,7 @@ ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
 
 📎 Retrieved from my indexed files: Mm fi integration, CONTRIBUTING.md, GITHUB_UPLOAD_GUIDE.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 45. Explain SAP FICO Architect Library — CYBEX S/4HANA SD-FI integration (Order-to-Cash): from master data to cash.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 67. Explain SAP FICO Architect Library — CYBEX S/4HANA SD-FI integration (Order-to-Cash): from master data to cash.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -2304,7 +3781,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: Mm fi integration, CONTRIBUTING.md, GITHUB_UPLOAD_GUIDE.md, SKILL.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 46. Explain SAP FICO Architect Library — Asset Accounting complete: HGB vs IFRS vs Turkish (VUK/TFRS) - configuration to financial statements.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 68. Explain SAP FICO Architect Library — Asset Accounting complete: HGB vs IFRS vs Turkish (VUK/TFRS) - configuration to financial statements.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Same data, different rules: HGB is conservative and tax-linked for the German statutory books, IFRS is decision-useful for investors, and Turkish reporting splits into VUK (tax procedure law and uniform chart of accounts, tax-driven) and TMS/TFRS (IFRS-adapted financial reporting under KGK). In S/4HANA one transaction posts once and the ledgers carry the differences: 0L IFRS, L1 HGB, L2 VUK, L3 TFRS.
@@ -2353,7 +3830,7 @@ HGB protects creditors, IFRS serves investors, VUK is Turkish tax law and TFRS i
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 47. Explain SAP FICO Architect Library — OMS and integration with SAP — order management system to S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 69. Explain SAP FICO Architect Library — OMS and integration with SAP — order management system to S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -2414,7 +3891,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 📎 Retrieved from my indexed files: CONTRIBUTING.md, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf, introduction-sap-fico.html, index.htm, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 48. Explain SAP FICO Architect Library — Screenshot or diagram explanation.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 70. Explain SAP FICO Architect Library — Screenshot or diagram explanation.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🖼️ WHAT THE IMAGE SAYS
 - --- [introduction-sap-fico.html · Free SAP FICO sources — auto-fetched · line 603 · relevance 16.4] ---
@@ -2474,7 +3951,7 @@ EC08, OADB, OAYZ, AO01, AO90, AFAB, ABUMN: one asset posts once and is valued pe
 
 📎 From my material: introduction-sap-fico.html, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 49. read this image and let me know what it says
+## 71. read this image and let me know what it says
 
 ### 💡 SAY THIS FIRST
 > --- [sap_co_product_costing.htm · Free SAP FICO sources — auto-fetched · line 245 · relevance 14.9] ---
@@ -2585,7 +4062,7 @@ KE24 shows only what the profitability set-up lets SAP write: KEA0, KEKK and KEK
 
 📎 Retrieved from my indexed files: sap_co_product_costing.htm, Interview screenshot 2026-10-17.jpg, SKILL.md, sap_fi_company_basics.htm, README.md, CONTRIBUTING.md, sap-fico-training-tutorials.html
 
-## 50. Explain SAP FICO Architect Library — Turkey CTP TR02 Rollout — full intercompany, e-Fatura, FX and tax.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 72. Explain SAP FICO Architect Library — Turkey CTP TR02 Rollout — full intercompany, e-Fatura, FX and tax.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
@@ -2623,7 +4100,7 @@ Legal entity first, template second, localization third. Structure, global param
 
 📎 From my material: Sd fi, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 51. Customization example from cybex
+## 73. Customization example from cybex
 
 ### 💡 SAY THIS FIRST
 Let me walk you through the Cybex MM‑FI customization that turns a PO receipt into real‑time GL entries.
@@ -2644,7 +4121,7 @@ Let me walk you through the Cybex MM‑FI customization that turns a PO receipt 
 
 📎 From my material: Mm fi integration, Copa, NI01_FICO_Greenfield_Complete_v2-1.pdf, Sd fi, FRAMEWORK.md
 
-## 52. More customization
+## 74. More customization
 
 ### 💡 SAY THIS FIRST
 Beyond basic automatic postings, advanced customization integrates custom pricing conditions, valuation splits, and validation logic.
@@ -2665,7 +4142,7 @@ Use t-code VKOA for revenue determination and OBYC for material movements.
 
 📎 From my material: FRAMEWORK.md, SKILL.md, sap_fi_company_basics.htm
 
-## 53. Zfi cogs
+## 75. Zfi cogs
 
 ### 💡 SAY THIS FIRST
 We need a custom COGS posting that ties directly to the Universal Journal for real‑time margin.
@@ -2745,7 +4222,7 @@ Key object: **OBYC**.
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Copa, Interview screenshot 2026-10-17.jpg, Sd fi, Profitability Analysis in SAP.pdf
 
-## 54. Explain SAP S/4HANA Universal Journal ACDOCA and New Asset Accounting architecture
+## 76. Explain SAP S/4HANA Universal Journal ACDOCA and New Asset Accounting architecture
 
 ### 💡 SAY THIS FIRST
 Universal Journal combines general ledger, asset accounting, and controlling into one single item table, eliminating reconciliation ledgers.
@@ -2828,7 +4305,7 @@ _The sections below come from the offline bank because they were missing above._
 [IFRS and local GAAP values on the same asset]
 ```
 
-## 55. Controlling area
+## 77. Controlling area
 
 ### 💡 SAY THIS FIRST
 A controlling area groups cost accounting across legal entities so we can analyze profitability consistently.
@@ -2941,7 +4418,7 @@ IF MY MIND GOES BLANK
 
 📎 From my material: CTP‑Turkey‑Blueprint (1).pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, COMPLETE_MODULES_SUMMARY.md
 
-## 56. Conditions types
+## 78. Conditions types
 
 ### 💡 SAY THIS FIRST
 Condition types are the building blocks in SAP pricing procedures that drive base prices, discounts, freight, and taxes.
@@ -3016,7 +4493,7 @@ Condition types control how pricing elements are calculated in sales orders or p
 
 📎 From my material: Interview screenshot 2026-10-17.jpg, Sd fi, CTP-Turkey-Blueprint (1).pdf, Mm fi integration, sap_fi_accounts_payable.htm
 
-## 57. what is Copa
+## 79. what is Copa
 
 ### 💡 SAY THIS FIRST
 COPA lets us see exactly which product, customer and region generate profit in real time.
@@ -3088,7 +4565,7 @@ Key object: **KEA0**.
 
 📎 From my material: Copa
 
-## 58. how can you describe your experience based on the business requirement and solution
+## 80. how can you describe your experience based on the business requirement and solution
 
 ### 💡 SAY THIS FIRST
 > My entire architecture approach is built on translating messy operational business requirements into clean, standard-first S/4HANA configurations,…
@@ -3111,7 +4588,7 @@ I translate business blueprints into standard S/4HANA finance architectures. At 
 
 📎 From my material: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf
 
-## 59. what is product costing
+## 81. what is product costing
 
 ### 💡 SAY THIS FIRST
 A standard cost estimate calculates what a product should cost by combining the quantity structure with activity rates and material prices.
@@ -3185,7 +4662,7 @@ Product costing calculates standard costs using BOMs, routings, and activity rat
 
 📎 From my material: sap_co_product_costing.htm
 
-## 60. how profitability analysis and copies connected
+## 82. how profitability analysis and copies connected
 
 ### 💡 SAY THIS FIRST
 Profitability analysis connects sales orders and billing documents to market segments so you can analyze contribution margins by customer, product, or sales region.
@@ -3265,7 +4742,7 @@ Profitability analysis connects sales billing to market segments using character
 
 📎 From my material: Profitability Analysis in SAP.pdf, sap_co_profitability_analysis.htm
 
-## 61. R2r end to end
+## 83. R2r end to end
 
 ### 💡 SAY THIS FIRST
 I’ll walk you through a complete Record‑to‑Report flow from master data to close.
@@ -3371,7 +4848,7 @@ In my last greenfield rollout (NI01_FICO_Greenfield_Complete_v2‑1.pdf) the cli
 ### 🎯 IF MY MIND GOES BLANK
 “I trace the source document to its financial trigger, verify automatic account determination in OBYC, VKOA, or OB40, inspect the Universal Journal lines in FB03 and ACDOCA, and reconcile subledgers to G/L balances with a complete negative test and reversal verification.”
 
-## 62. P2p full flow
+## 84. P2p full flow
 
 ### 💡 SAY THIS FIRST
 Procure-to-pay is an automated chain where buying creates a commitment, receiving posts inventory, and invoicing clears the clearing account.
@@ -3473,7 +4950,7 @@ Procure-to-pay connects purchasing, inventory, and accounts payable through auto
 
 📎 From my material: FRAMEWORK.md, NI01_FICO_Greenfield_Complete_v2-1.pdf, Sd fi, introduction-sap-fico.html
 
-## 63. Controlling config
+## 85. Controlling config
 
 ### 💡 SAY THIS FIRST
 When setting up controlling, I always align the controlling area to the company code first and establish our primary and secondary cost elements for tracking.
@@ -3566,7 +5043,7 @@ ACDOCA — one journal for FI and CO, no reconciliation ledger
 
 ### ⚙️ CONFIG STEPS
 
-## 64. how do you set up OB YC config what percentage
+## 86. how do you set up OB YC config what percentage
 
 ### 💡 SAY THIS FIRST
 Automatic account determination in MM via OBYC links material movements to general ledger accounts using transaction keys.
@@ -3673,7 +5150,7 @@ OBYC is the MM-FI integration transaction for automatic account determination. I
 
 📎 From my material: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, SKILL.md, CTP-Turkey-Blueprint (1).pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, COMPLETE_MODULES_SUMMARY.md
 
-## 65. Partner profile idoc setup
+## 87. Partner profile idoc setup
 
 ### 💡 SAY THIS FIRST
 Partner profiles control inbound and outbound IDoc communication by linking partner types to message types, ports, and process codes.
@@ -3763,7 +5240,7 @@ Partner profiles link partner numbers to message types and ports in WE20. They r
 
 📎 From my material: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, SKILL.md, CTP-Turkey-Blueprint (1).pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, COMPLETE_MODULES_SUMMARY.md
 
-## 66. how do you config complete mmfi cycle
+## 88. how do you config complete mmfi cycle
 
 ### 💡 SAY THIS FIRST
 Configuring the complete MM-FI cycle requires linking material valuation classes to automatic account determination keys through OBYC.
@@ -3898,7 +5375,7 @@ Key objects include OBYC, OMWD, BSX, and WRX.
 
 📎 From my material: COMPLETE_MODULES_SUMMARY.md, NI01_FICO_Greenfield_Complete_v2-1.pdf
 
-## 67. can you tell me how Turkey configure setup
+## 89. can you tell me how Turkey configure setup
 
 ### 💡 SAY THIS FIRST
 When rolling out our Turkish entity, I first locked down the legal, tax, and withholding setup before copying the company code and linking the plants.
@@ -4020,7 +5497,7 @@ When rolling out our Turkish operations at CYBEX, our primary challenge was alig
 
 📎 From my material: CTP-Turkey-Blueprint (1).pdf, Sd fi
 
-## 68. Asset accounting
+## 90. Asset accounting
 
 ### 💡 SAY THIS FIRST
 In my last rollout, asset accounting was driven by New Asset Accounting in S/4HANA, which eliminated delta areas through technical clearing accounts.
@@ -4089,7 +5566,7 @@ In my last rollout, asset accounting was driven by New Asset Accounting in S/4HA
 ### 🎯 IF MY MIND GOES BLANK
 Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area.
 
-## 69. shut off accounts are there and which is connected to the chart of depreciation
+## 91. shut off accounts are there and which is connected to the chart of depreciation
 
 ### 💡 SAY THIS FIRST
 Account determination in asset accounting links the asset class to general ledger reconciliation accounts via transaction AO90.
@@ -4162,7 +5639,7 @@ Account determination in AO90 links asset classes to reconciliation accounts, co
 
 📎 From my material: sap_fi_accounts_receivable.htm, sap_fi_accounts_payable.htm
 
-## 70. when do you complete a micro for accounting asset accounting
+## 92. when do you complete a micro for accounting asset accounting
 
 ### 💡 SAY THIS FIRST
 In my last rollout, asset accounting was driven by New Asset Accounting in S/4HANA, which eliminated delta areas through technical clearing accounts.
@@ -4231,7 +5708,7 @@ In my last rollout, asset accounting was driven by New Asset Accounting in S/4HA
 ### 🎯 IF MY MIND GOES BLANK
 Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area.
 
-## 71. what is depreciation area and deprecision key
+## 93. what is depreciation area and deprecision key
 
 ### 💡 SAY THIS FIRST
 A depreciation area values an asset for a specific accounting principle, while the depreciation key dictates how that value reduces over time.
@@ -4300,7 +5777,7 @@ A depreciation area holds the valuation for a specific ledger, a depreciation ke
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Interview screenshot 2026-10-17.jpg, COMPLETE_MODULES_SUMMARY.md
 
-## 72. Explain asset a
+## 94. Explain asset a
 
 ### 💡 SAY THIS FIRST
 In my last rollout, asset accounting was driven by New Asset Accounting in S/4HANA, which eliminated delta areas through technical clearing accounts.
@@ -4369,7 +5846,7 @@ In my last rollout, asset accounting was driven by New Asset Accounting in S/4HA
 ### 🎯 IF MY MIND GOES BLANK
 Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area.
 
-## 73. how I set accounting is connected to Copa
+## 95. how I set accounting is connected to Copa
 
 ### 💡 SAY THIS FIRST
 Account-based and costing-based profitability analysis connect directly to your general ledger and billing condition types in S/4HANA.
@@ -4444,7 +5921,7 @@ Profitability analysis connects sales billing and general ledger accounts to ope
 
 📎 From my material: Copa
 
-## 74. Asset accounting connected to copa
+## 96. Asset accounting connected to copa
 
 ### 💡 SAY THIS FIRST
 Account-based and costing-based profitability analysis connect directly to your general ledger and billing condition types in S/4HANA.
@@ -4519,7 +5996,7 @@ Profitability analysis connects sales billing and general ledger accounts to ope
 
 📎 From my material: Copa
 
-## 75. love you
+## 97. love you
 
 ### 💡 SAY THIS FIRST
 > “I searched the indexed material for this question
@@ -4583,7 +6060,7 @@ Reconcile resulting document and sign off
 **[object Object]**: 5 z VUK, Uniform Chart of Accounts, — iffer) 41 Deferred tax HGB-specific rules 1AS 12 temporary differences Separate tax reporting, local rules £5 Inflation No automatic restatement 1AS 29 when hyperinfiationary TMS 29 applies in Turkey (when criteria met) £3} How to Decide Which Rules Apply? B Posting Examples — Same Transacti…
 **[object Object]**: 🪤 TRAPS — dger assignment in AW01N. ### 🎯 IF MY MIND GOES BLANK Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area. ### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT - HGB vs IFRS — how do parallel ledgers answer both from one document? - How will you set up a compan…
 
-## 76. how does S4 Hannah handle an impairment posted only two Ledger zero l when calculating here three straight line the precision after a total useful life extension from 10 to 12 years
+## 98. how does S4 Hannah handle an impairment posted only two Ledger zero l when calculating here three straight line the precision after a total useful life extension from 10 to 12 years
 
 ### 💡 SAY THIS FIRST
 S/4HANA handles impairment and useful life extensions in Asset Accounting by recalculating planned depreciation across remaining periods in the affected ledger's depreciation area.
@@ -4701,7 +6178,7 @@ Useful life extension changes the remaining denominator in AS02, impairment redu
 
 📎 From my material: references/fi-modules/fi-gl-general-ledger.md
 
-## 77. what controversial picture
+## 99. what controversial picture
 
 ### 💡 SAY THIS FIRST
 When a controversial architectural screenshot appears, I inspect the ledger rules, transaction keys, and posting logic to resolve the mismatch.
@@ -4759,7 +6236,7 @@ A controversial picture usually exposes an integration breakdown between MM and 
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, SAP FICO Architect Library — Screenshot or diagram explanation.md
 
-## 78. set accounting to me asset accounting
+## 100. set accounting to me asset accounting
 
 ### 💡 SAY THIS FIRST
 When managing parallel valuation for IFRS and local forest rules, I use the universal journal's extension ledger architecture for absolute ledger segregation.
@@ -4826,7 +6303,7 @@ When managing parallel valuation for IFRS and local forest rules, I use the univ
 ### 🎯 IF MY MIND GOES BLANK
 We manage parallel rules for forestry through Asset Accounting depreciation areas assigned to dedicated S/4HANA ledgers. This replaced ECC non-leading ledger reconciliation gaps. I configure it using FINSC_LEDGER and AO90.
 
-## 79. Ifrs rules in sap
+## 101. Ifrs rules in sap
 
 ### 💡 SAY THIS FIRST
 We implement IFRS in SAP using parallel ledgers and accounting principles to manage local GAAP and international standards simultaneously.
@@ -4889,7 +6366,7 @@ One posting, every book. FINSC_LEDGER defines the ledgers, ACDOCA stores the lin
 
 📎 From my material: Interview screenshot 2026-10-17.jpg, NI01_FICO_Greenfield_Complete_v2-1.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 80. What do you know about flex germany
+## 102. What do you know about flex germany
 
 ### 💡 SAY THIS FIRST
 Flex Germany operates as a major advanced manufacturing and supply-chain solutions hub, requiring solid multi-entity SAP finance architecture.
@@ -4913,7 +6390,7 @@ Flex Germany operates as a major advanced manufacturing and supply-chain solutio
 ### 🎯 IF MY MIND GOES BLANK
 Flex Germany requires solid S/4HANA finance architecture, parallel HGB and IFRS ledgers in ACDOCA, and tight FI-MM/FI-SD integration.
 
-## 81. Important tables how to join tables
+## 103. Important tables how to join tables
 
 ### 💡 SAY THIS FIRST
 When we need to report across modules, we join ACDOCA with BSEG and GLT0.
@@ -4984,7 +6461,7 @@ The key view is V_ACDOCA_BSEG.
 
 📎 From my material: sap-fico-training-tutorials.html, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 
-## 82. Material ledger ckmlcp
+## 104. Material ledger ckmlcp
 
 ### 💡 SAY THIS FIRST
 Material Ledger and actual costing run a controlled month-end sequence to allocate price and exchange variances to inventory and consumption.
@@ -5052,7 +6529,7 @@ OMX1 turns it on, CK11N sets the standard, differences collect all month, CKMLCP
 
 📎 From my material: references/fi-modules/fi-gl-general-ledger.md
 
-## 83. you can write it again
+## 105. you can write it again
 
 ### 💡 SAY THIS FIRST
 Costing and accounting flows in maintenance orders debit planned and actual resource consumption before settling variances to cost centers.
@@ -5119,7 +6596,7 @@ Maintenance orders accumulate planned and actual costs for spare parts and labor
 
 📎 From my material: ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf, Interview screenshot 2026-10-17.jpg, CTP-Turkey-Blueprint (1).pdf, GITHUB_UPLOAD_GUIDE.md
 
-## 84. Dunning
+## 106. Dunning
 
 ### 💡 SAY THIS FIRST
 > Dunning is a dunning procedure with dunning levels, each with its own text, minimum amount and days in arrear, and a dunning run that proposes and…
@@ -5152,7 +6629,7 @@ Dunning is a dunning procedure with dunning levels, each with its own text, mini
 ### 🎯 HOW TO CRACK THIS QUESTION
 Say dunning is a process, not a report: levels, minimum amounts, blocks. Then mention the dispute workflow.
 
-## 85. Hgb rules sap with posting
+## 107. Hgb rules sap with posting
 
 ### 💡 SAY THIS FIRST
 When applying HGB rules in SAP S/4HANA, we use non-leading ledger L1 and accounting principles to post stricter statutory valuations separately from IFRS.
@@ -5219,7 +6696,7 @@ One posting, every book. FINSC_LEDGER defines the ledgers, ACDOCA stores the lin
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, Interview screenshot 2026-10-17.jpg, Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf
 
-## 86. Share a scenario down payments
+## 108. Share a scenario down payments
 
 ### 💡 SAY THIS FIRST
 Down payments let us collect money before delivery, and the system must split the receipt between liability and eventual revenue or inventory.
@@ -5320,7 +6797,7 @@ Down payment = liability until final invoice. Special G/L indicator A (customer)
 
 📎 From my material: README.md, references/MODULE_REFERENCE_INDEX.md
 
-## 87. Share a scenario of downpayments
+## 109. Share a scenario of downpayments
 
 ### 💡 SAY THIS FIRST
 > Core Concept: A down payment is a partial payment received before goods or services are delivered, booked as a liability (Special G/L) until the…
@@ -5425,7 +6902,7 @@ During our S/4HANA implementation for an industrial equipment manufacturer, clie
 ### 🎯 IF MY MIND GOES BLANK
 Down payment = liability until final invoice. Special G/L indicator 'A' for customers, 'D' for vendors. F-28 posts the cash receipt, F-32 clears it against the final invoice. OBYR/OBXR assigns the alternative reconciliation account.
 
-## 88. Credit memo full config
+## 110. Credit memo full config
 
 ### 💡 SAY THIS FIRST
 I configure credit memos to reverse or reduce existing liabilities and receivables directly in the subledger and general ledger.
@@ -5517,7 +6994,7 @@ A credit memo reduces an invoice liability or receivable, using document types l
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, introduction-sap-fico.html, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 
-## 89. Prepayment
+## 111. Prepayment
 
 ### 💡 SAY THIS FIRST
 > “I searched the indexed material for this question
@@ -5564,7 +7041,7 @@ Reconcile resulting document and sign off
 **[object Object]**: 4.1.2 Sales from Stock (Prepayment) — e sales order to request advance payment for the available items. This invoice is printed and emailed to the customer as the formal request for prepayment; the CTP Turkey house bank details are shown on the FAZ invoice. Upon receipt of the prepayment, the payment is posted in the accounting …
 **[object Object]**: 4.1.2 Sales from Stock (Prepayment) — is created automatically from the PO, document type CBIC (sales area 3001/10/10, plant 10 FAZ document Prepayment invoice (FAZ) is created with reference to the Z002 sales order and sent to the customer as the request f Clear payment Incoming payment is cleared against the FAZ document. This…
 
-## 90. Credit memo
+## 112. Credit memo
 
 ### 💡 SAY THIS FIRST
 I configure credit memos to reverse or reduce liabilities and receivables directly in the subledger and general ledger.
@@ -5628,7 +7105,7 @@ A credit memo reverses an invoice liability using document type KG in AP or DG i
 
 📎 From my material: NI01_FICO_Greenfield_Complete_v2-1.pdf, introduction-sap-fico.html, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 
-## 91. Debit memo
+## 113. Debit memo
 
 ### 💡 SAY THIS FIRST
 > “I searched the indexed material for this question
@@ -5693,7 +7170,7 @@ Reconcile resulting document and sign off
 **[object Object]**: 📋 EXAMPLE: Old ECC: You had to run KALC — (reconciliation ledger) to reconcile FI and CO. In S/4HANA with ACDOCA: FI and CO are the same table, zero reconciliation needed. 💡 TIP: Check if New GL is active: FAGL_ACTIVATION → should be active. In S/4HANA: always active, cannot be deactivated. ❓ A vendor has a debit balance (they…
 **[object Object]**: 📋 NI01 forgot FAGLGVTR for FY2025. In Jan 2026: FAGLL03H shows Revenue 300000 opening — a vendor invoice and a credit memo? A vendor invoice (document type KR or RE) records the purchase — it creates a credit on the vendor account (we owe money). A vendor credit memo (document type KG) records a return or correction — it create…
 
-## 92. Hgb vs ifrs
+## 114. Hgb vs ifrs
 
 ### 💡 SAY THIS FIRST
 HGB serves German statutory compliance and creditor protection, while IFRS delivers comparable reporting for group investors.
@@ -5769,7 +7246,7 @@ HGB protects creditors and IFRS serves investors; FINSC_LEDGER maps the principl
 
 📎 From my material: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, Interview screenshot 2026-10-17.jpg, NI01_FICO_Greenfield_Complete_v2-1.pdf
 
-## 93. Ecc vs s4hana
+## 115. Ecc vs s4hana
 
 ### 💡 SAY THIS FIRST
 > A ledger is simply the set of books a posting lands in, and most companies need more than one because they report under more than one set of rules
@@ -5821,7 +7298,7 @@ Reconciled by design
 ### 🎯 HOW TO CRACK THIS QUESTION
 Say it in one line: one posting, one table, every book. Then give the 0L plus 2L example with the different depreciation and finish with the close losing its reconciliation day. That is thirty seconds and it is unanswerable.
 
-## 94. Explain SAP FICO Architect Library — Data migration, cutover and LTMC — balanced trial, open items and assets.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 116. Explain SAP FICO Architect Library — Data migration, cutover and LTMC — balanced trial, open items and assets.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A close, test cycle or cutover is controlled by sequence and evidence. I lock the sequence, run valuation and allocations in dependency order, reconcile subledger to GL, keep exceptions owned, and do not call a test passed until the accounting document and report prove it.
@@ -5914,7 +7391,7 @@ Sequence, valuation, allocation, reconciliation, report, lock. A step is complet
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 95. Explain SAP FICO Architect Library — Fiori, embedded analytics and S/4HANA financial reporting.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 117. Explain SAP FICO Architect Library — Fiori, embedded analytics and S/4HANA financial reporting.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -5967,7 +7444,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 
-## 96. Explain SAP FICO Architect Library — Central Finance (CFIN) and SAP Group Reporting — real-time consolidation.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 118. Explain SAP FICO Architect Library — Central Finance (CFIN) and SAP Group Reporting — real-time consolidation.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -6020,7 +7497,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 
-## 97. Explain SAP FICO Architect Library — OMS (Order Management System) integration with SAP S/4HANA — document chain and FI postings.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 119. Explain SAP FICO Architect Library — OMS (Order Management System) integration with SAP S/4HANA — document chain and FI postings.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -6082,7 +7559,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 📎 Retrieved from my indexed files: ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 98. Explain SAP FICO Architect Library — Parallel accounting — HGB + IFRS ledger design, AA, FX and provisions.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 120. Explain SAP FICO Architect Library — Parallel accounting — HGB + IFRS ledger design, AA, FX and provisions.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** HGB protects creditors and drives German tax; IFRS serves the group investors. In S/4HANA I never choose between them — one document posts into parallel ledgers and each principle reads its own valuation from ACDOCA.
@@ -6171,7 +7648,7 @@ HGB = prudent, tax-linked, creditor protection. IFRS = market-based group view. 
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 99. Explain SAP FICO Architect Library — SAP Activate methodology — phases, workstreams and deliverables for S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 121. Explain SAP FICO Architect Library — SAP Activate methodology — phases, workstreams and deliverables for S/4HANA.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Tax is determined by the transaction, country, tax classification and account rule — not typed as a free amount. FTXP maintains the tax code and rate, OB40 or the relevant determination posts the tax account, and the document must carry the code so VAT reporting can reproduce it.
@@ -6258,7 +7735,7 @@ FTXP defines the tax case, OB40 finds the tax account, and the document tax code
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 100. Explain SAP FICO Architect Library — E-invoicing and e-reporting — multi-country SAP integration design.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 122. Explain SAP FICO Architect Library — E-invoicing and e-reporting — multi-country SAP integration design.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -6320,7 +7797,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 101. Explain SAP FICO Architect Library — Cegid POS to SAP S/4HANA integration — order replication, tenders and intercompany.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 123. Explain SAP FICO Architect Library — Cegid POS to SAP S/4HANA integration — order replication, tenders and intercompany.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -6382,7 +7859,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 102. Explain SAP FICO Architect Library — Credit management — design, configuration and integration with SD order block.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 124. Explain SAP FICO Architect Library — Credit management — design, configuration and integration with SD order block.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -6442,7 +7919,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 📎 Retrieved from my indexed files: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, introduction-sap-fico.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 103. Down payments
+## 125. Down payments
 
 ### 💡 SAY THIS FIRST
 Down payments collect cash before fulfillment, requiring special subledger postings to separate advance liabilities from revenue.
@@ -6511,7 +7988,7 @@ Down payments capture advance cash using Special G/L indicators to segregate bal
 
 📎 From my material: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf, references/MODULE_REFERENCE_INDEX.md, COMPLETE_MODULES_SUMMARY.md
 
-## 104. Tell me about yourself and your experience
+## 126. Tell me about yourself and your experience
 
 ### 💡 SAY THIS FIRST
 > I’m a senior SAP FI/CO/AA architect with 10 + years in finance, having led five end‑to‑end S/4HANA rollouts for CYBEX’s European, US and IMEA…
@@ -6536,7 +8013,7 @@ I’m a SAP S/4HANA Finance architect who has built and run five multi‑curre
 ### 🎯 IF MY MIND GOES BLANK
 Senior S/4HANA Finance architect at CYBEX, five rollouts, parallel HGB/IFRS, end‑to‑end ownership.
 
-## 105. How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+## 127. How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
 
 ### 💡 SAY THIS FIRST
 > As the SAP FICO lead architect, I design FI-MM and FI-SD integration to ensure that every material movement, invoice verification, and billing document clean hits the Universal Journal (ACDOCA), while Material Ledger actual costing captures multi-level price variances to settle inventory to actual cost at month-end.
@@ -6597,7 +8074,7 @@ To configure FI-MM, FI-SD integration, and Material Ledger in S/4HANA, follow th
 - Trap: Assuming Material Ledger can be retrofitted without realigning existing inventory values and price controls. → Winning line: ML activation requires strict prerequisites including stock clearance or zero-balance verification, alignment of valuation classes, and standard price settings before transport to production.
 - Trap: Treating MM and SD account determination as isolated functional configurations. → Wi
 
-## 106. Tell me about yourself and your experience as an Architect
+## 128. Tell me about yourself and your experience as an Architect
 
 _Working on it…_
 
@@ -6625,7 +8102,7 @@ Lead SAP FICO Architect with 15+ years delivering global S/4HANA transformations
 
 📎 From my material: README.md, CONTRIBUTING.md, FRAMEWORK.md, references/MODULE_REFERENCE_INDEX.md, SAP ABAP Interview Questions/SAP ABAP Interview QnA.md, introduction-sap-fico.html, SAP FICO Architect Library — Account determination behind the scenes — how SAP finds every G/L account (OBYC, VKOA, tax).md, SAP FICO Architect Library — Order-to-Cash behind the scenes — billing, Co-PA and margin, step by step.md
 
-## 107. Explain SAP FICO Architect Library — Plant Maintenance (PM) and FI-CO integration — orders, costs and settlements.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 129. Explain SAP FICO Architect Library — Plant Maintenance (PM) and FI-CO integration — orders, costs and settlements.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -6687,7 +8164,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 108. Explain SAP FICO Architect Library — AP automation — self-service supplier portal, EDI and automated 3-way match.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 130. Explain SAP FICO Architect Library — AP automation — self-service supplier portal, EDI and automated 3-way match.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** F-53 records one manual vendor payment and clears the selected invoice in the same document. F-44 moves no money; it clears vendor open items against each other. F110 is the controlled automatic payment run used for normal supplier payments.
@@ -6766,7 +8243,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 109. Explain SAP FICO Architect Library — Multi-entity financial reporting — segment, profit centre and entity reporting.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 131. Explain SAP FICO Architect Library — Multi-entity financial reporting — segment, profit centre and entity reporting.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -6826,7 +8303,7 @@ EXECUTIVE PROFILE — P order replication, intercompany supply, country tax, F11
 
 Sources: Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf, README.md, README.zh-CN.md
 
-## 110. Explain Profitability Analysis in SAP.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
+## 132. Explain Profitability Analysis in SAP.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** CO-PA answers which customer, product, country or channel makes money. KE24 shows lines only because the profitability set-up exists: operating concern (KEA0) plus assignment to the controlling area (KEKK) plus activation (KEKE, status 4 = both types). Billing then writes a CO-PA document; KE24 only reads it, and KEBD picks the view. KE4I and KE4M turn SD conditions into costing-based value fields; account-based needs no mapping because the G/L account is the value.
@@ -6916,7 +8393,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 111. Explain NI01_FICO_Greenfield_Complete_v2-1.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
+## 133. Explain NI01_FICO_Greenfield_Complete_v2-1.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -6978,7 +8455,7 @@ Document sections: 🟦 NI01 S/4HANA FICO Greenfield Implementation Book · 📚
 
 Sources: NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md, Sumit_Kashyap_SAP_FICO_Solution_Architect_CV.pdf, ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf, README.md, README.zh-CN.md
 
-## 112. Explain Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
+## 134. Explain Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Advanced foreign currency valuation — FINS_FXV — remeasures foreign-currency open items and balance-sheet balances at the reporting-date rate and posts only the movement still needed: the delta between the required closing value and the carrying value already on the books. Unlike classic FAGL_FCV it has no routine next-period reversal, and the balance-sheet side posts to the account being valued — for payables, the AP reconciliation account itself — not to a separate balance-sheet adjustment account.
@@ -7051,7 +8528,7 @@ FINS_FXV values at the key-date rate and posts only the delta onto the account b
 - How do you configure classic FAGL_FCV end to end (OBA1, delta logic, simulation)?
 - How do you prove a valuation in ACDOCA per ledger?
 
-## 113. Explain New company code and country/store rollout
+## 135. Explain New company code and country/store rollout
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
@@ -7146,7 +8623,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 114. Explain FI-MM integration — procure to pay account determination (OBYC)
+## 136. Explain FI-MM integration — procure to pay account determination (OBYC)
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -7193,7 +8670,7 @@ ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
 
 Reference: offline documents + online knowledge
 
-## 115. Explain FI-SD integration — order to cash revenue account determination (VKOA)
+## 137. Explain FI-SD integration — order to cash revenue account determination (VKOA)
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -7245,7 +8722,7 @@ Reference: offline documents + online knowledge
 - Gross margin = Revenue - COGS
 - Margin % = Gross margin / Revenue x 100
 
-## 116. Explain FI-PP integration — production order postings, WIP and settlement
+## 138. Explain FI-PP integration — production order postings, WIP and settlement
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -7295,7 +8772,7 @@ CO01 order → MIGO 261 issue → CO11N confirmation
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 117. Explain FI integration cheat sheet — MM, SD, PP on one page
+## 139. Explain FI integration cheat sheet — MM, SD, PP on one page
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -7354,7 +8831,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 Reference: offline documents + online knowledge
 
-## 118. Explain Classic Foreign Currency Valuation (FAGL_FCV) — end to end
+## 140. Explain Classic Foreign Currency Valuation (FAGL_FCV) — end to end
 
 ### 💡 SAY THIS FIRST
 > Foreign currency valuation revalues open items and G/L balances held in foreign currency at the closing rate and posts the unrealised difference
@@ -7402,7 +8879,7 @@ Reference: offline documents + online knowledge
 ### 🧮 FORMULAS — THE ONE-LINE LAWS
 - FX valuation difference = Open-item amount (FC) x (Closing rate - Book rate)
 
-## 119. Explain Advanced Foreign Currency Valuation (FINS_FXV) in S/4HANA
+## 141. Explain Advanced Foreign Currency Valuation (FINS_FXV) in S/4HANA
 
 ### 💡 SAY THIS FIRST
 > Foreign currency valuation revalues open items and G/L balances held in foreign currency at the closing rate and posts the unrealised difference
@@ -7451,7 +8928,7 @@ Reference: offline documents + online knowledge
 ### 🧮 FORMULAS — THE ONE-LINE LAWS
 - FX valuation difference = Open-item amount (FC) x (Closing rate - Book rate)
 
-## 120. Explain General Ledger, parallel ledgers and Universal Journal
+## 142. Explain General Ledger, parallel ledgers and Universal Journal
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A ledger is a complete set of books for one accounting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
@@ -7524,7 +9001,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 121. Explain Accounts Payable, F-53, F-44 and F110
+## 143. Explain Accounts Payable, F-53, F-44 and F110
 
 ### 💡 SAY THIS FIRST
 > Withholding tax is configured with a withholding tax type, a tax code, and the rules for when it is calculated - normally at invoice, at payment,…
@@ -7572,7 +9049,7 @@ Reference: offline documents + online knowledge
 - DSO = Receivables / Revenue x 365
 - DPO = Payables / Purchases x 365
 
-## 122. Explain Accounts Receivable, billing and cash application
+## 144. Explain Accounts Receivable, billing and cash application
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Order-to-cash becomes finance at billing: the sales document prices the sale, VKOA determines revenue, discount and tax accounts, the customer open item is created, and incoming payment or clearing closes it.
@@ -7654,7 +9131,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 123. Explain New Asset Accounting and parallel valuation
+## 145. Explain New Asset Accounting and parallel valuation
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** New Asset Accounting values the same asset in parallel by depreciation area and ledger. The asset class drives account determination and depreciation keys, postings update the asset subledger in real time, and AFAB calculates depreciation by area.
@@ -7739,7 +9216,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 124. Explain House banks, electronic bank statement and reconciliation
+## 146. Explain House banks, electronic bank statement and reconciliation
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Bank accounting has three layers that must not be mixed: house-bank master data, the payment or statement process, and the clearing rules that match bank movement to the open item. F110 pays, the bank statement proves the bank movement, and FEBAN handles the exceptions.
@@ -7817,7 +9294,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 125. Explain VAT, tax codes and withholding tax
+## 147. Explain VAT, tax codes and withholding tax
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Tax is determined by the transaction, country, tax classification and account rule — not typed as a free amount. FTXP maintains the tax code and rate, OB40 or the relevant determination posts the tax account, and the document must carry the code so VAT reporting can reproduce it.
@@ -7899,7 +9376,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 126. Explain Controlling, product costing and margin analysis
+## 148. Explain Controlling, product costing and margin analysis
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Controlling answers where the cost belongs and whether the product or market segment earned money. Cost centers collect responsibility cost, orders and production objects collect job cost, product costing values the product, and account-based margin analysis reads the result from ACDOCA.
@@ -7985,7 +9462,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 127. Explain FI-MM / FI-SD integration, GR/IR and numeric scenarios
+## 149. Explain FI-MM / FI-SD integration, GR/IR and numeric scenarios
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -8050,7 +9527,7 @@ Reference: offline documents + online knowledge
 - Still to invoice = PO qty - IR qty
 - GR/IR open balance = (GR qty - IR qty) x PO price
 
-## 128. Explain Period close, testing, cutover and sign-off
+## 150. Explain Period close, testing, cutover and sign-off
 
 ### 💡 SAY THIS FIRST
 > The cutover is a minute-by-minute plan across a weekend: freeze the legacy, extract, transform, load, validate, reconcile, get the sign-off, and…
@@ -8089,7 +9566,7 @@ Mention the go/no-go point and the rehearsed rollback - those are the two things
 
 Reference: offline documents + online knowledge
 
-## 129. Explain Advanced intercompany: cross-company supply, billing, transfer pricing and reconciliation
+## 151. Explain Advanced intercompany: cross-company supply, billing, transfer pricing and reconciliation
 
 ### 💡 SAY THIS FIRST
 > Intercompany billing generates the internal invoice automatically when the external sale is billed: the delivering company code invoices the…
@@ -8135,7 +9612,7 @@ Say it is generated automatically from the external billing, and that the two si
 
 Reference: offline documents + online knowledge
 
-## 130. Explain Foreign currency valuation and exchange differences
+## 152. Explain Foreign currency valuation and exchange differences
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Classic foreign currency valuation (FAGL_FCV) revalues foreign-currency open items (vendors, customers, G/L) and G/L balances to the latest exchange rate at the key date and posts the unrealised gain or loss to P&L against a balance-sheet adjustment account. Month-end it reverses on the first day of the next period — the valuation is temporary; at year-end it stays in the books for the financial statements. Rates come from OB08, account determination from OBA1 (KDB for G/L balances, KDF-side determination for open items), and in S/4HANA the result lands in ACDOCA per ledger.
@@ -8235,7 +9712,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 131. Explain Financial Statement Version (FSV) — the reporting hierarchy
+## 153. Explain Financial Statement Version (FSV) — the reporting hierarchy
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A Financial Statement Version is the reporting tree of the general ledger: in OB58 I build the balance-sheet and P&L hierarchy — assets, liabilities, equity, income, expenses — assign every G/L account to a node, and that one hierarchy is what F.01 and the S/4HANA Balance Sheet / Income Statement apps read from ACDOCA. It classifies postings; it never posts.
@@ -8301,7 +9778,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 132. Explain New GL — the ledger architecture (ECC New GL, S/4 Universal Journal)
+## 154. Explain New GL — the ledger architecture (ECC New GL, S/4 Universal Journal)
 
 ### 💡 SAY THIS FIRST
 > A ledger is simply the set of books a posting lands in, and most companies need more than one because they report under more than one set of rules
@@ -8360,7 +9837,7 @@ Say it in one line: one posting, one table, every book. Then give the 0L plus 2L
 
 Reference: offline documents + online knowledge
 
-## 133. Explain Credit management, credit checks and blocked deliveries
+## 155. Explain Credit management, credit checks and blocked deliveries
 
 ### 💡 SAY THIS FIRST
 > Classic credit control used the FI open items and sales order values with a credit control area and risk category
@@ -8403,7 +9880,7 @@ Contrast classic credit control with S/4 credit management and mention the credi
 
 Reference: offline documents + online knowledge
 
-## 134. Explain Payment terms, cash discount and dunning
+## 156. Explain Payment terms, cash discount and dunning
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Payment terms drive three things at once: the baseline date, the discount the customer or vendor can take, and the due date dunning counts from. OBB8 builds the term, the document inherits it, F-53 or the payment run takes the discount correctly, and F150 escalates only what is genuinely overdue.
@@ -8480,7 +9957,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 135. Explain Material Ledger and actual costing
+## 157. Explain Material Ledger and actual costing
 
 ### 💡 SAY THIS FIRST
 > The material ledger carries inventory in up to three valuations - legal, group and profit centre - and at period end it rolls up the actual prices…
@@ -8529,7 +10006,7 @@ Reference: offline documents + online knowledge
 - Price variance = (Actual price - Standard price) x Quantity
 - Periodic unit price = Total actual cost / Total quantity
 
-## 136. Explain CO-PA in SAP: configuration to KE24 with one worked example
+## 158. Explain CO-PA in SAP: configuration to KE24 with one worked example
 
 ### 💡 SAY THIS FIRST
 > Classic CO-PA was a separate table - CE1, CE2 and CE3 - fed by a transfer from FI and SD at billing, with its own characteristics and value fields
@@ -8568,7 +10045,7 @@ The one-line difference is 'no transfer, no reconciliation, real time'. Then men
 
 Reference: offline documents + online knowledge
 
-## 137. Explain Account-based vs costing-based CO-PA: one billing, read in KE24 both views (GB01)
+## 159. Explain Account-based vs costing-based CO-PA: one billing, read in KE24 both views (GB01)
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Account-based margin analysis lives in ACDOCA and always reconciles to the G/L; costing-based CO-PA lives in its own value-field tables and can model more freely but must be reconciled. In S/4HANA the strategic default is account-based; costing-based survives for specific valuation needs.
@@ -8643,7 +10120,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 138. Explain CYBEX S/4HANA MM-FI integration (Procure-to-Pay): from purchase requisition to vendor payment
+## 160. Explain CYBEX S/4HANA MM-FI integration (Procure-to-Pay): from purchase requisition to vendor payment
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -8692,7 +10169,7 @@ ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 139. Explain CYBEX S/4HANA SD-FI integration (Order-to-Cash): from master data to cash
+## 161. Explain CYBEX S/4HANA SD-FI integration (Order-to-Cash): from master data to cash
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -8741,7 +10218,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 140. Explain Asset Accounting complete: HGB vs IFRS vs Turkish (VUK/TFRS) - configuration to financial statements
+## 162. Explain Asset Accounting complete: HGB vs IFRS vs Turkish (VUK/TFRS) - configuration to financial statements
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Same data, different rules: HGB is conservative and tax-linked for the German statutory books, IFRS is decision-useful for investors, and Turkish reporting splits into VUK (tax procedure law and uniform chart of accounts, tax-driven) and TMS/TFRS (IFRS-adapted financial reporting under KGK). In S/4HANA one transaction posts once and the ledgers carry the differences: 0L IFRS, L1 HGB, L2 VUK, L3 TFRS.
@@ -8824,7 +10301,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 141. Explain Standard price (S) vs moving average price (V) - material price control
+## 163. Explain Standard price (S) vs moving average price (V) - material price control
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Price control decides how a material is valuated in the balance sheet: S keeps a fixed standard price all period (every variance goes to a price-difference account), V lets the moving average price follow every goods receipt (the stock value moves with the market). In S/4HANA the indicator sits on the material master accounting view and drives OBYC account determination.
@@ -8884,7 +10361,7 @@ S = fixed standard, variances to PRD and visible; V = moving average follows eve
 - How will you set up a company code for a new-country rollout?
 - How does the Universal Journal (ACDOCA) change the month-end close?
 
-## 142. Explain OMS and integration with SAP — order management system to S/4HANA
+## 164. Explain OMS and integration with SAP — order management system to S/4HANA
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -8944,7 +10421,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 143. Explain Screenshot or diagram explanation
+## 165. Explain Screenshot or diagram explanation
 
 ### 🖼️ THIS IMAGE COULD NOT BE READ
 No legible text was extracted from the image, so I will not invent an explanation — a made-up answer with blank t-codes helps nobody in the interview.
@@ -8956,7 +10433,7 @@ No legible text was extracted from the image, so I will not invent an explanatio
 
 The image itself is still saved in the Knowledge index under its file name, so it is not lost.
 
-## 144. HGB vs IFRS — what changes in SAP?
+## 166. HGB vs IFRS — what changes in SAP?
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** HGB protects creditors and drives German tax; IFRS serves the group investors. In S/4HANA I never choose between them — one document posts into parallel ledgers and each principle reads its own valuation from ACDOCA.
@@ -9028,7 +10505,7 @@ HGB = prudent, tax-linked, creditor protection. IFRS = market-based group view. 
 - How will you set up a company code for a new-country rollout?
 - How does the Universal Journal (ACDOCA) change the month-end close?
 
-## 145. HGB vs IFRS vs Turkish accounting principles
+## 167. HGB vs IFRS vs Turkish accounting principles
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Same data, different rules: HGB is conservative and tax-linked for the German statutory books, IFRS is decision-useful for investors, and Turkish reporting splits into VUK (tax procedure law and uniform chart of accounts, tax-driven) and TMS/TFRS (IFRS-adapted financial reporting under KGK). In S/4HANA one transaction posts once and the ledgers carry the differences: 0L IFRS, L1 HGB, L2 VUK, L3 TFRS.
@@ -9100,7 +10577,7 @@ HGB protects creditors, IFRS serves investors, VUK is Turkish tax law and TFRS i
 - HGB vs IFRS - how do parallel ledgers answer both?
 - Turkish depreciation keys under VUK: STR, DBL and pro-rata
 
-## 146. Account-based vs costing-based CO-PA
+## 168. Account-based vs costing-based CO-PA
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Account-based margin analysis lives in ACDOCA and always reconciles to the G/L; costing-based CO-PA lives in its own value-field tables and can model more freely but must be reconciled. In S/4HANA the strategic default is account-based; costing-based survives for specific valuation needs.
@@ -9166,7 +10643,7 @@ Account-based = ACDOCA, always reconciled, S/4 default. Costing-based = value fi
 - How will you set up a company code for a new-country rollout?
 - How does the Universal Journal (ACDOCA) change the month-end close?
 
-## 147. Classic FAGL_FCV vs Advanced FINS_FXV
+## 169. Classic FAGL_FCV vs Advanced FINS_FXV
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Classic FCV (FAGL_FCV) values into a balance-sheet adjustment account and normally reverses next period; Advanced FCV (FINS_FXV) posts only the delta directly onto the account being valued — no adjustment account, no routine reversal. It is a different closing architecture, not a new transaction code: once Advanced Valuation is activated for a scope, classic valuation must not be used there.
@@ -9255,7 +10732,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 148. What is OMS and integration with SAP?
+## 170. What is OMS and integration with SAP?
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -9317,7 +10794,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 149. Explain Copa — the key SAP FICO content, configuration and numbers I should know from this resource
+## 171. Explain Copa — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** CO-PA answers which customer, product, country or channel makes money. KE24 shows lines only because the profitability set-up exists: operating concern (KEA0) plus assignment to the controlling area (KEKK) plus activation (KEKE, status 4 = both types). Billing then writes a CO-PA document; KE24 only reads it, and KEBD picks the view. KE4I and KE4M turn SD conditions into costing-based value fields; account-based needs no mapping because the G/L account is the value.
@@ -9402,7 +10879,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 150. Explain Mm fi integration — the key SAP FICO content, configuration and numbers I should know from this resource
+## 172. Explain Mm fi integration — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -9461,7 +10938,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 Reference: offline documents + online knowledge
 
-## 151. Explain Sd fi — the key SAP FICO content, configuration and numbers I should know from this resource
+## 173. Explain Sd fi — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** FI-SD integration is revenue account determination: when SD bills (VF01), FI receives the customer, revenue and tax lines automatically. VKOA is the matrix — application V, condition type KOFI (or KOFK with CO), keyed by chart of accounts, sales organisation, account assignment groups of customer and material, and account key (ERL for revenue, ERS for deductions, MWS for tax). Pricing in the billing document finds the condition values; account determination turns them into the FI posting.
@@ -9541,7 +11018,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 152. Explain COMPLETE_MODULES_SUMMARY.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 174. Explain COMPLETE_MODULES_SUMMARY.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9598,7 +11075,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: COMPLETE_MODULES_SUMMARY.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 153. Explain CONTRIBUTING.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 175. Explain CONTRIBUTING.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9643,7 +11120,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: CONTRIBUTING.md
 
-## 154. Explain DOWNLOAD_GUIDE.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 176. Explain DOWNLOAD_GUIDE.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9688,7 +11165,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: DOWNLOAD_GUIDE.md
 
-## 155. Explain FILE_MANIFEST.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 177. Explain FILE_MANIFEST.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9733,7 +11210,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: FILE_MANIFEST.md
 
-## 156. Explain FRAMEWORK.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 178. Explain FRAMEWORK.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9778,7 +11255,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: FRAMEWORK.md
 
-## 157. Explain GITHUB_UPLOAD_GUIDE.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 179. Explain GITHUB_UPLOAD_GUIDE.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9824,7 +11301,7 @@ The retrieved passage contains no configuration t-code, so it cannot substantiat
 
 Sources: DOWNLOAD_GUIDE.md, ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf
 
-## 158. Explain README.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 180. Explain README.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9869,7 +11346,7 @@ Project Structure — ap-trench-skill/ # Knowledge skill — SAP field troublesh
 
 Sources: README.md, README.zh-CN.md
 
-## 159. Explain SKILL.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 181. Explain SKILL.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9914,7 +11391,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: SKILL.md
 
-## 160. Explain evals/evals.json — the key SAP FICO content, configuration and numbers I should know from this resource
+## 182. Explain evals/evals.json — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -9961,7 +11438,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: evals/evals.json
 
-## 161. Explain push-to-github.sh — the key SAP FICO content, configuration and numbers I should know from this resource
+## 183. Explain push-to-github.sh — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10007,7 +11484,7 @@ The retrieved passage contains no configuration t-code, so it cannot substantiat
 
 Sources: push-to-github.sh, ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf
 
-## 162. Explain references/MODULE_REFERENCE_INDEX.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 184. Explain references/MODULE_REFERENCE_INDEX.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10064,7 +11541,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/MODULE_REFERENCE_INDEX.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 163. Explain references/co-modules/co-io-internal-orders.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 185. Explain references/co-modules/co-io-internal-orders.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10109,7 +11586,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/co-modules/co-io-internal-orders.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 164. Explain references/co-modules/co-om-cost-centers.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 186. Explain references/co-modules/co-om-cost-centers.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10154,7 +11631,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/co-modules/co-om-cost-centers.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 165. Explain references/co-modules/co-pa-profitability-analysis.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 187. Explain references/co-modules/co-pa-profitability-analysis.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** CO-PA answers which customer, product, country or channel makes money. KE24 shows lines only because the profitability set-up exists: operating concern (KEA0) plus assignment to the controlling area (KEKK) plus activation (KEKE, status 4 = both types). Billing then writes a CO-PA document; KE24 only reads it, and KEBD picks the view. KE4I and KE4M turn SD conditions into costing-based value fields; account-based needs no mapping because the G/L account is the value.
@@ -10243,7 +11720,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 166. Explain references/co-modules/co-pc-product-costing.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 188. Explain references/co-modules/co-pc-product-costing.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10288,7 +11765,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/co-modules/co-pc-product-costing.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 167. Explain references/co-modules/co-pca-profit-centers.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 189. Explain references/co-modules/co-pca-profit-centers.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10333,7 +11810,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/co-modules/co-pca-profit-centers.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 168. Explain references/fi-modules/fi-aa-asset-accounting.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 190. Explain references/fi-modules/fi-aa-asset-accounting.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Asset Accounting end to end: a business transaction (PO, invoice, retirement) hits the asset master (AS01), posts into the General Ledger (ACDOCA), is valued per ledger (0L IFRS, L1 HGB, L2 VUK, L3 TFRS), and reports in F.01/F.07 per ledger up to Group Consolidation. The same transaction gives different results under HGB, IFRS and Turkish rules: asset class plus transaction type plus account modifier derives the G/L account in AO90, the G/L comes from the operating chart of accounts, and in FS00 almost all asset master G/Ls (APC, accumulated depreciation, special reserve) are balance sheet accounts; the P&L exceptions are depreciation expense, impairment loss, gain/loss on sale, retirement loss and scrap loss.
@@ -10423,7 +11900,7 @@ Reference: offline documents + online knowledge
 Reference: offline documents + online knowledge
 ⚠️ Any project-specific design value marked To Be Confirmed remains provisional; validate it against the signed-off blueprint/configuration workbook.
 
-## 169. Explain references/fi-modules/fi-ap-accounts-payable.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 191. Explain references/fi-modules/fi-ap-accounts-payable.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** F-53 records one manual vendor payment and clears the selected invoice in the same document. F-44 moves no money; it clears vendor open items against each other. F110 is the controlled automatic payment run used for normal supplier payments.
@@ -10504,7 +11981,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 170. Explain references/fi-modules/fi-ar-accounts-receivable.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 192. Explain references/fi-modules/fi-ar-accounts-receivable.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** Order-to-cash becomes finance at billing: the sales document prices the sale, VKOA determines revenue, discount and tax accounts, the customer open item is created, and incoming payment or clearing closes it.
@@ -10584,7 +12061,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 171. Explain references/fi-modules/fi-bl-bank-accounting.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 193. Explain references/fi-modules/fi-bl-bank-accounting.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10629,7 +12106,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/fi-modules/fi-bl-bank-accounting.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 172. Explain references/fi-modules/fi-gl-general-ledger.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 194. Explain references/fi-modules/fi-gl-general-ledger.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** A ledger is a complete set of books for one accounting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
@@ -10700,7 +12177,7 @@ Reference: offline documents + online knowledge
 
 Reference: offline documents + online knowledge
 
-## 173. Explain references/fi-modules/fi-tr-treasury.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 195. Explain references/fi-modules/fi-tr-treasury.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
@@ -10745,7 +12222,7 @@ No debit/credit line is present in the retrieved excerpt. Do not fabricate an en
 
 Sources: references/fi-modules/fi-tr-treasury.md, references/fi-modules/fi-gl-general-ledger.md
 
-## 174. Explain references/integrations/external-banking-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 196. Explain references/integrations/external-banking-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -10804,7 +12281,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 Reference: offline documents + online knowledge
 
-## 175. Explain references/integrations/external-tax-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 197. Explain references/integrations/external-tax-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -10867,7 +12344,7 @@ Reference: offline documents + online knowledge
 - Net = Gross / (1 + Tax rate)
 - Tax amount = Net amount x Tax rate
 
-## 176. Explain references/integrations/external-treasury-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 198. Explain references/integrations/external-treasury-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -10926,7 +12403,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 Reference: offline documents + online knowledge
 
-## 177. Explain references/integrations/hr-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 199. Explain references/integrations/hr-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
@@ -10985,7 +12462,7 @@ VA01 order → VL02N PGI → VF01 billing → F-28 receipt
 
 Reference: offline documents + online knowledge
 
-## 178. Explain references/integrations/mm-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
+## 200. Explain references/integrations/mm-fi-integration.md — the key SAP FICO content, configuration and numbers I should know from this resource
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 “I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
