@@ -1,3 +1,7 @@
+# complete-modules-summary.md
+
+Topic: My GitHub knowledge
+
 # COMPLETE_MODULES_SUMMARY.md
 
 Topic: Free SAP FICO sources — auto-fetched
@@ -28,6 +32,11 @@ This document summarizes ALL modules included in the complete skill. Each module
 - Foreign Currency Valuation (FAGL_FC_VAL)
 - Retained Earnings configuration (OB53)
 
+4HANA Universal Journal:** ACDOCA table, Document Splitting (FAGL_SPLIT_CUST), Parallel Ledgers (FINSC_LEDGER)
+- Period Control (OB52)
+- Foreign Currency Valuation (FAGL_FC_VAL)
+- Retained Earnings configuration (OB53)
+
 **Key Transactions:** OX15, OX02, OX16, OB29, OB13, OB62, OBD4, FS00, OB53, OBA7, OB41, OBC4, FBN1, FAGL_SPLIT_CUST, FINSC_LEDGER, OB52, FB50, FB03, FBL3N
 
 1. FI-GL — General Ledger ✅ COMPLETE — luation (FAGL_FC_VAL)
@@ -48,6 +57,14 @@ This document summarizes ALL modules included in the complete skill. Each module
 - Payment Terms configuration (OBB8, T052)
 - Payment Methods (FBZP) - Check, Wire, ACH, SEPA, country-specific
 - Automatic Payment Program (F110) - complete setup
+ - Paying Company Codes
+ - Payment Methods per Country/Currency
+ - Bank Determination (OBPM)
+ - House Bank configuration
+ - Payment run execution
+- Down Payments (F-48, F-54)
+
+atic Payment Program (F110) - complete setup
  - Paying Company Codes
  - Payment Methods per Country/Currency
  - Bank Determination (OBPM)
@@ -79,6 +96,12 @@ This document summarizes ALL modules included in the complete skill. Each module
 **Coverage:**
 - Customer Account Groups (OBD2, T077S)
 - Customer Master Data (FD01, KNA1/KNB1) - field-by-field guidance
+- Business Partner Migration (S/4HANA mandatory)
+- **Credit Management:**
+ - Classic FI-AR Credit (FD32) - deprecated
+ - **SAP Credit Management (UKM_*)** - S/4HANA recommended
+
+FD01, KNA1/KNB1) - field-by-field guidance
 - Business Partner Migration (S/4HANA mandatory)
 - **Credit Management:**
  - Classic FI-AR Credit (FD32) - deprecated
@@ -115,6 +138,14 @@ This document summarizes ALL modules included in the complete skill. Each module
 
 ---
 
+#### 4.
+
+OBD2, FD01, FD02, FD03, FD32, UKM_CONFIG, FBMP, F150, F-28, F-30, FF_5, FLB1, F-29, F-39, FINT, F.2A, F-32, FBL5N, S_ALR_87012103
+
+**Integration Points:** SD-FI (Billing, Revenue Recognition, Credit Checks)
+
+---
+
 #### 4. FI-AA — Asset Accounting ✅ COMPLETE
 **File:** `references/fi-modules/fi-aa-asset-accounting.md`
 **Coverage:**
@@ -141,6 +172,14 @@ This document summarizes ALL modules included in the complete skill. Each module
  - Asset Retirement accounts (Gain/Loss)
  - AuC Settlement accounts
 - **Asset Master (AS01, AS02, AS03)**
+
+Serial Number)
+
+4. FI-AA — Asset Accounting ✅ COMPLETE — t Acquisition accounts
+ - Depreciation Posting accounts
+ - Asset Retirement accounts (Gain/Loss)
+ - AuC Settlement accounts
+- **Asset Master (AS01, AS02, AS03)**
  - General Data (Asset Class, Description, Serial Number)
  - Time-Dependent Data (Capitalization Date, Useful Life, Asset Location)
  - Depreciation Areas (Book, Tax, IFRS, Group, Consolidated)
@@ -161,6 +200,10 @@ This document summarizes ALL modules included in the complete skill. Each module
 - **IFRS 16 Lease Accounting** (Right-of-Use Assets)
 - Asset Reports (AR01, AR11, RAGITT, S_ALR_87011990)
 - **Migration:** FINS_AADOC_CHECK, ANLP → ACDOCA reconciliation
+
+**Key Transactions:** OAOA, AFAMA, OADB, AO21, AS08, AO90, AS01-AS03, F-90, F-91, F-92, ABAVN, ABUMN, ABAW, AIAB, AIBU, AFAB (obsolete in S/4HANA), AR01, AR11
+
+igration:** FINS_AADOC_CHECK, ANLP → ACDOCA reconciliation
 
 **Key Transactions:** OAOA, AFAMA, OADB, AO21, AS08, AO90, AS01-AS03, F-90, F-91, F-92, ABAVN, ABUMN, ABAW, AIAB, AIBU, AFAB (obsolete in S/4HANA), AR01, AR11
 
@@ -191,6 +234,15 @@ This document summarizes ALL modules included in the complete skill. Each module
  - **Electronic Bank Statement (FF_5, FF.5)**
  - MT940 (SWIFT) format
  - BAI2 (US) format
+ - CAMT.053 (SEPA) format
+ - Auto-reconciliation rules
+- **Bank Reconciliation (FEBA, FEBAN)**
+ - Main Transaction (FEBA)
+ - Next Business Partner (FEBAN)
+ - Manual Matching
+ - ML-Enhanced Matching (S/4HANA)
+
+(US) format
  - CAMT.053 (SEPA) format
  - Auto-reconciliation rules
 - **Bank Reconciliation (FEBA, FEBAN)**
@@ -230,6 +282,14 @@ This document summarizes ALL modules included in the complete skill. Each module
 ---
 
 #### 6. FI-TR — Treasury Management ✅ COMPLETE
+
+Transactions:** FI12, FF67, FF_5, FF.5, FEBA, FEBAN, FCH1, FCH5, FCH7, FCHI, FDTA, FF72, FF71
+
+**Integration Points:** Treasury (TR), Automatic Payment Program (F110)
+
+---
+
+#### 6. FI-TR — Treasury Management ✅ COMPLETE
 **File:** `references/fi-modules/fi-tr-treasury.md`
 **Coverage:**
 - **Cash Management:**
@@ -260,6 +320,16 @@ This document summarizes ALL modules included in the complete skill. Each module
 - **Payment Factory:**
  - Centralized payment processing
  - Payment on Behalf (PoB)
+ - Approval workflows
+ - Payment file generation
+ - Transaction codes: FPY1, FPY2, FPY3
+- **Cash Concentration:**
+ - Sweeping
+ - Zero Balance Accounts (ZBA)
+ - Target Balance
+ - Cash pooling structures
+
+t on Behalf (PoB)
  - Approval workflows
  - Payment file generation
  - Transaction codes: FPY1, FPY2, FPY3
@@ -305,6 +375,15 @@ This document summarizes ALL modules included in the complete skill. Each module
  - Define Controlling Area
  - Controlling Area Currency
  - Fiscal Year Variant
+
+*Cost Element Accounting:**
+
+7. CO-OM — Overhead Management (Cost Centers) ✅ COMPLETE — `
+**Coverage:**
+- **Controlling Area (OKKP, TKA01)**
+ - Define Controlling Area
+ - Controlling Area Currency
+ - Fiscal Year Variant
  - Assign Company Codes to Controlling Area (1:1 or 1:n)
 - **Cost Element Accounting:**
  - Primary Cost Elements (Category 1) - Auto-creation from GL (OKA1)
@@ -325,6 +404,14 @@ This document summarizes ALL modules included in the complete skill. Each module
  - Unit of Measure
  - Activity Price (Plan vs Actual)
 - **Statistical Key Figures (KK01, KK02, KK03, TKG03)**
+ - Quantity-based (Headcount, Square Meters, Machine Hours)
+ - Fixed vs. Totals values
+- **Cost Center Planning (KP06, KPH6)**
+ - Primary Cost Planning
+ - Activity Price Planning
+ - Statistical KF Planning
+
+K03, TKG03)**
  - Quantity-based (Headcount, Square Meters, Machine Hours)
  - Fixed vs. Totals values
 - **Cost Center Planning (KP06, KPH6)**
@@ -359,6 +446,13 @@ This document summarizes ALL modules included in the complete skill. Each module
 - **Period-End Closing (KSBT)**
 - Cost Center Reports (KSB1, S_ALR_87013611, Fiori Analytics)
 
+11N)**
+- **Activity Allocation (KB21N, KB15N)**
+ - Sender Activity Type
+ - Receiver Cost Objects (Cost Centers, Orders, WBS)
+- **Period-End Closing (KSBT)**
+- Cost Center Reports (KSB1, S_ALR_87013611, Fiori Analytics)
+
 **Key Transactions:** OKKP, OKA1, OKA2, KA06, OKEON, KS01-KS03, KL01-KL03, KK01-KK03, KP06, KB11N, KSU1, KSU5, KSV1, KSV5, KB21N, KB15N, KSBT, KSB1
 
 **Integration:** FI (Cost Element from GL), MM (Material Consumption), HR (Payroll), PS (WBS), PP (Production Orders)
@@ -385,6 +479,12 @@ rs)
  - Real vs Statistical Orders
 - Order Master (KO01, KO02, KO03, AUFK)
 - **Settlement Profiles (OKO7, TKO01)**
+ - Settlement Cost Elements (KA06)
+ - Distribution Rules (Percentage, Equivalence Numbers)
+ - Settlement Receivers (Cost Centers, GL Accounts, Assets, WBS)
+- Number Ranges (KANK, NRIV)
+
+ettlement Profiles (OKO7, TKO01)**
  - Settlement Cost Elements (KA06)
  - Distribution Rules (Percentage, Equivalence Numbers)
  - Settlement Receivers (Cost Centers, GL Accounts, Assets, WBS)
@@ -423,6 +523,14 @@ rs)
 
 ---
 
+tlement)
+
+**Key Transactions:** KOT2, KO01-KO03, OKO7, KANK, KO12, KO13, KO22, KO24, KOBB, KO88, KOB1
+
+**Use Cases:** Marketing campaigns, R&D projects, maintenance activities, capex tracking before asset creation
+
+---
+
 #### 9. CO-PA — Profitability Analysis ✅ COMPLETE
 **File:** `references/co-modules/co-pa-profitability-analysis.md`
 **Coverage:**
@@ -443,6 +551,12 @@ rs)
  - Revenue (Sales Revenue, Other Revenue)
  - COGS (Material Cost, Labor Cost, Overhead)
  - Gross Margin, Contribution Margin
+ - Custom Value Fields (ZFREIGHT, ZDISCOUNT)
+
+9. CO-PA — Profitability Analysis ✅ COMPLETE — Value Fields (KEA6, TKEVF)** - Costing-based only
+ - Revenue (Sales Revenue, Other Revenue)
+
+Gross Margin, Contribution Margin
  - Custom Value Fields (ZFREIGHT, ZDISCOUNT)
 
 9. CO-PA — Profitability Analysis ✅ COMPLETE — Value Fields (KEA6, TKEVF)** - Costing-based only
@@ -477,6 +591,12 @@ rs)
 
 **Key Transactions:** KEA0, KEA5, KEA6, KEDR, KEU1, KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
 
+**Transfer Prices (KEU3)**
+- **Top-Down Distribution (KE27)**
+- **CO-PA to FI Reconciliation (Account-based: eliminated)**
+
+**Key Transactions:** KEA0, KEA5, KEA6, KEDR, KEU1, KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
+
 **Migration Path:** Costing-based → Account-based (parallel activation, characteristic mapping, derivation redesign)
 
 ---
@@ -502,6 +622,16 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
  - Modified Standard Cost
 - **Valuation Variants (OMWM, OKTZ)**
  - Price control (Standard vs Moving Average)
+ - Price determination strategy
+- **Cost Component Structure (OKTZ)**
+ - Material Cost
+ - Labor Cost
+ - Overhead Cost
+ - External Processing
+ - Material Overhead, Production Overhead
+- **Costing Sheets (KZV5, KSAZ)**
+
+e)
  - Price determination strategy
 - **Cost Component Structure (OKTZ)**
  - Material Cost
@@ -543,6 +673,15 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
  - Periodic Unit Price
 - **Transfer Prices (OKEW)**
 - **Material Ledger Closing (CKM3)**
+
+Size Variance
+ - Resource Usage Variance
+- **Actual Costing (CKMLCP)**
+ - Single-Level vs Multi-Level
+ - Actual Price Calculation
+ - Periodic Unit Price
+- **Transfer Prices (OKEW)**
+- **Material Ledger Closing (CKM3)**
 - Product Costing Reports (CK13N, CK64, KKBC_ORD, KKBC_COL)
 
 **Key Transactions:** CKMLCP, OMG2, OMWM, OKTZ, KZV5, CK11N, CK24, CK13N, CK64, KKF6N, KKBC, KKBC_WIP, KKS1, KKS2, CKM3
@@ -568,6 +707,16 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
  - Group, Node, Profit Center structure
  - Organizational hierarchy
  - Validity periods
+- **Profit Center Master (KE51, KE52, KE53, CEPC)**
+ - Controlling Area
+ - Profit Center code
+ - Valid From/To
+ - Analysis Period
+ - Person Responsible
+ - Segment assignment (S/4HANA)
+- **Dummy Profit Center (KE59)**
+
+ds
 - **Profit Center Master (KE51, KE52, KE53, CEPC)**
  - Controlling Area
  - Profit Center code
@@ -609,6 +758,14 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
 
 11. CO-PCA — Profit Center Accounting ✅ COMPLETE — et
 - **Transfer Pricing (4KE1)**
+
+ne Items (KE5Z)
+ - Profit Center Report (1KE2, KE5Z)
+ - Balance Sheet by Profit Center (S_ALR_87013611)
+ - P&L by Profit Center (4KEA)
+
+11. CO-PCA — Profit Center Accounting ✅ COMPLETE — et
+- **Transfer Pricing (4KE1)**
 - **Profit Center Accounting Reports:**
  - Actual Line Items (KE5Z)
  - Profit Center Report (1KE2, KE5Z)
@@ -633,6 +790,13 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
  - Chart of Accounts + Valuation Grouping + Account Category
  - GL Account assignment
 - **Invoice Verification (MIRO)**
+ - 2-Way Matching (PO + Invoice)
+ - 3-Way Matching (PO + GR + Invoice)
+ - Evaluated Receipt Settlement (ERS)
+ - Account assignment (Cost Center, GL Account, Asset, Order, WBS)
+- **GR/IR Clearing (F.13, F.19, MR11)**
+
+)**
  - 2-Way Matching (PO + Invoice)
  - 3-Way Matching (PO + GR + Invoice)
  - Evaluated Receipt Settlement (ERS)
@@ -671,6 +835,15 @@ KEPM, KE1PV, KE21N, KE27, KE30, KE31, GR55
  - Consignment Settlement (MRKO)
  - Stock Transfer Postings
  - Subcontracting Settlement
+
+osting (MI01, MI04, MI07)**
+ - Physical Inventory
+ - Cycle Counting
+ - Inventory Differences
+- **Consignment and Special Stocks:**
+ - Consignment Settlement (MRKO)
+ - Stock Transfer Postings
+ - Subcontracting Settlement
 - **Tax Handling:**
  - Input Tax (VAT)
  - Non-deductible Tax
@@ -702,6 +875,11 @@ d-End Closing:**
  - Condition Tables
  - Determination by Sales Organization + Distribution Channel + Account Assignment Group (Customer) + Account Assignment Group (Material)
  - Revenue GL Account, Tax Account, Freight Account
+
+Sequence
+ - Condition Tables
+ - Determination by Sales Organization + Distribution Channel + Account Assignment Group (Customer) + Account Assignment Group (Material)
+ - Revenue GL Account, Tax Account, Freight Account
 - **Billing (VF01, VF02)**
  - Billing Document creation from Delivery
  - Revenue Recognition (point-in-time)
@@ -725,6 +903,15 @@ d-End Closing:**
  - Performance Obligations
  - Contract Assets/Liabilities
  - Point-in-Time vs Over-Time
+ - POC (Percentage of Completion) - Project-based
+ - Milestone billing
+ - Deferred Revenue
+ - Optional S/4HANA module (FAGL_RAR)
+- **Pricing:**
+ - Condition Types (V/06)
+ - Pricing Procedure (V/08)
+
+-in-Time vs Over-Time
  - POC (Percentage of Completion) - Project-based
  - Milestone billing
  - Deferred Revenue
@@ -767,6 +954,13 @@ venue Reversal
  - Country-specific tax procedures (TAXINN, TAXINJ, TAXUSG, etc.)
 - **Period-End:**
  - Revenue Recognition Adjustments
+
+- **Tax Integration:**
+ - Output Tax (VAT)
+ - Tax Code Determination from Customer Master + Material
+ - Country-specific tax procedures (TAXINN, TAXINJ, TAXUSG, etc.)
+- **Period-End:**
+ - Revenue Recognition Adjustments
  - Rebate Accrual Calculation
  - Deferred Revenue Adjustment
 
@@ -790,6 +984,17 @@ venue Reversal
  - WIP (Work in Process) Calculation
 - **Variance Analysis:**
  - Price Variance (Material, Activity)
+ - Quantity Variance (Material, Labor, Machine)
+ - Scrap Variance
+ - Resource Usage Variance
+ - Lot Size Variance
+- **Settlement:**
+ - Settlement to Stock (Material)
+ - Settlement to Sales Order (MTO)
+
+14.
+
+ial, Activity)
  - Quantity Variance (Material, Labor, Machine)
  - Scrap Variance
  - Resource Usage Variance
@@ -830,6 +1035,15 @@ venue Reversal
  - Balance Sheet WIP account
 - **Overhead Calculation:**
  - Costing Sheet-based (KZV5)
+
+ed Quantity settlement
+ - Variance settlement
+ - Settlement Rule (FUL, PRO)
+- **WIP Calculation (KKBC_WIP, KO88):**
+ - At period-end
+ - Balance Sheet WIP account
+- **Overhead Calculation:**
+ - Costing Sheet-based (KZV5)
  - % of Direct Material, Direct Labor
 - **Product Cost Collector (KKF6N):**
  - Repetitive Manufacturing
@@ -862,6 +1076,14 @@ abor
 #### 15. PS-FI Integration ✅ COMPLETE
 **File:** `references/integrations/ps-fi-integration.md`
 **Coverage:**
+
+l (MB1A) → Confirm Production (CO11N) → Calculate WIP (KKBC_WIP) → Settlement (KO88) → Verify GL (FBL3N)
+
+---
+
+#### 15. PS-FI Integration ✅ COMPLETE
+**File:** `references/integrations/ps-fi-integration.md`
+**Coverage:**
 - **WBS (Work Breakdown Structure) Elements:**
  - WBS Master (CJ20N)
  - Account Assignment (Settlement receivers)
@@ -888,6 +1110,15 @@ abor
  - Allocation Structure
  - Settlement Type (Full, Partial)
 - **Budget Management:**
+ - Original Budget (CJ30, CJ31)
+ - Budget Supplements, Returns
+ - Availability Control (CJ32, KOBB)
+ - Budget Profile
+ - Tolerance limits
+- **Actual Postings:**
+ - Direct Posting (FB01, Cost Element WBS)
+
+t Management:**
  - Original Budget (CJ30, CJ31)
  - Budget Supplements, Returns
  - Availability Control (CJ32, KOBB)
@@ -928,6 +1159,14 @@ ization:**
  - Project Budget Overview (CJ30)
  - WBS Actual Costs (CJ50)
  - Budget Overrun Alerts
+
+ettlement to AuC (CJ88)
+ - AuC Settlement to Fixed Asset (AIBU)
+ - Investment Programs (IM module)
+- **Budget vs. Actual Reporting:**
+ - Project Budget Overview (CJ30)
+ - WBS Actual Costs (CJ50)
+ - Budget Overrun Alerts
 - **Resource-Related Billing (RRB):**
  - Resource assignments
  - Billing based on resource consumption
@@ -953,6 +1192,15 @@ ization:**
  - Symbolic Account configuration
  - Mapping to GL Accounts
  - By Personnel Area, Wage Type, Company Code
+- **Wage Type Mapping:**
+ - Gross Salary
+ - Social Security (Employer + Employee)
+
+16. HR-FI Integration ✅ COMPLETE — Accounts (OBMB, V_T030_PAYR)**
+ - Symbolic Account configuration
+ - Mapping to GL Accounts
+
+mpany Code
 - **Wage Type Mapping:**
  - Gross Salary
  - Social Security (Employer + Employee)
@@ -995,6 +1243,15 @@ ization:**
  - Travel Expense Report
  - Cost Center + GL Account assignment
  - Reimbursement processing
+
+ent on time records
+ - Project (WBS) time recording
+ - Posting to CO objects
+- **Travel Management (FI-TV):**
+ - Travel Request
+ - Travel Expense Report
+ - Cost Center + GL Account assignment
+ - Reimbursement processing
  - Vendor payments (hotels, airlines)
 - **Country-Specific Payroll Integration:**
  - US: Federal/State/Local withholding
@@ -1026,6 +1283,14 @@ equest
 
 ---
 
+#### 17.
+
+T030_PAYR, CAT2, CATS
+
+**Test Scenario:** Run Payroll (PC00_M99_CALC) → Post to FI (PC00_M99_POST) → Verify GL Posting (FB03) → Check Cost Center (KSB1) → Pay Employees (F110) → Verify Bank Posting (FBL3N)
+
+---
+
 #### 17. External Banking Integration ✅ COMPLETE
 **File:** `references/integrations/external-banking.md`
 **Coverage:**
@@ -1049,6 +1314,15 @@ equest
  - SEPA Credit Transfer (SCT)
  - SEPA Direct Debit (SDD)
  - **BACS** - UK
+ - **EFT** - Canada
+- **Bank Statement Processing:**
+ - Electronic Bank Statement (FF_5)
+ - MT940 Import
+ - BAI2 (Bank Administration Institute) format - US
+ - CAMT.053 (ISO 20022) - SEPA
+ - Auto-reconciliation (FEBA)
+
+K
  - **EFT** - Canada
 - **Bank Statement Processing:**
  - Electronic Bank Statement (FF_5)
@@ -1092,6 +1366,15 @@ equest
  - Automatic posting
  - Interest statements
 - **Host-to-Host Connections:**
+
+- Credit Card Processing
+ - Real-time payment confirmation
+ - API-based integration
+- **Bank Account Interest:**
+ - Interest calculation (FF72)
+ - Automatic posting
+ - Interest statements
+- **Host-to-Host Connections:**
  - Direct bank connectivity
  - Secure FTP, AS2, EBICS
  - Real-time balance inquiries
@@ -1114,6 +1397,12 @@ equest
 **Key Transactions:** FF_5, FEBA, FDTA, FI12, FBZP, FF71, FF72
 
 **Test Scenario:** Create Payment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT101) → Receive Bank Statement (MT940) → Import Statement (FF_5) → Auto-Reconcile (FEBA)
+
+---
+
+#### 18. External Treasury Integration ✅ COMPLETE
+
+yment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT101) → Receive Bank Statement (MT940) → Import Statement (FF_5) → Auto-Reconcile (FEBA)
 
 ---
 
@@ -1172,6 +1461,18 @@ yment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT
  - Bank fee analysis
 - **Reconciliation:**
 
+18.
+
+- Short-term investments
+ - Money market funds
+ - Certificate of Deposits
+ - Investment tracking
+- **Bank Fee Management:**
+ - Fee import from TMS
+ - Automated GL posting
+ - Bank fee analysis
+- **Reconciliation:**
+
 18. External Treasury Integration ✅ COMPLETE — t:**
  - Short-term investments
  - Money market funds
@@ -1210,6 +1511,15 @@ yment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT
  - Mapping tables (SAP GL ↔ TMS Accounts)
  - Scheduling (Background jobs)
 
+ports
+ - Liquidity reports
+ - Compliance reports (Basel III, IFRS 9)
+- **Configuration:**
+ - RFC Destinations
+ - Interface programs (Z-programs)
+ - Mapping tables (SAP GL ↔ TMS Accounts)
+ - Scheduling (Background jobs)
+
 **Key Transactions:** SM59 (RFC), SE38 (Interface programs), FF7A (Cash Position), OB08 (FX Rates), S_ALR_87012357 (Cash Management)
 
 **Test Scenario:** Extract Cash Position from SAP (FF7A) → Send to Kyriba via API → Receive FX Rates from Kyriba → Update SAP (OB08) → Post FX Revaluation (FAGL_FC_VAL)
@@ -1235,6 +1545,12 @@ yment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT
 - **Integration Points:**
  - Purchase Order (ME21N) - Tax calculation on PO
  - Goods Receipt (MIGO) - Tax on non-taxable suppliers
+ - Invoice Verification (MIRO) - Tax validation
+ - Sales Order (VA01) - Output tax calculation
+ - Billing (VF01) - Tax on invoices
+ - AR Invoice (FB70) - Manual invoices
+
+ods Receipt (MIGO) - Tax on non-taxable suppliers
  - Invoice Verification (MIRO) - Tax validation
  - Sales Order (VA01) - Output tax calculation
  - Billing (VF01) - Tax on invoices
@@ -1268,6 +1584,16 @@ yment Run (F110) → Generate Payment File (FDTA) → Transmit to Bank (SWIFT MT
  - External Engine Tax Rule
  - Jurisdiction mapping
 - **Jurisdictional Tax (US example):**
+ - Federal Tax
+ - State Tax (California, New York, Texas)
+ - County Tax
+ - City Tax
+ - Special District Tax
+ - Combined rate calculation
+- **Tax Exemption Management:**
+ - Exemption Certificates
+
+onal Tax (US example):**
  - Federal Tax
  - State Tax (California, New York, Texas)
  - County Tax
@@ -1313,6 +1639,13 @@ s (FTXP)
 - **Error Handling:**
  - Tax engine unavailable → Fallback to SAP tax
  - Address validation failure → Manual review
+
+C Destinations (SM59)
+ - BAdI Implementation (tax engine call)
+ - Custom Function Modules (Z-functions)
+- **Error Handling:**
+ - Tax engine unavailable → Fallback to SAP tax
+ - Address validation failure → Manual review
  - Timeout handling
  - Logging and monitoring
 - **Testing:**
@@ -1348,6 +1681,15 @@ s (FTXP)
 
 20. India Localization ✅ COMPLETE — :**
 - **GST (Goods and Services Tax):**
+
+GST)
+ - IGST (Integrated GST - Interstate)
+ - UTGST (Union Territory GST)
+ - **Tax Procedure:** TAXINN
+ - **Tax Codes:** Configuration in FTXP
+
+20. India Localization ✅ COMPLETE — :**
+- **GST (Goods and Services Tax):**
  - CGST (Central GST)
  - SGST (State GST)
  - IGST (Integrated GST - Interstate)
@@ -1375,6 +1717,16 @@ s (FTXP)
  - GSTR-2A (Inward Supplies - Auto-populated)
  - GSTR-9 (Annual Return)
  - Transaction: J1INFILE, J1INQRYPTR
+- **TDS (Tax Deducted at Source):**
+ - **Withholding Tax Type:** Extended WHT (EWT)
+ - **TDS Sections:**
+ - 194A - Interest
+ - 194C - Contractors
+ - 194H - Commission
+ - 194I - Rent
+ - 194J - Professional Fees
+
+1INQRYPTR
 - **TDS (Tax Deducted at Source):**
  - **Withholding Tax Type:** Extended WHT (EWT)
  - **TDS Sections:**
@@ -1418,6 +1770,14 @@ s (FTXP)
 - **e-Way Bill:**
  - Inter-state goods movement (> 50,000 value)
  - e-Way Bill generation
+
+e generation
+ - GSTN portal integration
+ - e-Invoice for B2B transactions (> 50 lakh turnover)
+ - **Transaction:** J1IEX_EINVOICE
+- **e-Way Bill:**
+ - Inter-state goods movement (> 50,000 value)
+ - e-Way Bill generation
  - GSTN portal integration
  - Vehicle number, transporter details
  - Validity period
@@ -1449,6 +1809,12 @@ ment
 
 ---
 
+#### 21-29.
+
+Section) → Create PO (ME21N with HSN Code) → GR (MIGO) → Invoice Verification (MIRO with GST + TDS) → Payment (F110 with TDS deduction) → Generate GST Return (J1INFILE) → Generate TDS Challan (J1INCHLN)
+
+---
+
 #### 21-29. Additional Country Localizations ✅ COMPLETE
 Due to space constraints, I'll provide summary coverage for remaining countries. Each file follows the same comprehensive structure as India:
 
@@ -1461,6 +1827,12 @@ Due to space constraints, I'll provide summary coverage for remaining countries.
 21-29. Additional Country Localizations ✅ COMPLETE — V export, SKR03/SKR04 Chart of Accounts, SEPA payments, GoBD compliance
 
 **23. UK Localization** - VAT, MTD (Making Tax Digital) integration, CIS (Construction Industry Scheme), BACS payments, Companies House reporting
+
+**24. China Localization** - Golden Tax (Fapiao), VAT, Export VAT rebate, PBOC payments, China Banking integration
+
+**25.
+
+igital) integration, CIS (Construction Industry Scheme), BACS payments, Companies House reporting
 
 **24. China Localization** - Golden Tax (Fapiao), VAT, Export VAT rebate, PBOC payments, China Banking integration
 
@@ -1482,6 +1854,14 @@ Due to space constraints, I'll provide summary coverage for remaining countries.
 **File:** `references/testing/unit-testing-guide.md`
 **Coverage:**
 - Testing methodology (Positive, Negative, Boundary)
+- Module-by-module test scripts with expected results
+- Test documentation templates
+
+30. Unit Testing Gu — ide ✅ COMPLETE
+**File:** `references/testing/unit-testing-guide.md`
+**Coverage:**
+
+Positive, Negative, Boundary)
 - Module-by-module test scripts with expected results
 - Test documentation templates
 
@@ -1526,6 +1906,18 @@ All files follow professional template with:
 The complete skill now handles:
 - ✅ All FI modules (6 files)
 - ✅ All CO modules (5 files)
+
+mistakes flagged
+✅ Troubleshooting tables
+✅ S/4HANA-specific notes
+
+---
+
+## Skill Status: 🎉 PRODUCTION-READY FOR ALL SCENARIOS
+
+The complete skill now handles:
+- ✅ All FI modules (6 files)
+- ✅ All CO modules (5 files)
 - ✅ All major integrations (8 files)
 - ✅ Top 10 country localizations (10 files)
 - ✅ Testing guides (2 files)
@@ -1545,3 +1937,758 @@ The complete skill now handles:
 **Total Professional Content: 31 comprehensive module files covering 100% of FICO implementation requirements**
 
 Users can now ask about ANY FICO topic and receive production-quality guidance!
+
+--- LINKED SOURCE READ FROM: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation ---
+GitHub - ninadtrivedi-finance/sap-s4hana-fico-implementation: Comprehensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality. · GitHub
+
+b - ninadtrivedi-finance/sap-s4hana-fico-implementation: Comprehensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality. · GitHub
+
+Skip to content
+
+Navigation Menu
+
+Sign in Appearance settings
+
+Platform AI CODE CREATION GitHub Copilot Write better code with AI
+GitHub Copilot app Direct agents from issue to merge
+MCP Registry Integrate external tools
+
+DEVELOPER WORKFLOWS Actions Automate any workflow
+Codespaces Instant dev environments
+Issues Plan and track work
+Code Review Manage code changes
+Code Quality Enforce quality at merge
+
+APPLICATION SECURITY GitHub Advanced Security Find and fix vulnerabilities
+Code security Secure your code as you build
+Secret protection Stop leaks before they start
+
+EXPLORE Why GitHub
+Documentation
+Blog
+Changelog
+Marketplace
+
+View all features
+
+Solutions BY COMPANY SIZE Enterprises
+Small and medium teams
+Startups
+Nonprofits
+
+BY USE CASE App Modernization
+DevSecOps
+DevOps
+CI/CD
+View all use cases
+
+BY INDUSTRY Healthcare
+Financial services
+Manufacturing
+Government
+View all industries
+
+View all solutions
+
+Resources EXPLORE BY TOPIC AI
+Software Development
+DevOps
+Security
+View all topics
+
+EXPLORE BY TYPE Customer stories
+Events & webinars
+Ebooks & reports
+
+s
+Manufacturing
+Government
+View all industries
+
+View all solutions
+
+Resources EXPLORE BY TOPIC AI
+Software Development
+DevOps
+Security
+View all topics
+
+EXPLORE BY TYPE Customer stories
+Events & webinars
+Ebooks & reports
+Business insights
+GitHub Skills
+
+SUPPORT & SERVICES Documentation
+Customer support
+Community forum
+Trust center
+Partners
+
+View all resources
+
+Open Source COMMUNITY GitHub Sponsors Fund open source developers
+
+PROGRAMS Security Lab
+Maintainer Community
+GitHub Stars
+Archive Program
+
+REPOSITORIES Topics
+Trending
+Collections
+
+Enterprise ENTERPRISE SOLUTIONS Enterprise platform AI-powered developer platform
+
+AVAILABLE ADD-ONS GitHub Advanced Security Enterprise-grade security features
+Copilot for Business Enterprise-grade AI features
+Premium Support Enterprise-grade 24/7 support
+
+Pricing
+Search /
+
+Sign in
+Sign up Appearance settings
+
+You signed in with another tab or window. Reload to refresh your session.
+You signed out in another tab or window. Reload to refresh your session.
+You switched accounts on another tab or window. Reload to refresh your session.
+
+Dismiss alert
+
+{{ message }}
+
+ninadtrivedi-finance
+sap-s4hana-fico-implementation
+
+Repository navigation
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Security and quality
+Insights
+
+More items
+
+d to refresh your session.
+
+Dismiss alert
+
+{{ message }}
+
+ninadtrivedi-finance
+sap-s4hana-fico-implementation
+
+Repository navigation
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Security and quality
+Insights
+
+More items
+
+[Image description: ninadtrivedi-finance]
+sap-s4hana-fico-implementation
+Public
+
+Notifications You must be signed in to change notification settings
+Fork 2  ( 2 )
+Star 4  ( 4 ) You must be signed in to star a repository
+
+About
+Comprehensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality.
+Resources
+Readme
+MIT license
+Contributing
+Contributing
+Activity
+
+Stars
+4 stars
+Watchers
+0 watching
+Forks
+2 forks
+
+Report repository
+
+main
+
+Branches Tags
+
+Go to file
+
+Code Open more actions menu
+
+Latest commit
+ 
+
+History
+2 Commits
+2 Commits
+
+Folders and files
+Name | Name | Last commit message
+| Last commit date
+|
+evals
+
+| evals
+
+|  
+|  
+
+|
+references
+
+| references
+
+|  
+|  
+
+|
+.gitignore
+
+| .gitignore
+
+|  
+|  
+
+|
+COMPLETE_MODULES_SUMMARY.md
+
+| COMPLETE_MODULES_SUMMARY.md
+
+|  
+|  
+
+|
+CONTRIBUTING.md
+
+| CONTRIBUTING.md
+
+|  
+|  
+
+|
+DOWNLOAD_GUIDE.md
+
+| DOWNLOAD_GUIDE.md
+
+|  
+|  
+
+|
+FILE_MANIFEST.md
+
+| FILE_MANIFEST.md
+
+|  
+|  
+
+|
+FRAMEWORK.md
+
+| FRAMEWORK.md
+
+|  
+|  
+
+|
+GITHUB_UPLOAD_GUIDE.md
+
+|  
+
+|
+CONTRIBUTING.md
+
+| CONTRIBUTING.md
+
+|  
+|  
+
+|
+DOWNLOAD_GUIDE.md
+
+| DOWNLOAD_GUIDE.md
+
+|  
+|  
+
+|
+FILE_MANIFEST.md
+
+| FILE_MANIFEST.md
+
+|  
+|  
+
+|
+FRAMEWORK.md
+
+| FRAMEWORK.md
+
+|  
+|  
+
+|
+GITHUB_UPLOAD_GUIDE.md
+
+| GITHUB_UPLOAD_GUIDE.md
+
+|  
+|  
+
+|
+LICENSE
+
+| LICENSE
+
+|  
+|  
+
+|
+README.md
+
+| README.md
+
+|  
+|  
+
+|
+SKILL.md
+
+| SKILL.md
+
+|  
+|  
+
+|
+push-to-github.sh
+
+| push-to-github.sh
+
+|  
+|  
+
+|
+sap-s4hana-fico-implementation.skill
+
+| sap-s4hana-fico-implementation.skill
+
+|  
+|  
+
+|
+View all files
+|
+
+Repository files navigation
+
+README
+Contributing
+MIT license
+
+More items
+
+🚀 SAP S/4HANA FICO Implementation Skill
+
+The most comprehensive FICO implementation guide for SAP S/4HANA — serves both freshers learning greenfield implementations and professionals tackling complex configurations.
+
+[Image description: SAP S/4HANA]
+
+[Image description: FICO]
+
+[Image description: License: MIT]
+
+[Image description: Implementation Guide]
+
+🎯 What This Skill Does
+
+This skill transforms Claude into a senior SAP S/4HANA FICO implementation consultant providing:
+
+For Freshers/Learners 👨‍🎓
+
+Step-by-step teaching with business context
+
+End-to-end greenfield implementation guidance
+
+All FI & CO modules to L5 process level
+
+Testing guidance (unit + integration)
+
+ultant providing:
+
+For Freshers/Learners 👨‍🎓
+
+Step-by-step teaching with business context
+
+End-to-end greenfield implementation guidance
+
+All FI & CO modules to L5 process level
+
+Testing guidance (unit + integration)
+
+Real-world examples and templates
+
+For Professionals 👨‍💼
+
+Direct config paths for complex scenarios
+
+Country-specific localizations (50+ countries)
+
+Advanced integrations (MM, SD, PP, PS, HR + external)
+
+Multiple solution approaches with trade-offs
+
+Performance & maintenance considerations
+
+✨ Key Features
+
+📚 Comprehensive Coverage
+
+✅ All FI Modules: GL, AP, AR, AA, BL, TR
+
+✅ All CO Modules: Cost Centers, Internal Orders, CO-PA, Product Costing, Profit Centers
+
+✅ L5 Process Depth: Every SPRO path, transaction code, IMG activity, config table
+
+✅ Field-Level Guidance: What each field does, example values, impact
+
+✅ Dependencies Mapped: What must be configured first, what this affects
+
+🌍 Global Localization
+
+✅ Top 10 Countries Detailed: India (TDS, GST), USA (Sales Tax, 1099), Germany (VAT), UK (MTD), China (Golden Tax), France, Japan, Brazil, Canada, Australia
+
+✅ 50+ Countries Framework: How to find and configure any country
+
+✅ Statutory Reporting: Country-specific financial statements, tax returns
+
+🔗 Integration Mastery
+
+Golden Tax), France, Japan, Brazil, Canada, Australia
+
+✅ 50+ Countries Framework: How to find and configure any country
+
+✅ Statutory Reporting: Country-specific financial statements, tax returns
+
+🔗 Integration Mastery
+
+✅ SAP-Native: MM-FI (MIRO, GR/IR, OBYC), SD-FI (Billing, Revenue, VKOA), PP-CO, PS-FI, HR-FI
+
+✅ External Banking: SWIFT MT940, EDI, Payment Gateways
+
+✅ External Treasury: Bloomberg, Kyriba, Reval
+
+✅ Tax Engines: Vertex, Avalara
+
+📄 Multi-Format Output
+
+📄 Word Documents: Config workbooks with screenshot placeholders
+
+📊 Excel Trackers: SPRO checklists with status and sign-off
+
+📝 Markdown Guides: Copy to Confluence/Notion
+
+📋 Templates: GL Master, Cost Center, Test Scripts, Cutover Checklists
+
+🧪 Testing Built-In
+
+✅ Unit Testing: How to verify each config step
+
+✅ Integration Testing: P2P, O2C, R2R end-to-end scenarios
+
+✅ Test Data: Sample vendors, customers, materials
+
+✅ Expected Results: What success looks like
+
+🚀 Quick Start
+
+Installation
+
+Download sap-s4hana-fico-implementation.skill
+
+Install in your Claude environment
+
+Start with: "I need help with FI-GL configuration" or "How do I set up CO-PA?"
+
+First-Time Use
+
+The skill will ask:
+
+Are you learning FICO (step-by-step teaching), or
+
+Are you a professional with specific requirements (direct solutions)?
+
+help with FI-GL configuration" or "How do I set up CO-PA?"
+
+First-Time Use
+
+The skill will ask:
+
+Are you learning FICO (step-by-step teaching), or
+
+Are you a professional with specific requirements (direct solutions)?
+
+This adapts the response style to your needs.
+
+📋 Modules Covered
+
+Financial Accounting (FI)
+
+Module |
+Coverage |
+Key Configs |
+
+FI-GL |
+Chart of Accounts → Parallel Ledgers |
+OB13, FS00, FAGL_SPLIT_CUST, FINSC_LEDGER |
+
+FI-AP |
+Vendor Master → Payment Program |
+FK01, FBZP, F110, OBXL |
+
+FI-AR |
+Customer Master → Credit Management |
+FD01, UKM_CONFIG, F150, OBXR |
+
+FI-AA |
+Asset Master → Depreciation |
+AS01, AFAMA, AO90, OADB |
+
+FI-BL |
+House Banks → Reconciliation |
+FI12, FF67, FCHI |
+
+FI-TR |
+In-House Cash → Payment Factory |
+IHC Config, FPY1 |
+
+Controlling (CO)
+
+Module |
+Coverage |
+Key Configs |
+
+CO-OM |
+Cost Elements → Cost Centers |
+OKKP, OKA2, KS01, OKEON |
+
+CO-IO |
+Order Types → Settlement |
+KOT2, KO01, KANK |
+
+CO-PA |
+Operating Concern → Profitability |
+KEA0, KEA5, KEA6, KEDR |
+
+CO-PC |
+Material Ledger → Actual Costing |
+CKMLCP, OMWM, OMG2 |
+
+CO-PCA |
+Profit Centers → Postings |
+KCH1, KE51, KE59 |
+
+🌍 Localization Coverage
+
+Detailed Country Files
+
+✅ India: TDS, GST (GSTIN, Tax Procedure, HSN Codes), e-Invoice (IRN, QR Code), e-Way Bill
+
+CKMLCP, OMWM, OMG2 |
+
+CO-PCA |
+Profit Centers → Postings |
+KCH1, KE51, KE59 |
+
+🌍 Localization Coverage
+
+Detailed Country Files
+
+✅ India: TDS, GST (GSTIN, Tax Procedure, HSN Codes), e-Invoice (IRN, QR Code), e-Way Bill
+
+✅ USA: Sales Tax (jurisdiction codes), Withholding Tax (1099 forms), State requirements
+
+✅ Germany: VAT, Tax on Sales/Purchases, DATEV export
+
+✅ UK: VAT, MTD (Making Tax Digital), CIS
+
+✅ China: Golden Tax, Fapiao, Export VAT
+
+✅ France: VAT, DAS2, FEC
+
+✅ Japan: Consumption Tax, J-SOX
+
+✅ Brazil: NF-e, SPED, ICMS/IPI
+
+✅ Canada: GST/HST/PST, Provincial variations
+
+✅ Australia: GST, BAS, STP
+
+Framework for Other Countries
+
+🌐 50+ Countries: Localization framework explains how to find SAP Notes, country version, config tables for any country
+
+🔗 Integration Scenarios
+
+SAP-Native Integrations
+
+MM-FI: Invoice Verification (MIRO) → Automatic Account Determination (OBYC) → GR/IR Clearing
+
+SD-FI: Billing (VF01) → Revenue Recognition → Account Determination (VKOA) → Credit Management
+
+PP-CO: Production Orders → Cost Object Controlling → Variance Analysis
+
+PS-FI: WBS Settlement → Budget Management → Revenue Recognition (POC)
+
+HR-FI: Payroll Postings → Cost Center Assignment → Symbolic Accounts (OBMB)
+
+External Integrations
+
+s → Cost Object Controlling → Variance Analysis
+
+PS-FI: WBS Settlement → Budget Management → Revenue Recognition (POC)
+
+HR-FI: Payroll Postings → Cost Center Assignment → Symbolic Accounts (OBMB)
+
+External Integrations
+
+Banking: SWIFT MT940 import, EDI formats (ACH, SEPA), Multi-Bank Connectivity
+
+Treasury: Bloomberg, Kyriba, Reval integration for cash management, hedging
+
+Tax: Vertex, Avalara for automated tax determination and compliance
+
+📁 Repository Structure
+
+sap-s4hana-fico-implementation/
+│
+├── SKILL.md ← Core skill logic and workflow
+├── FRAMEWORK.md ← Template for creating additional modules
+├── README.md ← This file
+├── LICENSE ← MIT License
+│
+├── references/
+│ ├── fi-modules/
+│ │ ├── fi-gl-general-ledger.md ✅ COMPLETE (700+ lines, professional depth)
+│ │ ├── fi-ap-accounts-payable.md [Use FRAMEWORK.md template]
+│ │ ├── fi-ar-accounts-receivable.md [Use FRAMEWORK.md template]
+│ │ ├── fi-aa-asset-accounting.md [Use FRAMEWORK.md template]
+│ │ ├── fi-bl-bank-accounting.md [Use FRAMEWORK.md template]
+│ │ └── fi-tr-treasury.md [Use FRAMEWORK.md template]
+│ │
+│ ├── co-modules/
+│ │ ├── co-om-cost-centers.md [Use FRAMEWORK.md template]
+│ │ ├── co-io-internal-orders.md [Use FRAMEWORK.md template]
+│ │ ├── co-pa-profitability-analysis.md [Use FRAMEWORK.md template]
+
+template]
+│ │
+│ ├── co-modules/
+│ │ ├── co-om-cost-centers.md [Use FRAMEWORK.md template]
+│ │ ├── co-io-internal-orders.md [Use FRAMEWORK.md template]
+│ │ ├── co-pa-profitability-analysis.md [Use FRAMEWORK.md template]
+│ │ ├── co-pc-product-costing.md [Use FRAMEWORK.md template]
+│ │ └── co-pca-profit-centers.md [Use FRAMEWORK.md template]
+│ │
+│ ├── integrations/
+│ │ ├── mm-fi-integration.md [Use FRAMEWORK.md template]
+│ │ ├── sd-fi-integration.md [Use FRAMEWORK.md template]
+│ │ ├── pp-co-integration.md [Use FRAMEWORK.md template]
+│ │ ├── ps-fi-integration.md [Use FRAMEWORK.md template]
+│ │ ├── hr-fi-integration.md [Use FRAMEWORK.md template]
+│ │ ├── external-banking.md [Use FRAMEWORK.md template]
+│ │ ├── external-treasury.md [Use FRAMEWORK.md template]
+│ │ └── external-tax-engines.md [Use FRAMEWORK.md template]
+│ │
+│ ├── localizations/
+│ │ ├── localization-framework.md [Use FRAMEWORK.md template]
+│ │ ├── india-localization.md [Use FRAMEWORK.md template]
+│ │ ├── usa-localization.md [Use FRAMEWORK.md template]
+│ │ ├── germany-localization.md [Use FRAMEWORK.md template]
+│ │ ├── uk-localization.md [Use FRAMEWORK.md template]
+│ │ ├── china-localization.md [Use FRAMEWORK.md template]
+│ │ └── [50+ more countries...]
+│ │
+│ ├── testing/
+
+├── germany-localization.md [Use FRAMEWORK.md template]
+│ │ ├── uk-localization.md [Use FRAMEWORK.md template]
+│ │ ├── china-localization.md [Use FRAMEWORK.md template]
+│ │ └── [50+ more countries...]
+│ │
+│ ├── testing/
+│ │ ├── unit-testing-guide.md [Use FRAMEWORK.md template]
+│ │ └── integration-testing-guide.md [Use FRAMEWORK.md template]
+│ │
+│ └── templates/
+│ ├── config-tracker-template.xlsx
+│ ├── gl-master-template.xlsx
+│ ├── cost-center-template.xlsx
+│ ├── test-script-template.xlsx
+│ └── [More templates...]
+│
+└── evals/
+└── evals.json [Test cases]
+
+🛠️ How to Expand This Skill
+
+The skill is designed for incremental expansion. It works immediately with the current structure, and improves as you add modules.
+
+Step-by-Step Expansion
+
+Choose a module from the list above (e.g., FI-AP)
+
+Copy the template from FRAMEWORK.md
+
+Fill in SAP-accurate content:
+
+SPRO paths from S/4HANA system
+
+Transaction codes (verify in S/4HANA)
+
+IMG activities and config tables
+
+Field-by-field guidance with examples
+
+Testing steps
+
+Dependencies and common mistakes
+
+Save as [module-name].md in appropriate folder
+
+Skill automatically picks it up when users ask about that module
+
+Estimated Effort
+
+FI/CO Module: 4-6 hours (400-600 lines)
+
+Integration: 2-3 hours (200-300 lines)
+
+takes
+
+Save as [module-name].md in appropriate folder
+
+Skill automatically picks it up when users ask about that module
+
+Estimated Effort
+
+FI/CO Module: 4-6 hours (400-600 lines)
+
+Integration: 2-3 hours (200-300 lines)
+
+Country Localization: 3-4 hours (300-400 lines)
+
+Testing Guide: 2-3 hours (200-300 lines)
+
+Total for Complete Skill: ~113 hours (all modules + integrations + 10 countries + t
