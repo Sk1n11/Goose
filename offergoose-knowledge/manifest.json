@@ -1,7 +1,11 @@
 {
-  "exportedAt": "2026-10-19T18:15:07.093Z",
-  "answers": 197,
+  "exportedAt": "2026-10-19T18:21:31.266Z",
+  "answers": 178,
   "documents": [
+    "offergoose-knowledge/documents/sap-co-profitability-analysis.md",
+    "offergoose-knowledge/documents/sap-co-product-costing.md",
+    "offergoose-knowledge/documents/sap-fico-training-tutorials.md",
+    "offergoose-knowledge/documents/introduction-sap-fico.md",
     "offergoose-knowledge/documents/complete-modules-summary.md",
     "offergoose-knowledge/documents/contributing.md",
     "offergoose-knowledge/documents/download-guide.md",
@@ -37,10 +41,6 @@
     "offergoose-knowledge/documents/references-localizations-canada-localization.md",
     "offergoose-knowledge/documents/references-localizations-china-localization.md",
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
-    "offergoose-knowledge/documents/references-localizations-germany-localization.md",
-    "offergoose-knowledge/documents/references-localizations-india-localization.md",
-    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
-    "offergoose-knowledge/documents/references-localizations-uk-localization.md",
-    "offergoose-knowledge/documents/references-localizations-usa-localization.md"
+    "offergoose-knowledge/documents/references-localizations-germany-localization.md"
   ]
 }
