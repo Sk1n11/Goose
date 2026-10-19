@@ -170,7 +170,7 @@ This concludes the [Module Name] configuration guide.
 
 ### Integration Point 1: [Name]
 
-Integration Reference Fi — les (references/integrations/)
+Integration Reference Files (references/integrations/) — les (references/integrations/)
 
 ```markdown
 # [Module A]-[Module B] Integration Guide
@@ -237,7 +237,7 @@ Integration Reference Fi — les (references/integrations/)
 
 ## Legal & Regulatory Context
 
-Localization Reference Files (references/lo — calizations/)
+Localization Reference Files (references/localizations/) — calizations/)
 
 ### Detailed Country Files (Top 10)
 
@@ -479,7 +479,7 @@ Procure-to-Pay (P2P) — rial Document
  - ✅ FI-GL-general-ledger.md (DONE - 450+ lines provided as example)
  - ⏳ FI-AP-accounts-payable.md (Use framework above)
 
-Test Result Documentation — # How to Expand This Skill
+How to Expand This Skill — # How to Expand This Skill
 
 ### Priority Order for Adding Content:
 
