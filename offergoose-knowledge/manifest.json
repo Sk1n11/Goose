@@ -1,22 +1,17 @@
 {
-  "exportedAt": "2026-10-19T18:21:31.266Z",
-  "answers": 178,
+  "exportedAt": "2026-10-19T18:20:31.540Z",
+  "answers": 200,
   "documents": [
-    "offergoose-knowledge/documents/sap-co-profitability-analysis.md",
-    "offergoose-knowledge/documents/sap-co-product-costing.md",
-    "offergoose-knowledge/documents/sap-fico-training-tutorials.md",
-    "offergoose-knowledge/documents/introduction-sap-fico.md",
+    "offergoose-knowledge/documents/app-report.md",
     "offergoose-knowledge/documents/complete-modules-summary.md",
     "offergoose-knowledge/documents/contributing.md",
     "offergoose-knowledge/documents/download-guide.md",
+    "offergoose-knowledge/documents/evals-evals.md",
     "offergoose-knowledge/documents/file-manifest.md",
     "offergoose-knowledge/documents/framework.md",
     "offergoose-knowledge/documents/github-upload-guide.md",
-    "offergoose-knowledge/documents/readme.md",
-    "offergoose-knowledge/documents/skill.md",
-    "offergoose-knowledge/documents/evals-evals.md",
+    "offergoose-knowledge/documents/mm-fi-integration.md",
     "offergoose-knowledge/documents/push-to-github.md",
-    "offergoose-knowledge/documents/references-module-reference-index.md",
     "offergoose-knowledge/documents/references-co-modules-co-io-internal-orders.md",
     "offergoose-knowledge/documents/references-co-modules-co-om-cost-centers.md",
     "offergoose-knowledge/documents/references-co-modules-co-pa-profitability-analysis.md",
@@ -41,6 +36,11 @@
     "offergoose-knowledge/documents/references-localizations-canada-localization.md",
     "offergoose-knowledge/documents/references-localizations-china-localization.md",
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
-    "offergoose-knowledge/documents/references-localizations-germany-localization.md"
+    "offergoose-knowledge/documents/references-localizations-germany-localization.md",
+    "offergoose-knowledge/documents/references-localizations-india-localization.md",
+    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
+    "offergoose-knowledge/documents/references-module-reference-index.md",
+    "offergoose-knowledge/documents/sd-fi.md",
+    "offergoose-knowledge/documents/skill.md"
   ]
 }
