@@ -205,7 +205,7 @@ Common gaps to address:
 - Insufficient field-level guidance
 - Weak testing procedures
 
-1. Read Current Content First — ## 1. Read Current Content First
+Module Enhancement Guidelines — ## 1. Read Current Content First
 Understand what's already documented before adding
 
 ### 2. Identify Gaps
@@ -308,7 +308,7 @@ Before submitting:
 ### 2. Check Formatting
 - No broken markdown
 
-1. Verify in SAP System — SAP System
+1. Verify in — SAP System
 - Log into S/4HANA system (sandbox/demo)
 - Navigate to transaction codes / SPRO paths
 - Verify they exist and work as documented
