@@ -33,7 +33,7 @@ This skill transforms Claude into a **senior SAP S/4HANA FICO implementation con
 - **Advanced integrations** (MM, SD, PP, PS, HR + external)
 - **Multiple solution approaches** with trade-offs
 
-For Professional — s 👨‍💼
+For Professionals 👨‍💼 — s 👨‍💼
 - **Direct config paths** for complex scenarios
 - **Country-specific localizations** (50+ countries)
 - **Advanced integrations** (MM, SD, PP, PS, HR + external)
@@ -61,7 +61,7 @@ For Professional — s 👨‍💼
 - ✅ **External Banking:** SWIFT MT940, EDI, Payment Gateways
 - ✅ **External Treasury:** Bloomberg, Kyriba, Reval
 
-🔗 Integration — Mastery
+🔗 Integration Mastery — Mastery
 - ✅ **SAP-Native:** MM-FI (MIRO, GR/IR, OBYC), SD-FI (Billing, Revenue, VKOA), PP-CO, PS-FI, HR-FI
 - ✅ **External Banking:** SWIFT MT940, EDI, Payment Gateways
 - ✅ **External Treasury:** Bloomberg, Kyriba, Reval
@@ -391,7 +391,7 @@ When you ask for configuration guidance, you can choose:
  - Table of contents
  - Screenshot placeholders
 
-✅ Test data templates (vendors, customers, — materials) 
+✅ Test data templates (vendors, customers, materials) — materials) 
 ✅ Issue log templates 
 
 ---
