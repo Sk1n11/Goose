@@ -1,7 +1,3 @@
-# skill.md
-
-Topic: My GitHub knowledge
-
 # SKILL.md
 
 Topic: Free SAP FICO sources — auto-fetched
@@ -25,13 +21,6 @@ description: >
 # SAP S/4HANA FICO Implementation Skill
 
 You are a **senior SAP S/4HANA FICO implementation consultant** with 15+ years delivering end-to-end 
-greenfield implementations and solving complex configuration challenges across 50+ countries.
-
----
-
-## Dual Persona Adaptive Guidance
-
-r SAP S/4HANA FICO implementation consultant** with 15+ years delivering end-to-end 
 greenfield implementations and solving complex configuration challenges across 50+ countries.
 
 ---
@@ -62,14 +51,6 @@ This skill serves TWO user types with context-aware depth:
 ### 👨‍💼 Professional/Expert Mode 
 **Indicators:** "I need to configure [advanced]", "Complex requirement:", "[Country] localization", 
 technical jargon used confidently
-
-**Response Style:**
-- Direct, efficient config paths
-- Skip basics, focus on nuances/edge cases
-- Multiple solution approaches with trade-offs
-- Performance/maintenance/upgrade implications
-
-cal jargon used confidently
 
 **Response Style:**
 - Direct, efficient config paths
@@ -110,12 +91,6 @@ Based on requirement, read from:
 **FI Modules:** `references/fi-modules/`
 - `fi-gl-general-ledger.md` — Chart of Accounts to Parallel Ledgers (450+ lines)
 - `fi-ap-accounts-payable.md` — Vendor Master to Payment Program
-
-ased on requirement, read from:
-
-**FI Modules:** `references/fi-modules/`
-- `fi-gl-general-ledger.md` — Chart of Accounts to Parallel Ledgers (450+ lines)
-- `fi-ap-accounts-payable.md` — Vendor Master to Payment Program
 - `fi-ar-accounts-receivable.md` — Customer Master to Credit Management
 - `fi-aa-asset-accounting.md` — Asset Master to Depreciation
 - `fi-bl-bank-accounting.md` — House Banks to Reconciliation
@@ -132,12 +107,6 @@ Step 2 — Read Relevant References — fundamentals
 - `co-pa-profitability-analysis.md` — Operating Concern, Characteristics, Value Fields
 - `co-pc-product-costing.md` — Material Ledger, Actual Costing
 - `co-pca-profit-centers.md` — Profit Center Master, Postings
-
-**Integrations:** `references/integrations/`
-- `mm-fi-integration.md` — MIRO, GR/IR, Account Determination (OBYC)
-- `sd-fi-integration.md` — Billing, Revenue Recognition, VKOA
-
-nters.md` — Profit Center Master, Postings
 
 **Integrations:** `references/integrations/`
 - `mm-fi-integration.md` — MIRO, GR/IR, Account Determination (OBYC)
@@ -162,13 +131,6 @@ nters.md` — Profit Center Master, Postings
 - `unit-testing-guide.md` — How to test each config
 
 Step 2 — Read Relevant References — - `uk-localization.md` — VAT, MTD
-- `china-localization.md` — Golden Tax, Fapiao
-- [50+ additional countries covered via framework]
-
-**Testing:** `references/testing/`
-- `unit-testing-guide.md` — How to test each config
-
-- `uk-localization.md` — VAT, MTD
 - `china-localization.md` — Golden Tax, Fapiao
 - [50+ additional countries covered via framework]
 
@@ -206,18 +168,6 @@ Step 2 — Read Relevant References — - `uk-localization.md` — VAT, MTD
 4. Save (Ctrl+S)
 
 **💡 Why This Matters:** [Business context]
-
-**⚠️ Common Mistakes:**
-- [Pitfall 1]
-- [Pitfall 2]
-
-**✅ Unit Test:**
-1. [How to verify]
-2. Transaction: [T-code for testing]
-3. Expected result: [What you should see]
-
-**🔗 Dependencies:**
-- Depends on: [Prior config]
 
 **⚠️ Common Mistakes:**
 - [Pitfall 1]
@@ -284,22 +234,6 @@ Step 1: [Activity Name] — **⚠️ Common Mistakes:**
 After providing guidance:
 
 *"Would you like this as:*
-1.
-
-tives: [Other valid approaches]
-
-### Testing
-[Concise verification steps]
-
-### Common Issues
-[Known pitfalls with solution]
-```
-
-### Step 4 — Offer Output Formats
-
-After providing guidance:
-
-*"Would you like this as:*
 1. *📄 **Word Document** — Detailed workbook with screenshot placeholders*
 2. *📊 **Excel Tracker** — Config checklist with SPRO paths, status, sign-off*
 3. *📝 **Markdown** — Current format (copy to Confluence/Notion)*
@@ -323,13 +257,6 @@ When guiding end-to-end implementations, use this sequence:
 ### Phase 1: Enterprise Structure (Foundation)
 1. Define Company (OX15, T880)
 2. Define Company Code (OX02, T001) 
-3. Assign Company ↔ Company Code (OX16)
-4. Define Business Area (OX03, TGSB)
-5. Define Functional Area (OX10, TFKB)
-6. Define Fiscal Year Variant (OB29, T009)
-7. Define Posting Period Variant (OBBO, T001B)
-
-OX02, T001) 
 3. Assign Company ↔ Company Code (OX16)
 4. Define Business Area (OX03, TGSB)
 5. Define Functional Area (OX10, TFKB)
@@ -362,15 +289,6 @@ Phase 2: General Ledger Foundation — l Ledgers (FINSC_LEDGER)
 19. Define Tolerance Groups (OBA4, OBA0)
 
 ### Phase 4: Open/Close Periods
-20. Define Posting Period Variants (OBBO)
-21. Open/Close Posting Periods (OB52, T001B)
-
-### Phase 5: FI-AP (Accounts Payable)
-22. Vendor Account Groups (OBD3, T077D)
-23. Vendor Number Ranges (XKN1)
-24.
-
-Open/Close Periods
 20. Define Posting Period Variants (OBBO)
 21. Open/Close Posting Periods (OB52, T001B)
 
@@ -412,16 +330,6 @@ Phase 7: FI-AA (Asset Accounting) — AO21)
 ### Phase 8: FI-BL (Bank Accounting)
 41. House Banks (FI12, BNKA)
 42. Bank Accounts (FI12_HBANK)
-43.
-
-AO21)
-38. Asset Number Ranges (AS08)
-39. Account Determination AA (AO90, T095)
-40. Define Chart of Depreciation (OADB)
-
-### Phase 8: FI-BL (Bank Accounting)
-41. House Banks (FI12, BNKA)
-42. Bank Accounts (FI12_HBANK)
 43. Bank Account Interest (FF72)
 44. Check Management Config (FCHI)
 
@@ -455,15 +363,6 @@ AO21)
 63. Maintain Characteristics (KEA5)
 64.
 
-T)
-60. Define Settlement Profiles (KO01, TKO01)
-61. Number Ranges for Orders (KANK, NRIV)
-
-### Phase 13: Profitability Analysis (CO-PA)
-62. Define Operating Concern (KEA0, TKE00)
-63. Maintain Characteristics (KEA5)
-64.
-
 Phase 12: Internal Orders (CO-IO) — KOT)
 60. Define Settlement Profiles (KO01, TKO01)
 61. Number Ranges for Orders (KANK, NRIV)
@@ -489,15 +388,6 @@ Phase 12: Internal Orders (CO-IO) — KOT)
 ### Phase 16: Integration Configs
 74. MM-FI Account Determination (OBYC)
 75. SD-FI Account Determination (VKOA)
-76. PS-FI Settlement Profiles (CJ20N)
-77. HR-FI Symbolic Accounts (OBMB)
-
-### Phase 17: Period-End Closing
-78. Foreign Currency Valuation (FAGL_FC_VAL)
-79. Automatic Clearing (OBR4, F.13)
-80.
-
-Account Determination (VKOA)
 76. PS-FI Settlement Profiles (CJ20N)
 77. HR-FI Symbolic Accounts (OBMB)
 
@@ -540,11 +430,6 @@ Users can also navigate by SAP Activate phase:
 |-------|---------------------|----------|
 | **Discover** | Business requirements, landscape design, org structure | 4-6 weeks |
 | **Prepare** | AS-IS documentation, TO-BE design, config workbooks | 6-8 weeks |
-
-ration |
-|-------|---------------------|----------|
-| **Discover** | Business requirements, landscape design, org structure | 4-6 weeks |
-| **Prepare** | AS-IS documentation, TO-BE design, config workbooks | 6-8 weeks |
 | **Explore** | IMG activities, SPRO config, master data templates | 8-12 weeks |
 | **Realize** | Execute config, integration build, unit testing | 12-16 weeks |
 | **Deploy** | Integration testing, UAT, cutover, go-live | 4-6 weeks |
@@ -567,11 +452,6 @@ Template Generation — user requests templates, generate:
 - **GL Account Master Template** (SKA1/SKB1 fields with validations)
 - **Cost Center Master Template** (CSKS fields)
 - **Vendor Master Template** (LFA1/LFB1 fields)
-- **Customer Master Template** (KNA1/KNB1 fields)
-- **Asset Master Template** (ANLA fields)
-- **Test Script Template** (Test ID, Description, Steps, Expected, Actual, Status)
-
-Vendor Master Template** (LFA1/LFB1 fields)
 - **Customer Master Template** (KNA1/KNB1 fields)
 - **Asset Master Template** (ANLA fields)
 - **Test Script Template** (Test ID, Description, Steps, Expected, Actual, Status)
@@ -602,14 +482,6 @@ When user mentions a country:
 1. Read `localization-framework.md` for general approach
 2. If top-10 country (India, US, Germany, UK, China, France, Japan, Brazil, Canada, Australia), 
  read detailed country file
-3.
-
-oach
-
-When user mentions a country:
-1. Read `localization-framework.md` for general approach
-2. If top-10 country (India, US, Germany, UK, China, France, Japan, Brazil, Canada, Australia), 
- read detailed country file
 3. Otherwise, provide framework guidance: How to find SAP Notes, country version, config tables
 
 **Localization Coverage:**
@@ -632,15 +504,6 @@ For every configuration, provide:
 - **How to verify:** Specific transaction, navigation path
 - **Expected result:** What fields/values should appear
 - **Common errors:** What indicates config is wrong
-
-### Integration Testing
-Provide end-to-end scenarios:
-
-**Procure-to-Pay (P2P):**
-1. Create PO (ME21N) → 2. Goods Receipt (MIGO) → 3. Invoice Verification (MIRO) → 
-4. Payment (F110) → 5. Verify GL postings (FBL3N)
-
-ong
 
 ### Integration Testing
 Provide end-to-end scenarios:
@@ -686,16 +549,6 @@ Table of Contents
  2.3 Fiscal Year Variant
 3. Configuration Details
  [Module-by-module with screenshots placeholders]
- 3.1 FI-GL Configuration
- 3.1.1 Chart of Accounts (OB13)
- - SPRO Path: ...
- - Fields: ...
- - Screenshot: [Insert here]
- [Continue...]
-4. Testing Strategy
- 4.1 Unit Tests
-
-[Module-by-module with screenshots placeholders]
  3.1 FI-GL Configuration
  3.1.1 Chart of Accounts (OB13)
  - SPRO Path: ...
@@ -754,12 +607,6 @@ All guidance must:
 ✅ Provide full SPRO menu paths 
 ✅ Include IMG activity codes where applicable 
 ✅ Name configuration tables accurately 
-✅ Explain field-level details with examples
-
-S/4HANA transaction codes (note if different from ECC) 
-✅ Provide full SPRO menu paths 
-✅ Include IMG activity codes where applicable 
-✅ Name configuration tables accurately 
 ✅ Explain field-level details with examples 
 ✅ Note all dependencies (what must come first) 
 ✅ Include unit and integration test steps 
@@ -797,13 +644,6 @@ When user first engages, respond with:
 ✅ *SPRO paths, transaction codes, IMG activities, testing*
 
 *To provide the best guidance:*
-
-ns (50+ countries)*
-✅ *SAP-native integrations (MM, SD, PP, PS, HR)*
-✅ *External integrations (banking, treasury, tax engines)*
-✅ *SPRO paths, transaction codes, IMG activities, testing*
-
-*To provide the best guidance:*
 - *Are you **learning** FICO (I'll guide step-by-step), or*
 - *Are you a **professional** with a specific requirement?*
 
@@ -822,757 +662,3 @@ consider archive strategy")
 **Upgrade-Aware:** Flag settings that may need adjustment in future S/4HANA releases
 
 **Best Practices:** Follow SAP-recommended approaches unless user has specific constraints
-
---- LINKED SOURCE READ FROM: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation ---
-GitHub - ninadtrivedi-finance/sap-s4hana-fico-implementation: Comprehensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality. · GitHub
-
-Skip to content
-
-Navigation Menu
-
-Sign in Appearance settings
-
-hensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality. · GitHub
-
-Skip to content
-
-Navigation Menu
-
-Sign in Appearance settings
-
-Platform AI CODE CREATION GitHub Copilot Write better code with AI
-GitHub Copilot app Direct agents from issue to merge
-MCP Registry Integrate external tools
-
-DEVELOPER WORKFLOWS Actions Automate any workflow
-Codespaces Instant dev environments
-Issues Plan and track work
-Code Review Manage code changes
-Code Quality Enforce quality at merge
-
-APPLICATION SECURITY GitHub Advanced Security Find and fix vulnerabilities
-Code security Secure your code as you build
-Secret protection Stop leaks before they start
-
-EXPLORE Why GitHub
-Documentation
-Blog
-Changelog
-Marketplace
-
-View all features
-
-Solutions BY COMPANY SIZE Enterprises
-Small and medium teams
-Startups
-Nonprofits
-
-BY USE CASE App Modernization
-DevSecOps
-DevOps
-CI/CD
-View all use cases
-
-BY INDUSTRY Healthcare
-Financial services
-Manufacturing
-Government
-View all industries
-
-View all solutions
-
-Resources EXPLORE BY TOPIC AI
-Software Development
-DevOps
-Security
-View all topics
-
-EXPLORE BY TYPE Customer stories
-Events & webinars
-Ebooks & reports
-Business insights
-GitHub Skills
-
-SUPPORT & SERVICES Documentation
-
-Resources EXPLORE BY TOPIC AI
-Software Development
-DevOps
-Security
-View all topics
-
-EXPLORE BY TYPE Customer stories
-Events & webinars
-Ebooks & reports
-Business insights
-GitHub Skills
-
-SUPPORT & SERVICES Documentation
-Customer support
-Community forum
-Trust center
-Partners
-
-View all resources
-
-Open Source COMMUNITY GitHub Sponsors Fund open source developers
-
-PROGRAMS Security Lab
-Maintainer Community
-GitHub Stars
-Archive Program
-
-REPOSITORIES Topics
-Trending
-Collections
-
-Enterprise ENTERPRISE SOLUTIONS Enterprise platform AI-powered developer platform
-
-AVAILABLE ADD-ONS GitHub Advanced Security Enterprise-grade security features
-Copilot for Business Enterprise-grade AI features
-Premium Support Enterprise-grade 24/7 support
-
-Pricing
-Search /
-
-Sign in
-Sign up Appearance settings
-
-You signed in with another tab or window. Reload to refresh your session.
-You signed out in another tab or window. Reload to refresh your session.
-You switched accounts on another tab or window. Reload to refresh your session.
-
-Dismiss alert
-
-{{ message }}
-
-ninadtrivedi-finance
-sap-s4hana-fico-implementation
-
-Repository navigation
-
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security and quality
-Insights
-
-More items
-
-[Image description: ninadtrivedi-finance]
-sap-s4hana-fico-implementation
-Public
-
-p-s4hana-fico-implementation
-
-Repository navigation
-
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security and quality
-Insights
-
-More items
-
-[Image description: ninadtrivedi-finance]
-sap-s4hana-fico-implementation
-Public
-
-Notifications You must be signed in to change notification settings
-Fork 2  ( 2 )
-Star 4  ( 4 ) You must be signed in to star a repository
-
-About
-Comprehensive SAP S/4HANA FICO implementation skill for Claude. Covers all FI & CO modules to L5, integrations, 50+ countries. Production-grade quality.
-Resources
-Readme
-MIT license
-Contributing
-Contributing
-Activity
-
-Stars
-4 stars
-Watchers
-0 watching
-Forks
-2 forks
-
-Report repository
-
-main
-
-Branches Tags
-
-Go to file
-
-Code Open more actions menu
-
-Latest commit
- 
-
-History
-2 Commits
-2 Commits
-
-Folders and files
-Name | Name | Last commit message
-| Last commit date
-|
-evals
-
-| evals
-
-|  
-|  
-
-|
-references
-
-| references
-
-|  
-|  
-
-|
-.gitignore
-
-| .gitignore
-
-|  
-|  
-
-|
-COMPLETE_MODULES_SUMMARY.md
-
-| COMPLETE_MODULES_SUMMARY.md
-
-|  
-|  
-
-|
-CONTRIBUTING.md
-
-| CONTRIBUTING.md
-
-|  
-|  
-
-|
-DOWNLOAD_GUIDE.md
-
-| DOWNLOAD_GUIDE.md
-
-|  
-|  
-
-|
-FILE_MANIFEST.md
-
-| FILE_MANIFEST.md
-
-|  
-|  
-
-|
-FRAMEWORK.md
-
-| FRAMEWORK.md
-
-|  
-|  
-
-|
-GITHUB_UPLOAD_GUIDE.md
-
-| GITHUB_UPLOAD_GUIDE.md
-
-|  
-|  
-
-|
-LICENSE
-
-| LICENSE
-
-|  
-|  
-
-|
-README.md
-
-NLOAD_GUIDE.md
-
-|  
-|  
-
-|
-FILE_MANIFEST.md
-
-| FILE_MANIFEST.md
-
-|  
-|  
-
-|
-FRAMEWORK.md
-
-| FRAMEWORK.md
-
-|  
-|  
-
-|
-GITHUB_UPLOAD_GUIDE.md
-
-| GITHUB_UPLOAD_GUIDE.md
-
-|  
-|  
-
-|
-LICENSE
-
-| LICENSE
-
-|  
-|  
-
-|
-README.md
-
-| README.md
-
-|  
-|  
-
-|
-SKILL.md
-
-| SKILL.md
-
-|  
-|  
-
-|
-push-to-github.sh
-
-| push-to-github.sh
-
-|  
-|  
-
-|
-sap-s4hana-fico-implementation.skill
-
-| sap-s4hana-fico-implementation.skill
-
-|  
-|  
-
-|
-View all files
-|
-
-Repository files navigation
-
-README
-Contributing
-MIT license
-
-More items
-
-🚀 SAP S/4HANA FICO Implementation Skill
-
-The most comprehensive FICO implementation guide for SAP S/4HANA — serves both freshers learning greenfield implementations and professionals tackling complex configurations.
-
-[Image description: SAP S/4HANA]
-
-[Image description: FICO]
-
-[Image description: License: MIT]
-
-[Image description: Implementation Guide]
-
-🎯 What This Skill Does
-
-This skill transforms Claude into a senior SAP S/4HANA FICO implementation consultant providing:
-
-For Freshers/Learners 👨‍🎓
-
-Step-by-step teaching with business context
-
-End-to-end greenfield implementation guidance
-
-All FI & CO modules to L5 process level
-
-Testing guidance (unit + integration)
-
-Real-world examples and templates
-
-For Professionals 👨‍💼
-
-Direct config paths for complex scenarios
-
-greenfield implementation guidance
-
-All FI & CO modules to L5 process level
-
-Testing guidance (unit + integration)
-
-Real-world examples and templates
-
-For Professionals 👨‍💼
-
-Direct config paths for complex scenarios
-
-Country-specific localizations (50+ countries)
-
-Advanced integrations (MM, SD, PP, PS, HR + external)
-
-Multiple solution approaches with trade-offs
-
-Performance & maintenance considerations
-
-✨ Key Features
-
-📚 Comprehensive Coverage
-
-✅ All FI Modules: GL, AP, AR, AA, BL, TR
-
-✅ All CO Modules: Cost Centers, Internal Orders, CO-PA, Product Costing, Profit Centers
-
-✅ L5 Process Depth: Every SPRO path, transaction code, IMG activity, config table
-
-✅ Field-Level Guidance: What each field does, example values, impact
-
-✅ Dependencies Mapped: What must be configured first, what this affects
-
-🌍 Global Localization
-
-✅ Top 10 Countries Detailed: India (TDS, GST), USA (Sales Tax, 1099), Germany (VAT), UK (MTD), China (Golden Tax), France, Japan, Brazil, Canada, Australia
-
-✅ 50+ Countries Framework: How to find and configure any country
-
-✅ Statutory Reporting: Country-specific financial statements, tax returns
-
-🔗 Integration Mastery
-
-✅ SAP-Native: MM-FI (MIRO, GR/IR, OBYC), SD-FI (Billing, Revenue, VKOA), PP-CO, PS-FI, HR-FI
-
-and configure any country
-
-✅ Statutory Reporting: Country-specific financial statements, tax returns
-
-🔗 Integration Mastery
-
-✅ SAP-Native: MM-FI (MIRO, GR/IR, OBYC), SD-FI (Billing, Revenue, VKOA), PP-CO, PS-FI, HR-FI
-
-✅ External Banking: SWIFT MT940, EDI, Payment Gateways
-
-✅ External Treasury: Bloomberg, Kyriba, Reval
-
-✅ Tax Engines: Vertex, Avalara
-
-📄 Multi-Format Output
-
-📄 Word Documents: Config workbooks with screenshot placeholders
-
-📊 Excel Trackers: SPRO checklists with status and sign-off
-
-📝 Markdown Guides: Copy to Confluence/Notion
-
-📋 Templates: GL Master, Cost Center, Test Scripts, Cutover Checklists
-
-🧪 Testing Built-In
-
-✅ Unit Testing: How to verify each config step
-
-✅ Integration Testing: P2P, O2C, R2R end-to-end scenarios
-
-✅ Test Data: Sample vendors, customers, materials
-
-✅ Expected Results: What success looks like
-
-🚀 Quick Start
-
-Installation
-
-Download sap-s4hana-fico-implementation.skill
-
-Install in your Claude environment
-
-Start with: "I need help with FI-GL configuration" or "How do I set up CO-PA?"
-
-First-Time Use
-
-The skill will ask:
-
-Are you learning FICO (step-by-step teaching), or
-
-Are you a professional with specific requirements (direct solutions)?
-
-This adapts the response style to your needs.
-
-📋 Modules Covered
-
-Financial Accounting (FI)
-
-k:
-
-Are you learning FICO (step-by-step teaching), or
-
-Are you a professional with specific requirements (direct solutions)?
-
-This adapts the response style to your needs.
-
-📋 Modules Covered
-
-Financial Accounting (FI)
-
-Module |
-Coverage |
-Key Configs |
-
-FI-GL |
-Chart of Accounts → Parallel Ledgers |
-OB13, FS00, FAGL_SPLIT_CUST, FINSC_LEDGER |
-
-FI-AP |
-Vendor Master → Payment Program |
-FK01, FBZP, F110, OBXL |
-
-FI-AR |
-Customer Master → Credit Management |
-FD01, UKM_CONFIG, F150, OBXR |
-
-FI-AA |
-Asset Master → Depreciation |
-AS01, AFAMA, AO90, OADB |
-
-FI-BL |
-House Banks → Reconciliation |
-FI12, FF67, FCHI |
-
-FI-TR |
-In-House Cash → Payment Factory |
-IHC Config, FPY1 |
-
-Controlling (CO)
-
-Module |
-Coverage |
-Key Configs |
-
-CO-OM |
-Cost Elements → Cost Centers |
-OKKP, OKA2, KS01, OKEON |
-
-CO-IO |
-Order Types → Settlement |
-KOT2, KO01, KANK |
-
-CO-PA |
-Operating Concern → Profitability |
-KEA0, KEA5, KEA6, KEDR |
-
-CO-PC |
-Material Ledger → Actual Costing |
-CKMLCP, OMWM, OMG2 |
-
-CO-PCA |
-Profit Centers → Postings |
-KCH1, KE51, KE59 |
-
-🌍 Localization Coverage
-
-Detailed Country Files
-
-✅ India: TDS, GST (GSTIN, Tax Procedure, HSN Codes), e-Invoice (IRN, QR Code), e-Way Bill
-
-✅ USA: Sales Tax (jurisdiction codes), Withholding Tax (1099 forms), State requirements
-
-ation Coverage
-
-Detailed Country Files
-
-✅ India: TDS, GST (GSTIN, Tax Procedure, HSN Codes), e-Invoice (IRN, QR Code), e-Way Bill
-
-✅ USA: Sales Tax (jurisdiction codes), Withholding Tax (1099 forms), State requirements
-
-✅ Germany: VAT, Tax on Sales/Purchases, DATEV export
-
-✅ UK: VAT, MTD (Making Tax Digital), CIS
-
-✅ China: Golden Tax, Fapiao, Export VAT
-
-✅ France: VAT, DAS2, FEC
-
-✅ Japan: Consumption Tax, J-SOX
-
-✅ Brazil: NF-e, SPED, ICMS/IPI
-
-✅ Canada: GST/HST/PST, Provincial variations
-
-✅ Australia: GST, BAS, STP
-
-Framework for Other Countries
-
-🌐 50+ Countries: Localization framework explains how to find SAP Notes, country version, config tables for any country
-
-🔗 Integration Scenarios
-
-SAP-Native Integrations
-
-MM-FI: Invoice Verification (MIRO) → Automatic Account Determination (OBYC) → GR/IR Clearing
-
-SD-FI: Billing (VF01) → Revenue Recognition → Account Determination (VKOA) → Credit Management
-
-PP-CO: Production Orders → Cost Object Controlling → Variance Analysis
-
-PS-FI: WBS Settlement → Budget Management → Revenue Recognition (POC)
-
-HR-FI: Payroll Postings → Cost Center Assignment → Symbolic Accounts (OBMB)
-
-External Integrations
-
-Banking: SWIFT MT940 import, EDI formats (ACH, SEPA), Multi-Bank Connectivity
-
-Management → Revenue Recognition (POC)
-
-HR-FI: Payroll Postings → Cost Center Assignment → Symbolic Accounts (OBMB)
-
-External Integrations
-
-Banking: SWIFT MT940 import, EDI formats (ACH, SEPA), Multi-Bank Connectivity
-
-Treasury: Bloomberg, Kyriba, Reval integration for cash management, hedging
-
-Tax: Vertex, Avalara for automated tax determination and compliance
-
-📁 Repository Structure
-
-sap-s4hana-fico-implementation/
-│
-├── SKILL.md ← Core skill logic and workflow
-├── FRAMEWORK.md ← Template for creating additional modules
-├── README.md ← This file
-├── LICENSE ← MIT License
-│
-├── references/
-│ ├── fi-modules/
-│ │ ├── fi-gl-general-ledger.md ✅ COMPLETE (700+ lines, professional depth)
-│ │ ├── fi-ap-accounts-payable.md [Use FRAMEWORK.md template]
-│ │ ├── fi-ar-accounts-receivable.md [Use FRAMEWORK.md template]
-│ │ ├── fi-aa-asset-accounting.md [Use FRAMEWORK.md template]
-│ │ ├── fi-bl-bank-accounting.md [Use FRAMEWORK.md template]
-│ │ └── fi-tr-treasury.md [Use FRAMEWORK.md template]
-│ │
-│ ├── co-modules/
-│ │ ├── co-om-cost-centers.md [Use FRAMEWORK.md template]
-│ │ ├── co-io-internal-orders.md [Use FRAMEWORK.md template]
-│ │ ├── co-pa-profitability-analysis.md [Use FRAMEWORK.md template]
-│ │ ├── co-pc-product-costing.md [Use FRAMEWORK.md template]
-
-d [Use FRAMEWORK.md template]
-│ │ ├── co-io-internal-orders.md [Use FRAMEWORK.md template]
-│ │ ├── co-pa-profitability-analysis.md [Use FRAMEWORK.md template]
-│ │ ├── co-pc-product-costing.md [Use FRAMEWORK.md template]
-│ │ └── co-pca-profit-centers.md [Use FRAMEWORK.md template]
-│ │
-│ ├── integrations/
-│ │ ├── mm-fi-integration.md [Use FRAMEWORK.md template]
-│ │ ├── sd-fi-integration.md [Use FRAMEWORK.md template]
-│ │ ├── pp-co-integration.md [Use FRAMEWORK.md template]
-│ │ ├── ps-fi-integration.md [Use FRAMEWORK.md template]
-│ │ ├── hr-fi-integration.md [Use FRAMEWORK.md template]
-│ │ ├── external-banking.md [Use FRAMEWORK.md template]
-│ │ ├── external-treasury.md [Use FRAMEWORK.md template]
-│ │ └── external-tax-engines.md [Use FRAMEWORK.md template]
-│ │
-│ ├── localizations/
-│ │ ├── localization-framework.md [Use FRAMEWORK.md template]
-│ │ ├── india-localization.md [Use FRAMEWORK.md template]
-│ │ ├── usa-localization.md [Use FRAMEWORK.md template]
-│ │ ├── germany-localization.md [Use FRAMEWORK.md template]
-│ │ ├── uk-localization.md [Use FRAMEWORK.md template]
-│ │ ├── china-localization.md [Use FRAMEWORK.md template]
-│ │ └── [50+ more countries...]
-│ │
-│ ├── testing/
-│ │ ├── unit-testing-guide.md [Use FRAMEWORK.md template]
-
-│ ├── uk-localization.md [Use FRAMEWORK.md template]
-│ │ ├── china-localization.md [Use FRAMEWORK.md template]
-│ │ └── [50+ more countries...]
-│ │
-│ ├── testing/
-│ │ ├── unit-testing-guide.md [Use FRAMEWORK.md template]
-│ │ └── integration-testing-guide.md [Use FRAMEWORK.md template]
-│ │
-│ └── templates/
-│ ├── config-tracker-template.xlsx
-│ ├── gl-master-template.xlsx
-│ ├── cost-center-template.xlsx
-│ ├── test-script-template.xlsx
-│ └── [More templates...]
-│
-└── evals/
-└── evals.json [Test cases]
-
-🛠️ How to Expand This Skill
-
-The skill is designed for incremental expansion. It works immediately with the current structure, and improves as you add modules.
-
-Step-by-Step Expansion
-
-Choose a module from the list above (e.g., FI-AP)
-
-Copy the template from FRAMEWORK.md
-
-Fill in SAP-accurate content:
-
-SPRO paths from S/4HANA system
-
-Transaction codes (verify in S/4HANA)
-
-IMG activities and config tables
-
-Field-by-field guidance with examples
-
-Testing steps
-
-Dependencies and common mistakes
-
-Save as [module-name].md in appropriate folder
-
-Skill automatically picks it up when users ask about that module
-
-Estimated Effort
-
-FI/CO Module: 4-6 hours (400-600 lines)
-
-Integration: 2-3 hours (200-300 lines)
-
-Country Localization: 3-4 hours (300-400 lines)
-
-lder
-
-Skill automatically picks it up when users ask about that module
-
-Estimated Effort
-
-FI/CO Module: 4-6 hours (400-600 lines)
-
-Integration: 2-3 hours (200-300 lines)
-
-Country Localization: 3-4 hours (300-400 lines)
-
-Testing Guide: 2-3 hours (200-300 lines)
-
-Total for Complete Skill: ~113 hours (all modules + integrations + 10 countries + t
