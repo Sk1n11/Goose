@@ -1,9 +1,7 @@
 {
-  "exportedAt": "2026-10-19T18:13:24.668Z",
-  "answers": 178,
+  "exportedAt": "2026-10-19T18:15:07.093Z",
+  "answers": 197,
   "documents": [
-    "offergoose-knowledge/documents/mm-fi-integration.md",
-    "offergoose-knowledge/documents/sd-fi.md",
     "offergoose-knowledge/documents/complete-modules-summary.md",
     "offergoose-knowledge/documents/contributing.md",
     "offergoose-knowledge/documents/download-guide.md",
@@ -41,6 +39,8 @@
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
     "offergoose-knowledge/documents/references-localizations-germany-localization.md",
     "offergoose-knowledge/documents/references-localizations-india-localization.md",
-    "offergoose-knowledge/documents/references-localizations-japan-localization.md"
+    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
+    "offergoose-knowledge/documents/references-localizations-uk-localization.md",
+    "offergoose-knowledge/documents/references-localizations-usa-localization.md"
   ]
 }
