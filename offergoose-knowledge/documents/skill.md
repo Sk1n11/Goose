@@ -476,7 +476,7 @@ When user mentions a country:
  read detailed country file
 3.
 
-Country Localization Approach — oach
+Country Localization Appr — oach
 
 When user mentions a country:
 1. Read `localization-framework.md` for general approach
@@ -570,7 +570,7 @@ Columns:
 - Config Step #
 - Module (FI-GL, FI-AP, etc.)
 
-4.2 Integration Tests — Integration Tests
+4.1 Unit Tests — Integration Tests
 5. Cutover Plan
 6. Training Plan
 Appendix A: SPRO Path Reference
@@ -625,7 +625,7 @@ When user first engages, respond with:
 *I can help with:*
 ✅ *End-to-end greenfield implementations (all FI & CO modules)*
 
-✅ Adapt depth to user persona (teaching vs. expert) — ert) 
+✅ Adapt depth to user persona (teaching vs. exp — ert) 
 
 ---
 
