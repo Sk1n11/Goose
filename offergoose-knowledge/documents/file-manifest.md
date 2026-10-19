@@ -44,7 +44,7 @@ This document lists all files included in the GitHub-ready package.
 ### FI Modules (6 files)
 | File | Coverage | Key Transactions |
 
-Module Index (1 file) — Index (1 file)
+Module — Index (1 file)
 | File | Size | Purpose |
 |------|------|---------|
 | **references/MODULE_REFERENCE_INDEX.md** | 16KB | Complete index of all 31 modules |
@@ -64,7 +64,7 @@ Module Index (1 file) — Index (1 file)
 |------|----------|-----------------|
 | **co-om-cost-centers.md** | Controlling Area, Cost Elements, Cost Centers, Activity Types | OKKP, KS01, KSU5, KSV5 |
 
-CO Modules (5 files) — ## CO Modules (5 files)
+FI Modules (6 files) — ## CO Modules (5 files)
 | File | Coverage | Key Transactions |
 |------|----------|-----------------|
 | **co-om-cost-centers.md** | Controlling Area, Cost Elements, Cost Centers, Activity Types | OKKP, KS01, KSU5, KSV5 |
