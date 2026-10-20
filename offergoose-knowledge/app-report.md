@@ -1,7 +1,7 @@
 # OfferGoose - automatic app report
 
-App version: 2.62.0
-Generated: 2026-10-20T06:25:22.197Z
+App version: 2.63.0
+Generated: 2026-10-20T06:30:11.035Z
 AI providers with a saved key: groq, gemini, openrouter, custom
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
@@ -2253,168 +2253,80 @@ Reverse-charge VAT is posted with a tax code that creates both an input-tax debi
 ### EXTRA POINTS
 - **SPRO Path:** Financial Accounting → Financial Accounting Global Settings → Tax on Sales/Purchases → Calculation → Define Tax 
 
-## 78. [2026-10-20T06:24:44.009Z] answer
+## 78. [2026-10-20T06:29:28.003Z] answer
 
-Q: Profit ability
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
 Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-Profitability in S/4HANA is measured in real‑time by account‑based CO‑PA feeding every FI posting into ACDOCA.
+A: I need to follow the strict format specified:
+
+### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** CO‑PA captures revenue, cost and margin per defined characteristics so management sees true profit per product‑channel‑country.
-- **Key System Benefit:** In S/4HANA the CO‑PA fields live in ACDOCA, delivering instant margin analysis and eliminating the ECC reconciliation between FI (BKPF/BSEG) and CO‑PA (CE1/CE4).
-- **Execution Strategy:** Activate operating concern → define characteristics/value fields (KOMP/KONM) → map revenue accounts via VKOA and cost accounts via OBYC → enable “CO‑PA in Universal Journal” (FINSC_LEDGER) → assign profit centre & cost object to sales order.
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
 
 ### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
 ```
-1. SALES ORDER VA01 · create order with BP, material, price
- revenue G/L acct VKOA (determines ACDOCA revenue line)
- CO‑PA char. KOMP (product, channel, country)
-
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
  ↓
-2. DELIVERY VL01N · goods issue
- cost G/L acct OBYC (COGS posted to ACDOCA)
-
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
  ↓
-3. BILLING VF01 · create invoice
- FI document BKPF/BSEG → ACDOCA line (revenue, tax, discount)
- CO‑PA line CE1_XXXX (or ACDOCA CO‑PA fields)
-
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
  ↓
-4. PAYMENT F-28 · clear AR
- cash posting ACDOCA cash line
-
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
  ↓
-5. MARGIN REPORT KE24 / FAGLL03H (real‑time margin = revenue – COGS)
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
 ```
+
+But I need to follow the exact format: stage line padded with spaces so t-codes start at column 24, detail lines indented 3 spaces, arrow rows between stages. Max 22 lines.
+
+Let's construct it carefully.
 
 ### ⚙️ CONFIG STEPS
- 1. **OKKP** — define Controlling Area (CO top‑level) · WHY: consolidates all company codes for profit analysis · ENTER: GB01, EUR, FYV K4, version 0 · Where: SPRO ▸ Controlling ▸ General Controlling ▸ Maintain Controlling Area · TEST/PASS: KSB1 shows a cost entry for any CC under GB01
- 2. **OX15** — create Operating Concern (CO‑PA) · WHY: groups CO‑PA data for profitability reporting · ENTER: ZPROFIT, description “Global Profitability”, currency EUR · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Oper. Concern ▸ Maintain Operating Concern · TEST/PASS: KEKP shows ZPROFIT in the list
- 3. **KEPM** — define CO‑PA characteristics (KOMP) · WHY: dimensions (product, channel, country) needed for margin splits · ENTER: 001 “MATNR” (Material), 002 “VTWEG” (Sales Channel), 003 “LAND1” (Country) · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Master Data ▸ Define Characteristics · TEST/PASS: KEPM displays three characteristics for ZPROFIT
- 4. **KEPM** — define CO‑PA value fields (KONM) · WHY: capture revenue, cost, discount, margin · ENTER: 001 “REVENUE”, 002 “DISCOUNT”, 003 “COGS”, 004 “MARGIN” · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Master Data ▸ Define Value Fields · TEST/PASS: KEPM list shows all four fields
- 5. **VKOA** — revenue account determination · WHY: links sales price to FI G/L and CO‑PA revenue field · ENTER: Condition Type “001” → Revenue G/L 400000 (Revenue), CO‑PA field REVENUE, Operating Concern ZPROFIT · Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Determination ▸ Revenue Account Determination ▸ Define Account Keys · TEST/PASS: VA01 creates a sales order, VF01 posts revenue to 400000 and CO‑PA REVENUE line
- 6. **OBYC** — automatic account determination for postings (COGS) · WHY: posts material consumption to cost of goods sold and fills CO‑PA COGS field · ENTER: Val. Key “VKM” → G/L 500000 (COGS), CO‑PA field COGS, Operating Concern ZPROFIT · Where: SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Document → Posting Keys ▸ Automatic Account Determination ▸ Configure Automatic Posting ▸ OBYC · TEST/PASS: VL01N goods issue creates debit 500000 and CO‑PA COGS line
- 7. **KEP5** — assign Operating Concern to Company Code · WHY: enables CO‑PA posting for that legal entity · ENTER: Company Code TR02 → Operating Concern ZPROFIT · Where: SPRO ▸ Controlling ▸ Profitability Analysis ▸ Assign Operating Concern to Company Code ▸ KEP5 · TEST/PASS: FB03 of a billing document shows CO‑PA fields populated for TR02
- 8. **FINSC_LEDGER** — activate “CO‑PA in Universal Journal” (S/4) · WHY: merges FI and CO‑PA lines, eliminates reconciliation · ENTER: Ledger 0L (IFRS) & L1 (Local) → “CO‑PA in ACDOCA” = X · Where: SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Ledgers ▸ Define Ledger → Edit → Activate CO‑PA in ACDOCA · TEST/PASS: SE16H on ACDOCA shows CO‑OBJNR and CO‑SEG populated after billing
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
 
-**SYSTEM READY:** Create a sales order for material MAT001, price 50, discount 5 % → deliver → bill → post → KE24 shows REVENUE 4 750, COGS 3 200, MARGIN 1 550 for MAT001‑US‑Online.
-
-### 🔧 DROP THESE OBJECT NAMES
-- **VKOA** — revenue account determination for billing
-- **OBYC** — automatic G/L posting for material movements
-- **KEKP** — operating concern master for CO‑PA
-- **KOMP** — CO‑PA characteristic definition
-- **KONM** — CO‑PA value‑field definition
-- **FINSC_LEDGER** — enable CO‑PA in Universal Journal
+_The sections below come from the offline bank because they were missing above._
 
 ### 🧾 ACCOUNTING ENTRIES
-- Dr 120000 (Accounts Receivable) 4 750 / Cr 400000 (Revenue) 4 750 — when VF01 posts invoice (net after 5 % discount).
-- Dr 500000 (COGS) 3 200 / Cr 310000 (Inventory) 3 200 — when VL01N posts goods issue.
-- Dr 400000 (Revenue) 250 / Cr 200000 (Discount) 250 — discount component of the same invoice.
-- Dr 120000 (Cash) 4 750 / Cr 120000 (A
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
 
-## 79. [2026-10-20T06:24:54.158Z] answer
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
 
-Q: Profit ability
-Scrutiny: all parameters pass
-A: 
-**SAY THIS FIRST**  
-Profitability in S/4HANA is measured in real‑time by account‑based CO‑PA feeding every FI posting into ACDOCA.  
+## 79. [2026-10-20T06:30:11.021Z] free-database-fetch
 
-**DIRECT ANSWER TO SPEAK NOW**  
-- **Business Detail**  
-  * Seller: Sales Org 100, Distribution Channel 10, Division 01.  
-  * Buyer: Customer 5000 (Germany).  
-  * Payment: 30‑day net, 19 % VAT.  
-  * Invoice flow: Sales order → Delivery → Billing → Payment.  
-  * Legal/Tax: Company code 1000 uses German GAAP IFRS; tax code 19% mapped to G/L 110000.  
-
-- **Key System Benefit**  
-  CO‑PA lines live in ACDOCA, so revenue, COGS, discount, and margin are instantly visible in profitability reports.  
-
-- **Execution Strategy**  
-  1. Activate operating concern.  
-  2. Define characteristics/value fields.  
-  3. Map revenue and cost accounts to CO‑PA fields.  
-  4. Enable “CO‑PA in Universal Journal”.  
-  5. Assign profit centre & cost object to sales order.  
-
-**ARCHITECTURAL FLOW**  
-```
-1. VA01 – create order (BP 5000, MAT001, Qty 100, Net 4 750, Discount 250)
-   → revenue G/L 400000 (net), CO‑PA field REVENUE
-2. VL01N – goods issue
-   → COGS G/L 500000, CO‑PA field COGS
-3. VF01 – billing
-   → FI doc BKPF/BSEG → ACDOCA line (revenue, tax, discount)
-   → CO‑PA line CE1_XXXX (or ACDOCA CO‑PA fields)
-4. F‑28 – payment
-   → cash posting ACDOCA cash line
-5. KE24 – margin report
-   → REVENUE 4 750, COGS 3 200, MARGIN 1 550
-```
-
-**CONFIG STEPS (build order)**  
-
-| # | Step | T‑code (plain) | What it does | Why it matters | Example value |
-|---|------|----------------|--------------|----------------|---------------|
-| 1 | Create Controlling Area | OX15 | Define GB01, currency EUR, fiscal year 2026 | Consolidates all company codes for CO‑PA | GB01 – “Global CO‑PA” |
-| 2 | Create Operating Concern | OX15 | Create ZPROFIT, currency EUR | Groups CO‑PA data for profit analysis | ZPROFIT – “Global Profitability” |
-| 3 | Define Characteristics | KEPM | 001 MATNR, 002 VTWEG, 003 LAND1 | Dimensions for profit splits | MATNR – “Material”, VTWEG – “Online”, LAND1 – “DE” |
-| 4 | Define Value Fields | KEPM | 001 REVENUE, 002 DISCOUNT, 003 COGS, 004 MARGIN | Capture financial drivers | REVENUE – “Revenue”, COGS – “Cost of Goods Sold” |
-| 5 | Assign Operating Concern to Company Code | KEP5 | Company code 1000 → ZPROFIT | Enables CO‑PA posting for that legal entity | 1000 → ZPROFIT |
-| 6 | Revenue Account Determination | VKOA | Condition 001 → G/L 400000, CO‑PA field REVENUE, ZPROFIT | Links sales price to FI G/L and CO‑PA | 001 → 400000 |
-| 7 | Automatic Posting for COGS | OBYC | Val. Key VKM → G/L 500000, CO‑PA field COGS, ZPROFIT | Posts material consumption to COGS and CO‑PA | VKM → 500000 |
-| 8 | Discount Account Determination | OBYC | Condition 002 → G/L 200000, CO‑PA field DISCOUNT, ZPROFIT | Posts discount to discount account and CO‑PA | 002 → 200000 |
-| 9 | Tax Code Definition | OBYC | Tax code 19 → G/L 110000, tax rate 19 % | Posts VAT and populates tax fields | 19 → 110000 |
-|10 | Assign Profit Centre to Sales Order | VAKO | Profit centre 500 → Sales Org 100 | Allocates revenue to profit centre | 500 → 100 |
-|11 | Enable CO‑PA in Universal Journal | FINSC_LEDGER | Ledger 0L & L1 → “CO‑PA in ACDOCA” = X | Merges FI & CO‑PA lines | 0L/L1 → X |
-
-**BEHIND THE SCENES**  
-
-| Document / Table | What updates | Where I see it |
-|------------------|--------------|----------------|
-| BKPF/BSEG | FI posting for invoice | FB03 – document display |
-| ACDOCA | Universal journal lines (revenue, COGS, discount, tax, cash, CO‑PA fields) | SE16H – filter by CO_OBJNR |
-| MATDOC | Material movement for goods issue | MB51 – material documents |
-| EKBE | Procurement history (not used in this flow) | KE24 – vendor cost analysis |
-| RBKP/RSEG | Billing header & item | FB03 – billing header |
-| VBRK/VBRP | Billing header & item | FB03 – billing item |
-| CE1/CE4 | CO‑PA postings (pre‑universal‑journal) | KE24 – profitability analysis |
-
-**FORMULA (worked example)**  
-```
-Net Revenue = Gross Revenue – Discount
-Gross Revenue = 50 € × 100 = 5 000 €
-Discount = 5 % × 5 000 € = 250 €
-Net Revenue = 5 000 € – 250 € = 4 750 €
-
-COGS = 32 % × Net Revenue = 3 200 €
-Margin = Net Revenue – COGS = 4 750 € – 3 200 € = 1 550 €
-```
-I verify the numbers in KE24 for MAT001, Country DE, Channel Online.
-
-**TEST CLICK‑PATH**  
-1. VA01 → create order 90000001.  
-2. VL01N → goods issue 90000002.  
-3. VF01 → billing 90000003.  
-4. FB03 → document 90000003 – check revenue 400000, tax 110000, discount 200000.  
-5. SE16H → ACDOCA – filter CO_OBJNR = 90000003 – confirm REVENUE 4 750, COGS 3 200, MARGIN 1 550.  
-6. KE24 → query ZPROFIT, MATNR MAT001, LAND1 DE, VTWEG Online – view margin 1 550.  
-
-**NEGATIVE TEST**  
-Change VKOA mapping for condition 001 to G/L 410000 (not linked to CO‑PA).  
-Repeat steps 1‑3.  
-FB03 shows revenue 410000 but no REVENUE field in CO‑PA.  
-KE24 shows zero revenue, COGS, margin.  
-System posts FI only; CO‑PA lines remain blank.  
-
-**RECONCILIATION**  
-* Subledger (CO‑PA) = Control account (400000) = ACDOCA entries.  
-* Reports: KE24 (profitability), FBL1N (G/L account), FBL3N (CO‑PA segment), FB03 (document).  
-* ACDOCA is the single source of truth; run ACDOCA‑b
-
-## 80. [2026-10-20T06:25:22.183Z] free-database-fetch
-
-Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 385 sources, 134 answers
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 382 sources, 124 answers
