@@ -1,8 +1,7 @@
 {
-  "exportedAt": "2026-10-20T06:26:34.731Z",
-  "answers": 134,
+  "exportedAt": "2026-10-20T06:31:31.951Z",
+  "answers": 124,
   "documents": [
-    "offergoose-knowledge/documents/sap-fico-architect-library-multi-entity-financial-reporting-segment-pr.md",
     "offergoose-knowledge/documents/profitability-analysis-in-sap.md",
     "offergoose-knowledge/documents/ni01-fico-greenfield-complete-v2-1.md",
     "offergoose-knowledge/documents/advanced-foreign-currency-valuation-fins-fxv-guide.md",
@@ -39,6 +38,9 @@
     "offergoose-knowledge/documents/references-integrations-pp-co-integration.md",
     "offergoose-knowledge/documents/references-integrations-ps-fi-integration.md",
     "offergoose-knowledge/documents/references-integrations-sd-fi-integration.md",
-    "offergoose-knowledge/documents/references-localizations-australia-localization.md"
+    "offergoose-knowledge/documents/references-localizations-australia-localization.md",
+    "offergoose-knowledge/documents/references-localizations-brazil-localization.md",
+    "offergoose-knowledge/documents/references-localizations-canada-localization.md",
+    "offergoose-knowledge/documents/references-localizations-china-localization.md"
   ]
 }
