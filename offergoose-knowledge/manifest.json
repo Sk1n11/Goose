@@ -1,16 +1,7 @@
 {
-  "exportedAt": "2026-10-20T07:17:06.183Z",
-  "answers": 122,
+  "exportedAt": "2026-10-21T06:45:46.457Z",
+  "answers": 154,
   "documents": [
-    "offergoose-knowledge/documents/profitability-analysis-in-sap.md",
-    "offergoose-knowledge/documents/ni01-fico-greenfield-complete-v2-1.md",
-    "offergoose-knowledge/documents/advanced-foreign-currency-valuation-fins-fxv-guide.md",
-    "offergoose-knowledge/documents/copa.md",
-    "offergoose-knowledge/documents/mm-fi-integration.md",
-    "offergoose-knowledge/documents/sd-fi.md",
-    "offergoose-knowledge/documents/complete-modules-summary.md",
-    "offergoose-knowledge/documents/contributing.md",
-    "offergoose-knowledge/documents/download-guide.md",
     "offergoose-knowledge/documents/file-manifest.md",
     "offergoose-knowledge/documents/framework.md",
     "offergoose-knowledge/documents/github-upload-guide.md",
@@ -41,6 +32,15 @@
     "offergoose-knowledge/documents/references-localizations-australia-localization.md",
     "offergoose-knowledge/documents/references-localizations-brazil-localization.md",
     "offergoose-knowledge/documents/references-localizations-canada-localization.md",
-    "offergoose-knowledge/documents/references-localizations-china-localization.md"
+    "offergoose-knowledge/documents/references-localizations-china-localization.md",
+    "offergoose-knowledge/documents/references-localizations-france-localization.md",
+    "offergoose-knowledge/documents/references-localizations-germany-localization.md",
+    "offergoose-knowledge/documents/references-localizations-india-localization.md",
+    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
+    "offergoose-knowledge/documents/references-localizations-uk-localization.md",
+    "offergoose-knowledge/documents/references-localizations-usa-localization.md",
+    "offergoose-knowledge/documents/references-testing-integration-testing-guide.md",
+    "offergoose-knowledge/documents/references-testing-unit-testing-guide.md",
+    "offergoose-knowledge/documents/index.md"
   ]
 }
