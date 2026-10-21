@@ -1,8 +1,8 @@
 # OfferGoose - automatic app report
 
-App version: 2.65.0
-Generated: 2026-10-20T07:15:54.745Z
-AI providers with a saved key: groq, gemini, openrouter, custom
+App version: 2.86.0
+Generated: 2026-10-21T06:44:28.843Z
+AI providers with a saved key: groq, arena, gemini, openrouter
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
 
@@ -3538,3 +3538,406 @@ A greenfield greenfield implementation builds an entirely fresh SAP S/4HANA syst
 ## 103. [2026-10-20T07:15:54.701Z] free-database-fetch
 
 Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 382 sources, 122 answers
+
+## 104. [2026-10-20T07:16:31.279Z] answer
+
+Q: Green field
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+A greenfield implementation builds an entirely fresh SAP S/4HANA system from scratch without legacy data migration.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW (speak aloud in ~30-45 secs)
+- **Core Concept:** Greenfield implementation designs a brand-new SAP S/4HANA target environment from a blank canvas, allowing us to adopt best-practice processes without legacy technical debt.
+- **Key System Benefit:** It fully harnesses modern S/4HANA architecture, establishing the Universal Journal in ACDOCA, real-time Margin Analysis, and the SAP Business Partner framework from day one.
+- **Execution Strategy:** We drive this build using Enterprise Structure definition in SPRO, the CVI master data framework, standard chart of accounts activation, and SAP Activate methodology sprints.
+
+### 📊 ARCHITECTURAL FLOW
+```
+1. PREPARE & EXPLORE SOLAR / SAP Activate
+ define business scope, target operating model, fit-to-standard workshops
+
+ ↓
+2. REALISATION SPRO · CVI · LTMC
+ configure enterprise structure OX02, activate leading ledger, run CVI
+
+ ↓
+3. INTEGRATION OBYC · VKOA · OBA1
+ set up automated account determination, pricing procedures, and tax codes
+
+ ↓
+4. TESTING & DEPLOY ECATT · FAGLL03H · LSMW
+ execute string testing, user acceptance, and final cutover to go-live
+
+```
+
+### ⚙️ CONFIG STEPS
+1. **OX02** — create the company code, the legal entity that carries its own books · WHY: statutory statements, tax and audit are per legal entity · ENTER: Company code NI01, country DE, currency EUR, language EN · Where: SPRO ▸ Enterprise Structure ▸ Definition ▸ Financial Accounting ▸ Edit, Copy, Delete, Check Company Code · TEST/PASS: FS00 creates a G/L account in NI01 and FB50 posts in its first open period
+2. **OKKP** — configure the controlling area, the top organisational unit in CO · WHY: management accounting requires an aligned fiscal year variant and currency across assigned company codes · ENTER: Controlling area NI01, currency EUR, FYV K4, cost accounting active · Where: SPRO ▸ Controlling ▸ General Controlling ▸ Maintain Controlling Area · TEST/PASS: KSB1 reports cost center actuals for NI01 transactions
+3. **FINSC_LEDGER** — define parallel accounting ledgers in the Universal Journal · WHY: IFRS and local statutory reporting require independent valuation and ledger groups · ENTER: Leading ledger 0L (IFRS), non-leading ledger L1 (local GAAP) · Where: SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Ledgers ▸ Ledger ▸ Define Ledgers for General Ledger Accounting · TEST/PASS: FAGLL03H displays parallel line items split by ledger group
+4. **BUP1** — activate the Customer-Vendor Integration framework · WHY: S/4HANA architecture mandates Business Partner as the single entry point for all master records · ENTER: BP role groups, identical numbering active, number ranges assigned · Where: SPRO ▸ Cross-Application Components ▸ Master Data Synchronization ▸ Customer/Vendor Integration ▸ Business Partner Settings · TEST/PASS: BP transaction successfully creates a synchronized vendor and supplier master
+5. **OBYC** — configure automatic account determination for material movements · WHY: inventory postings must route automatically to balance sheet and expense accounts without manual journal entry · ENTER: Valuation grouping code, transaction keys BSX, WRX, GBB paired with G/L accounts · Where: SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Periodic Processing ▸ Integrate Materials Management · TEST/PASS: MIGO goods receipt posts material value to inventory BSX and clearing to WRX
+6. **VKOA** — configure revenue account determination for sales and distribution · WHY: billing documents must post sales revenue, freight, and discounts to correct income statement accounts · ENTER: Application V, condition tables, access sequence KOFI00, chart of accounts NIOP · Where: SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Periodic Processing ▸ Integrate Sales and Distribution · TEST/PASS: VF01 billing run posts revenue directly to ERL accounts and tax to MWS
+7. **FAGL_FCV** — set up foreign currency valuation methods and account determination · WHY: period-end valuation must revalue open foreign currency items per local and IFRS rules · ENTER: Valuation method IFRS, exchange rate type M, realized and unrealized gain/loss G/L accounts · Where: SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Periodic Processing ▸ Valuate ▸ Define Valuation Methods · TEST/PASS: FAGL_FCV execution posts unrealized FX differences to ledger 0L and L1 correctly
+8. **SYSTEM READY TEST** — execute the end-to-end integration and reporting verification · WHY: confirms all structural, master data, and determination steps function cohesively · ENTER: Post a purchase order in ME21N, receive goods in MIGO, verify material document in MATDOC, post vendor invoice in MIRO, and clear in F110 · Where: FAGLL03H and ACDOCA reporting · TEST/PASS: Trial balance equals subledger balances across ledgers 0L and L1
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OX02** — defines enterprise company code structure
+- **OKKP** — establishes controlling area parameters
+- **FINSC_LEDGER** — c
+
+## 105. [2026-10-20T07:16:59.540Z] answer
+
+Q: Valuation methods
+Scrutiny: all parameters pass
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** Advanced foreign currency valuation — FINS_FXV — remeasures foreign-currency open items and balance-sheet balances at the reporting-date rate and posts only the movement still needed: the delta between the required closing value and the carrying value already on the books. Unlike classic FAGL_FCV it has no routine next-period reversal, and the balance-sheet side posts to the account being valued — for payables, the AP reconciliation account itself — not to a separate balance-sheet adjustment account.
+- **Key System Benefit:** Because valuation is accounting-principle-based and ledger-specific in ACDOCA, each parallel ledger carries its own unrealised FX result from one run, and the valuation journal entry stays traceable to the original line item — no reversal noise, no adjustment-account reconciliation at the next close.
+- **Execution Strategy:** Scope is designed, not selected at runtime: the financial statement version plus the FX semantic tag decide which monetary accounts are eligible, an accounting-principle-based valuation rule (delivered examples SKDV and STDV) decides rate type and method — ALWAYS_VALUATE, LOWEST_VALUE, STRICT_LOWEST_VALUE, GAIN_ONLY or DE_BILMOG_VALUATE — and activation is a cutover decision per principle, ledger and company code, because classic valuation must not be used again for the activated scope.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. KEY DATE + RATES OB08
+ reporting-date rate per rate type and currency pair
+ ↓
+2. SCOPE OB58 · FX TAG
+ FSV and FX semantic tag select eligible monetary accounts
+ ↓
+3. RULE ENGINE SKDV · STDV
+ accounting-principle rule, method and rate type resolve
+ ↓
+4. DELTA POSTING FINS_FXV
+ posts only closing value minus carrying value
+ ↓
+5. PROVE FB03 · ACDOCA
+ journal entry on the valued account plus FX P&L
+```
+
+### ⚙️ CONFIG STEPS
+1. **OB58** — define the financial statement version for the chart of accounts and accounting principle; the FSV is the scope backbone of the run · Example: One FSV per principle view: statutory structure for local GAAP, group structure for IFRS — never one FSV fighting both purposes · Ref: Advanced FCV guide, configuration checklist step 3; SPRO ▸ General Ledger ▸ Periodic Processing ▸ Financial Statement Versions.
+2. **FINSC_LEDGER** — assign the FSV and the valuation design to the accounting principle and ledger that will carry the result · Example: IFRS leading ledger and HGB non-leading ledger resolve their own rule and post their own delta from the same FINS_FXV run · Ref: Advanced FCV guide, checklist steps 1 and 4; SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Ledgers.
+3. **FX SEMANTIC TAG** — tag the monetary G/L accounts and nodes to be valued with the FX semantic tag; exclude non-monetary accounts deliberately · Example: AP/AR reconciliation accounts and foreign-currency bank accounts are tagged; share capital and historical-cost fixed assets stay out of scope — new accounts inside a tagged range enter scope automatically, so governance matters · Ref: Advanced FCV guide, checklist step 5; SAP Help — Advanced Valuation, semantic tags.
+4. **ADV VALUATION** — activate Advanced Valuation for the accounting principle with its starting ledger, company code and fiscal period — a cutover, not a switch you flip casually · Example: After activation, classic FAGL_FCV and the displaced classic reports must not be used for that scope; opening and history treatment is tested before production · Ref: Advanced FCV guide, checklist step 6 and cutover caution; SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Periodic Processing ▸ Advanced Valuation.
+5. **OB08** — maintain the key-date exchange rates and translation ratios for the rate types the rule uses, with direct/indirect quotation confirmed · Example: USD/INR key-date rate 85 maintained for rate type M; a missing pair is the most common reason an item silently produces no result · Ref: Advanced FCV guide, checklist step 2; SAP GUI ▸ Financial Accounting ▸ General Ledger ▸ Environment ▸ Exchange Rates.
+6. **SKDV / STDV** — define the FCV valuation rule and its steps: business transaction, exchange-rate type, semantic tag, valuation method and grouping · Example: Delivered SKDV (key-date FCV) runs ALWAYS_VALUATE; a local-GAAP rule may run STRICT_LOWEST_VALUE so only worsening losses post · Ref: Advanced FCV guide, rules and valuation methods; SPRO ▸ Advanced Valuation ▸ Foreign Currency Valuation rules.
+7. **KDF** — keep realised exchange-rate differences from payment clearing (transaction key KDF logic) separate from the unrealised valuation and reset accounts of FCV · Example: When the payable is later paid, the payment difference is realised FX via clearing determination; the valuation reset follows the configured realised/reset accounts of the installed release — mixing the two is a classic audit finding · Ref: Advanced FCV guide, checklist step 7 and release-sensitive account fields; SPRO ▸ Financial Accounting ▸ Accounts Payable ▸ Business Transactions ▸ Outgoing Payments.
+8. **FINS_FXV** — execute the valuation run by company code, le
+
+## 106. [2026-10-20T07:17:15.728Z] answer
+
+Q: Valuation methods
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+> Core Concept: A close, test cycle or cutover is controlled by sequence and evidence
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** A close, test cycle or cutover is controlled by sequence and evidence. I lock the sequence, run valuation and allocations in dependency order, reconcile subledger to GL, keep exceptions owned, and do not call a test passed until the accounting document and report prove it.
+- **Key System Benefit:** In S/4HANA ACDOCA lets close teams reconcile GL, subledger, CO and margin views from the same journal, so the close becomes exception management rather than hunting differences between copied tables.
+- **Execution Strategy:** The runbook orders period control and the MM period close, depreciation, automatic clearing, foreign-currency valuation and GR/IR regrouping, assessment and distribution, WIP and order settlement, reporting, balance carryforward and lock. Every step has an owner, input, output, reconciliation and rollback or correction path.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. PREPARE OB52
+ periods, master data and interfaces checked
+ ↓
+2. VALUE AFAB · FAGL_FCV
+ depreciation and foreign currency posted
+ ↓
+3. ALLOCATE KSU5 · KSV5 · CO88
+ assessment, distribution, WIP and settlement completed
+ ↓
+4. RECONCILE F.13 · FBL3N · ACDOCA
+ clearing done; subledger, GR/IR and GL agreed
+ ↓
+5. REPORT F.01
+ financial statement and management pack produced
+ ↓
+6. CARRY + LOCK FAGLGVTR · OB52
+ balances carried forward, period closed with evidence retained
+```
+
+### ⚙️ CONFIG STEPS
+1. **OB52** — control which posting periods and account types are open · Example: Normal users are blocked after cut-off while the close team uses controlled special access · Ref: close calendar; SPRO ▸ Financial Accounting Global Settings ▸ Document ▸ Posting Periods.
+2. **AFAB** — run depreciation before asset reporting and period lock · Example: Depreciation 50,000 must be posted or explicitly explained before the balance sheet is signed · Ref: asset close checklist; SAP GUI ▸ Fixed Assets ▸ Periodic Processing.
+3. **MMPV** — close the MM posting period in step with the FI cut-off · Example: No goods movement can land in the closing period after the logistics cut-off; exceptions are listed and owned · Ref: materials close step; SAP GUI ▸ Logistics ▸ Materials Management (t-code MMPV).
+4. **F.13** — run automatic clearing for GR/IR and the agreed clearing accounts · Example: Matched items clear inside tolerance; every residual line is explained, never force-cleared · Ref: clearing evidence pack; SAP GUI ▸ Financial Accounting ▸ General Ledger ▸ Periodic Processing ▸ Clearing.
+5. **FAGL_FCV** — value open foreign-currency items and G/L balances · Example: Exchange differences are posted by ledger/accounting principle and reversed or carried by design · Ref: valuation design; SAP GUI ▸ General Ledger ▸ Periodic Processing ▸ Closing ▸ Valuate.
+6. **F.19** — regroup open GR/IR items into adjustment accounts for the balance-sheet date · Example: Goods received not invoiced and invoices without goods show on the correct side without touching the open items · Ref: GR/IR regrouping design; SAP GUI ▸ General Ledger ▸ Periodic Processing ▸ Closing ▸ Regroup.
+7. **KSU5** — execute actual assessment/distribution cycles after source costs are complete · Example: Sender and receiver totals are proved before the cycle is accepted · Ref: allocation cycle evidence; SAP GUI ▸ Controlling ▸ Cost Center Accounting ▸ Period-End Closing.
+8. **KSV5** — execute actual distribution where fixed rules, not statistical keys, drive the split · Example: Sender totals distribute completely; receivers prove back to the sender balance · Ref: allocation cycle evidence; SAP GUI ▸ Controlling ▸ Cost Center Accounting ▸ Period-End Closing.
+9. **KKAO** — calculate work in process for open production orders before settlement · Example: WIP is capitalised for unfinished orders and reverses automatically when the order completes · Ref: WIP design; SAP GUI ▸ Product Cost Controlling ▸ Cost Object Controlling ▸ Period-End Closing.
+10. **CO88** — settle production and internal orders after WIP/variance calculation · Example: No production order is left with an unexplained balance at close · Ref: CO close runbook; SAP GUI ▸ Product Cost Controlling ▸ Cost Object Controlling.
+11. **FAGLGVTR** — carry G/L balances forward into the new fiscal year after the statement is agreed · Example: P&L closes to retained earnings and every balance-sheet account opens the new year proved to F.01 · Ref: year-end carryforward step; SAP GUI ▸ General Ledger ▸ Periodic Processing ▸ Closing ▸ Carry Forward.
+12. **AJRW** — change the asset fiscal year (and close the old one with AJAB) after depreciation is signed · Example: Asset history sheets open the new year only on reconciled, fully depreciated-or-explained values · Ref: asset year-end checklist; SAP GUI ▸ Fixed Assets ▸ Periodic Processing ▸ Year-End Closing.
+13. **LTMC** — load and reconcile cutover master data, open items and balances during migration · Example: Legacy trial balance, AP/AR open items and asset values agree to the loade
+
+## 107. [2026-10-20T08:42:01.590Z] answer
+
+Q: Recurring
+Scrutiny: ISSUES: Worked entries balance - total Dr equals total Cr
+A: ### 💡 SAY THIS FIRST
+Recurring entries automate routine month-end accruals and rent schedules without requiring manual journal entry creation every period.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW (speak aloud in ~30-45 secs)
+- **Core Concept:** Recurring entries act as template documents for repetitive transactions like monthly rent or insurance, eliminating manual effort during month-end closing.
+- **Key System Benefit:** S/4HANA stores these template documents in BKPF and BSEG, which are then processed via batch input sessions (SM35) or the background execution program (F.14) to post directly into the Universal Journal (ACDOCA).
+- **Execution Strategy:** We set up number ranges via FBN1 with interval X1, define template documents using FBD1, and execute them periodically via F.14 while ensuring posting periods are open in OB52.
+
+### 📊 ARCHITECTURAL FLOW
+```
+1. NUMBER RANGE FBN1
+ define document number range X1 for recurring templates
+
+ ↓
+2. TEMPLATE FBD1
+ create recurring document template with intervals and frequency
+
+ ↓
+3. EXECUTION F.14
+ execute recurring entries for settlement period into batch input
+
+ ↓
+4. BATCH PROCESSING SM35
+ process batch input session in background or foreground to post
+
+ ↓
+5. ACCOUNTING FB03
+ verify posted document in ACDOCA and BKPF/BSEG tables
+
+```
+
+### ⚙️ CONFIG STEPS
+1. **FBN1** — define number ranges for recurring documents · WHY: recurring template documents require a dedicated number range separate from actual postings · ENTER: company code NI01, number range X1, years 2024 to 2025, from 1 to 9999 · Where: SPRO ▸ Financial Accounting ▸ General Ledger Accounting ▸ Periodic Processing ▸ Recurring Entries ▸ Define Document Number Ranges · TEST/PASS: FBN1 displays interval X1 ready for template creation
+2. **FS00** — create general ledger master account · WHY: the P&L or balance sheet account to be posted automatically must exist and accept line item display · ENTER: account 400402, account group Administration expenses, P&L statement, field status group G001 · Where: Easy Access ▸ Accounting ▸ Financial Accounting ▸ General Ledger ▸ Master Records ▸ G.L. Accounts ▸ Individual Processing ▸ FS00 · TEST/PASS: FS00 saves account 400402 without error
+3. **FBD1** — create recurring document template · WHY: establishes the recurring posting structure, frequency, and first/next run dates · ENTER: company code NI01, doc type SA, first run date 01.04.2024, interval 1 month, last run date 31.12.2024, G/L accounts and amounts · Where: Easy Access ▸ Accounting ▸ Financial Accounting ▸ General Ledger ▸ Periodic Processing ▸ Recurring Entries ▸ FBD1 - Create · TEST/PASS: FBD3 displays the created recurring document number 100000
+4. **F.14** — execute recurring entries · WHY: selects due recurring documents for the settlement period and generates a batch input session · ENTER: company code NI01, fiscal year 2024, settlement period 01.04.2024 to 30.04.2024, batch session name SAPF120_ · Where: Easy Access ▸ Accounting ▸ Financial Accounting ▸ General Ledger ▸ Periodic Processing ▸ Recurring Entries ▸ Execute · TEST/PASS: system confirms batch input session SAPF120_ was created
+5. **SM35** — process batch input session · WHY: processes the generated session to post the actual accounting documents into the general ledger · ENTER: select session SAPF120_, click Process, select Display Errors Only or Foreground · Where: Easy Access ▸ System ▸ Services ▸ Batch Input ▸ Sessions · TEST/PASS: session overview shows processing completed successfully and document 100001 is posted
+6. **OB52** — maintain posting period variants · WHY: ensures the target posting period is open so batch processing does not fail on period validation · ENTER: posting period variant NI01, account type +, periods 1 to 12 / year 2024 · Where: SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Ledgers ▸ Fiscal Year and Posting Periods ▸ Posting Periods ▸ Open and Close Posting Periods · TEST/PASS: SM35 processes batch session without period error
+
+### 🔧 DROP THESE OBJECT NAMES
+- **FBD1** — create recurring document template
+- **F.14** — execute recurring entries program
+- **SM35** — batch input session processing
+- **FBN1** — recurring document number range X1
+- **OB52** — open and close posting periods
+- **ACDOCA** — Universal Journal line item table
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Administrative Expenses 400402 €5,000 / Cr Bank Clearing Account 113100 €5,000 — Monthly recurring rent posting executed via F.14 and SM35.
+
+### 🧪 HOW TO TEST IT
+1. Open FBD3 and display recurring document number 100000 to verify header data, amount of €5,000, and next run date.
+2. Execute F.14 for the current month's settlement period and enter session name SAPF120_.
+3. Navigate to SM35, select session SAPF120_, and process in foreground mode to step through screens.
+4. Negative test: close posting period in OB52 for the target month, run SM35, and verify the system halts with period-not-open error before posting.
+5. Reconciliation: open FB03 for the generated document number, verify lines in BKPF, BSEG, and ACDOCA, and reconcile against finan
+
+## 108. [2026-10-21T06:43:30.187Z] answer
+
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+## 109. [2026-10-21T06:43:53.030Z] answer
+
+Q: Gvtr
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+> “I searched the indexed material for this question
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+Interview question
+ ↓
+Retrieve matching file + heading
+ ↓
+Check the cited step/object in SAP
+ ↓
+Reconcile resulting document and sign off
+```
+
+### ⚙️ CONFIG STEPS
+1. **FAGL_FCV** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf.
+2. **F-02** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf.
+3. **OB08** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: Advanced_Foreign_Currency_Valuation_FINS_FXV_Guide.pdf.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **FAGL_FCV** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F-02** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **OB08** — explicitly detected in the retrieved indexed material; validate its role in context.
+
+### 🧾 ACCOUNTING ENTRIES
+- 83 83,000 86,000 −3,000 Dr AP 3,000 / Cr FX gain or configured — nation.
+- Account Debit (INR) Credit (INR)
+- Account Debit (INR) Credit (INR)
+- Foreign Currency Valuation, credit-risk-based impairment and balance-sheet reclassification. Sequence and
+- 83 83,000 86,000 −3,000 Dr AP 3,000 / Cr FX gain or configured — hanged, the
+
+### 🧪 HOW TO TEST IT
+1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
+2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
+3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+
+### 🪤 TRAPS
+- Do not promote an unconfirmed blueprint value to production configuration.
+- A retrieved keyword is evidence to inspect, not proof that every project uses the same account or process.
+- If the note does not state the posting, request the approved mapping rather than guessing.
+
+### 🎯 IF MY MIND GOES BLANK
+“I will anchor the answer to the cited file, confirm the exact configuration in QAS, and prove the accounting result in FB03/ACDOCA before sign-off.”
+
+### 📎 FROM MY INDEXED MATERIAL
+83 83,000 86,000 −3,000 Dr AP 3,000 / Cr FX gain or configured — nation. Post-clearing FCV follow-up Previously posted unrealized valuation may need correction after the open item is cleared. The subsequent Advanced FCV run corrects the residual adjustment according to the configured realized/reset accounts; do not reverse by ha…
+sting period and B/S/P&L reconciliation. [ ] Keep the next period’s FCV delta process in the close calendar—do not schedule an automatic reversal of the FCV document. Run sequence in the broader Advanced Valuation close SAP’s Advanced Valuation overview lists the related jobs as discounting long-term assets/liabilities, Advanced…
+
+## 110. [2026-10-21T06:43:54.017Z] answer
+
+Q: Gvtr
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+### 🧠 GOING DEEPER - the architect cut
+
+### 🧠 DEEPER CUT — FI-MM/FI-SD Integration & Material Ledger Actual Costing
+- **BUSINESS DETAIL**: In my last global manufacturing rollout, our European entity (selling finished goods) buys raw materials from third-party vendors via Purchase Orders, receives them into plant 1000 via MIGO, and pays via MIRO with 30-day net payment terms under German VAT laws. When sales orders ship to intercompany customers via VL01N and bill via VF01, the system generates billing documents that post revenue and cost of goods sold simultaneously, passing German statutory and EC sales list requirements.
+- **CONFIG STEPS**: 
+  1. **OMJJ** — Define movement types (e.g., 101 Goods Receipt for PO into Warehouse) and assign value strings, because the business requires distinct movement types to drive separate G/L posting indicators without manual intervention. Example value: Movement type 101 uses value string WE01 for inventory posting.
+  2. **OBYC** — Configure automatic account determination for MM inventory postings using transaction keys BSX, WRX, GBB, and PRD, because finance needs every goods movement and invoice variance routed to the exact inventory, clearing, or price difference account. Example value: Valuation class 3000 (Raw Materials) linked to G/L 130000 (Invento
+
+## 111. [2026-10-21T06:44:28.035Z] github-fetch
+
+Fetched from Sk1n11/Goose: {"owner":"Sk1n11","repo":"Goose","branch":"main","folder":"offergoose-knowledge","files":17,"answers":122,"catalog":1,"fetched":["offergoose-knowledge/answers.json (122 answers)","offergoose-knowledge/answers.md","offergoose-knowledge/app-report.md","offergoose-knowledge/documents/index.md","offergoose-knowledge/documents/interview-screenshot-2026-10-17.md","offergoose-knowledge/documents/references-localizations-china-localization.md","offergoose-knowledge/documents/references-localizations-france-localization.md","offergoose-knowledge/documents/references-localizations-germany-localization.md","offergoose-knowledge/documents/references-localizations-india-localization.md","offergoose-knowledge/documents/references-localizations-japan-localization.md","offergoose-knowledge/documents/references-testing-integration-testing-guide.md","offergoose-knowledge/documents/references-testing-unit- | KB now: 391 sources, 154 answers
+
+## 112. [2026-10-21T06:44:28.806Z] free-database-fetch
+
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 390 sources, 154 answers
