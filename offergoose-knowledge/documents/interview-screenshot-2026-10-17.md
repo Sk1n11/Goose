@@ -2,122 +2,208 @@
 
 Topic: Screenshots
 
-[Local OCR · confidence 48%]
-AP O0@ - NO ®Li017%
-Whatis a Reconciliation Account?
-Thi oft sa translator
-Howit works — in el me
-Ap sub ledgr Recontiaton Account po
-21000 Ss Hoot
-Total: € 10,500 do €10500
-Suledger total aways = GL balance
-The 3 mai Reconliaion Accounts
-AE Yon Ter a
-ep
-The golden ue
-ONrcnsenunes
+[Local OCR · confidence 71%]
+. . aise ines:
+HGB vs vs Turkish Accounting Principles ame bes.
+5 5 5 iffere ions.
+One Transaction — Different Rules — Different Results > Better decis®
+—) HGB (Germany) & IFRS (International) (C+) Turkish Accounting
+@ German Commercial Code (HGB) @ International Financial Reporting Standards @ Includes VUK (Tax Law), Uniform Chart of
+or ES aa mae Accounts, and TFRS/BOBI FRS
+ocus on creditor protection, prudence rovide comparable, decision-useful 3
+and distributable profit Or rae © Local statutory and tax compliance
+@ Generally conservative accounting @ Based on fair value where relevant @ Often influenced by tax rules (VUK)
+@ Used for German statutory financial @ More flexible, principle-based @ TRS is aligned with IFRS for specified entities
+Stgments @ Used for consolidated reporting © Requirements defined by KGK and Turkish
+@ May differ from German tax law (EStG) (in many cases required for listed companies) regulations
+83 Key Differences at a Glance
+ HGB (Germany) IFRS (International) Turkish Accounting (VUK / TMS/TFRS)
+€Q Primary purpose Statutory accounts, creditor protection Comparable reporting for investors Local statutory and tax compliance
+5 z VUK, Uniform Chart of Accounts,
+
+83 Key Differences at a Glance — RS (International) Turkish Accounting (VUK / TMS/TFRS)
+€Q Primary purpose Statutory accounts, creditor protection Comparable reporting for investors Local statutory and tax compliance
+5 z VUK, Uniform Chart of Accounts,
+LF Governing rules German Commercial Code (HGB) IFRS Standards EI oe
+@ Assetvaluation Historical cost, conservative Historical cost or far value (depends on standard) | Often tax-based cost, local rules apply
+<p Depreciation Based on HGB rules (often shorter) Based on useful life, residual value, components Tax depreciation (VUK) may differ
+[=] Inventory Lower of cost or market (stricter) Lower of cost or NRV (IAS 2) Lower of cost or NRV, tax rules influence
+@ Provisions Only certain provisions allowed (HGB §249) IAS 37 - present obligation, probable, measurable ~~ Depending on framework, tax deductibility
+not automatic.
+ Revenue Realization and accrual principles IFRS 15 - 5-step model Local rules, may differ from IFRS 15
+B Leases Different treatment (not like IFRS 16) IFRS 16 - ROU asset and lease liability Depends on VUK or TMS (may differ)
+41 Deferred tax HGB-specific rules 1AS 12 temporary differences Separate tax reporting, local rules
+£5 Inflation No automatic restatement 1AS 29 when hyperinfiationary TMS 29 applies in Turkey (when criteria met)
+
+5 z VUK, Uniform Chart of Accounts, — iffer)
+41 Deferred tax HGB-specific rules 1AS 12 temporary differences Separate tax reporting, local rules
+£5 Inflation No automatic restatement 1AS 29 when hyperinfiationary TMS 29 applies in Turkey (when criteria met)
+£3} How to Decide Which Rules Apply? B Posting Examples — Same Transaction, Different Results
+1. What is the purpose of your financial statements? | 0 1. Purchase of a machine (120,000)
+Ves, iors opi) | ETI SECT ETT
+Dr Machinery (PPE) 120,000 | | Dr Machinery (PPE) 120,000 | Dr Machinery (PPE) 120,000
+2. Which standard i required? CrBank/Paable 120000 || CrBank/Papable 120000 | | CrBank/Pasble 120000
+(by law, contract or group policy) | 2 Fara
+ail 2 Depreciation (useful life differs)
+or legal requirement investors or group (TMS/TFRS) | | Dr DepreciationExp. 20000 Dr Depreciation Exp. 15000 | Dr Depreciation Exp. ~~ 24,000
+(HGB) (IFRS) (or local regulation) Crécc Deprecaion 20000 | | Crhce Depreciation 15000 | | Cr Acc Depreciation 24.000
+2 = — y ——— Useful life: 6 years Useful life: 8 years. Useful life: 5 years (example)
+Use VUK/ THE rules: = ¢ =
+| Use HGB rules J | UselFRS les | | (with local guidance) J © 3. Warranty provision (10,000)
+=
+CPodson 10000 || CrPovson 10000 | | (may notbetax deduct)
+Asset Liability Revenue Inventory && 4.
+
+2 = — y ——— Useful life: 6 years Useful life: 8 years. Useful life: 5 years (example — )
+Use VUK/ THE rules: = ¢ =
+| Use HGB rules J | UselFRS les | | (with local guidance) J © 3. Warranty provision (10,000)
+=
+CPodson 10000 || CrPovson 10000 | | (may notbetax deduct)
+Asset Liability Revenue Inventory && 4. Customer prepayment (12,000)
+Compre (col (comeotgos fg rmmand
+intangible) provision) service) finished goods) Or Bank 12000 | | Or Bank 12000 | | Dr Bank 12000
+|” cosratomna tom || crossbows 1200 || Gort 13000
+pre | A 5. impairment (10,000)
+and check fo local adaptations (e., tax, sector es), ATES GETTER SETTER
+Or Impaiment Loss 10000 | | Dr ImpaimentLoss 10000 | Dependson calles
+Cofisset/ Ace.Dep. 10000 || Crhset/Acc.Dep. 10000 || and tax reatment
+B Try It Yourself - Quick Example —_—
+= 4 “\/" Remember
+ps —
+HGB: 20000 Th same transaction can sto ferent smut er HG8, FR a Tks les
+Transaction: Machine purchase v | IFRS:15000 Always check the applicable standard, egal requirements and company policy. § stand
+Turkish : 24,000 @ Tn rues and local regulations can create additional dif ler
+tes CE] urkish (example): 0 Toles, sector des nd loca regulation ve sctona ferences. 0 Tn
+Sores acento, DAR) files Use professional judgment or estimates and uncertain ams. the 4 unl
+Method: Straight-line: v | Different resus. Document and reconcile al diferences. tpt —
+
+2 = — y ——— Useful life: 6 years Useful life: 8 years. Useful life: 5 years (example) — ca regulation ve sctona ferences. 0 Tn
+Sores acento, DAR) files Use professional judgment or estimates and uncertain ams. the 4 unl
+Method: Straight-line: v | Different resus. Document and reconcile al diferences. tpt —
+Important [J Offical References
+This cheat sheet provides a simplified overview. The correct accounting treatment depends on the specific transaction, Fh la
+‘applicable standards (HGB, IFRS, VUK, TMS/TFRS), legal requirements and professional judgment. Always refer to the oficial standards SR rod
+and current regulation or const a qualified accountant. 2 0k Tks Ss (MST BOR
 
 [Structured understanding of this image]
 ### 🖼️ WHAT THE IMAGE SAYS
-- AP O0@ - NO ®Li017%
-- Whatis a Reconciliation Account?
-- Thi oft sa translator
-- Howit works — in el me
-- Ap sub ledgr Recontiaton Account po
-- 21000 Ss Hoot
-- Total: € 10,500 do €10500
-- Suledger total aways = GL balance
-- The 3 mai Reconliaion Accounts
-- AE Yon Ter a
-- The golden ue
-- ONrcnsenunes
-- **SAP objects detected:** LI017.
-- **Amounts / rates detected:** € 10,500, €105.
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** A ledger is a complete set of books for one accounting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
+- . . aise ines:
+- HGB vs vs Turkish Accounting Principles ame bes.
+- 5 5 5 iffere ions.
+- One Transaction — Different Rules — Different Results > Better decis®
+- —) HGB (Germany) & IFRS (International) (C+) Turkish Accounting
+- @ German Commercial Code (HGB) @ International Financial Reporting Standards @ Includes VUK (Tax Law), Uniform Chart of
+- or ES aa mae Accounts, and TFRS/BOBI FRS
+- ocus on creditor protection, prudence rovide comparable, decision-useful 3
+- and distributable profit Or rae © Local statutory and tax compliance
 
-🗣️ DIRECT ANSWER TO SPEAK NOW — unting principle. In S/4HANA I post once into ACDOCA and the leading and non-leading ledgers receive their valuation in the same document, so IFRS group reporting and local HGB/statutory books stay reconciled by design.
-- **Key System Benefit:** ACDOCA removes the old FI/CO reconciliation problem: GL, CO, asset and margin characteristics sit on one line item, and extension ledgers can carry management adjustments without changing the primary posting.
-- **Execution Strategy:** FINSC_LEDGER defines the ledger set, accounting principles bind each ledger to its valuation rule, ledger groups control which company codes post where, and document splitting keeps balance-sheet characteristics zero-balanced.
-- **Scenario Figures I Will Use:** € 10,500, €105. I keep the same figures through the posting, clearing and test steps; if a rate or account is not given, I state it as an explicit assumption rather than inventing a project value.
-- **Objects Detected In The Question/Image:** LI017.
+🖼️ WHAT THE IMAGE SAYS — (Tax Law), Uniform Chart of
+- or ES aa mae Accounts, and TFRS/BOBI FRS
+- ocus on creditor protection, prudence rovide comparable, decision-useful 3
+- and distributable profit Or rae © Local statutory and tax compliance
+- @ Generally conservative accounting @ Based on fair value where relevant @ Often influenced by tax rules (VUK)
+- @ Used for German statutory financial @ More flexible, principle-based @ TRS is aligned with IFRS for specified entities
+- Stgments @ Used for consolidated reporting © Requirements defined by KGK and Turkish
+- @ May differ from German tax law (EStG) (in many cases required for listed companies) regulations
+- 83 Key Differences at a Glance
+- HGB (Germany) IFRS (International) Turkish Accounting (VUK / TMS/TFRS)
+- €Q Primary purpose Statutory accounts, creditor protection Comparable reporting for investors Local statutory and tax compliance
+- 5 z VUK, Uniform Chart of Accounts,
+- LF Governing rules German Commercial Code (HGB) IFRS Standards EI oe
+- **SAP objects detected:** HG8.
+- **Amounts / rates detected:** RS 15, RS 16, £5, £3.
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** New Asset Accounting values the same asset in parallel by depreciation area and ledger.
+
+🖼️ WHAT THE IMAGE SAYS — bjects detected:** HG8.
+- **Amounts / rates detected:** RS 15, RS 16, £5, £3.
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** New Asset Accounting values the same asset in parallel by depreciation area and ledger. The asset class drives account determination and depreciation keys, postings update the asset subledger in real time, and AFAB calculates depreciation by area.
+- **Key System Benefit:** S/4HANA removed the old delta-area workaround for many parallel valuations: integrated acquisitions use a technical clearing account so each ledger/area receives the correct value from the original document.
+- **Execution Strategy:** Chart of depreciation, depreciation areas, account determination, asset classes and number ranges must be designed together; an asset class with the wrong account determination posts every later acquisition and retirement incorrectly.
+- **Scenario Figures I Will Use:** RS 15, RS 16, £5, £3. I keep the same figures through the posting, clearing and test steps; if a rate or account is not given, I state it as an explicit assumption rather than inventing a project value.
+- **Objects Detected In The Question/Image:** HG8.
 
 ### 📊 ARCHITECTURAL FLOW
 ```text
-1. POSTING FB50 · FB60 · MIRO
- one business document enters Finance
+1. STRUCTURE OAOB · OADB
+ chart of depreciation and areas assigned
  ↓
-2. LEDGER ENGINE FINSC_LEDGER
- leading and non-leading ledgers selected
- ↓
-3. JOURNAL ACDOCA
- one line per ledger, account and characteristic
- ↓
-4. REPORTING FAGLL03 · Fiori
+2. MASTER AS01
 
-📊 ARCHITECTURAL FLOW — MIRO
- one business document enters Finance
+🗣️ DIRECT ANSWER TO SPEAK NOW — ssumption rather than inventing a project value.
+- **Objects Detected In The Question/Image:** HG8.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. STRUCTURE OAOB · OADB
+ chart of depreciation and areas assigned
  ↓
-2. LEDGER ENGINE FINSC_LEDGER
- leading and non-leading ledgers selected
+2. MASTER AS01
+ asset class creates account and depreciation defaults
  ↓
-3. JOURNAL ACDOCA
- one line per ledger, account and characteristic
+3. ACQUIRE F-90 · MIRO
+ asset value posted by area/ledger
  ↓
-4. REPORTING FAGLL03 · Fiori
- local and group views read the same document
+4. DEPRECIATE AFAB
+ planned depreciation posted
+ ↓
+5. CLOSE / PROVE AJAB · AW01N
+ year close and asset history verified
 ```
 
 ### ⚙️ CONFIG STEPS
-1. **FINSC_LEDGER** — define ledgers, accounting principles and ledger groups · Example: 0L for IFRS leading ledger and a non-leading ledger for HGB/local GAAP · Ref: ledger-design sheet; SPRO ▸ Financial Accounting ▸ Financial Accounting Global Settings ▸ Ledgers.
-2. **OBY6** — assign the company code currency, fiscal-year variant and posting-period variant · Example: German company code reports EUR locally while the group reads the same ACDOCA document under IFRS · Ref: company-code global-parameter sheet; SPRO ▸ Financial Accounting Global Settings.
-3. **FAGL_ACTIVATION** — confirm New GL/document-splitting activation in an ECC conversion context · Example: Segment and profit-center splitting are active before the first productive posting · Ref: conversion readiness checklist; SPRO ▸ Financial Accounting ▸ General Ledger Accounting.
-4.
+1. **OAOB** — assign the chart of depreciation to the company code · Example: Each company code uses the country chart that carries its statutory depreciation areas · Ref: asset-accounting design; SPRO ▸ Financial Accounting ▸ Asset Accounting ▸ Organizational Structures.
+2. **OADB** — review depreciation areas and their ledger/accounting-principle assignment · Example: Book, IFRS and local-tax areas value the same asset without duplicate asset masters · Ref: depreciation-area matrix; SPRO ▸ Financial Accounting ▸ Asset Accounting ▸ Valuation.
+3.
 
-⚙️ CONFIG STEPS — n an ECC conversion context · Example: Segment and profit-center splitting are active before the first productive posting · Ref: conversion readiness checklist; SPRO ▸ Financial Accounting ▸ General Ledger Accounting.
-4. **OB52** — open and close posting periods by account type and company code · Example: Only the current period stays open for users; special periods are restricted to the close team · Ref: period-close calendar; SPRO ▸ Financial Accounting Global Settings ▸ Document ▸ Posting Periods.
-5. **FS00** — maintain the G/L account and its field-status, tax and open-item behaviour · Example: A balance-sheet clearing account is open-item managed; a revenue account carries the correct tax category · Ref: chart-of-accounts governance list; SAP GUI ▸ Accounting ▸ Financial Accounting ▸ General Ledger ▸ Master Records.
-6. **FAGLFLEXT / ACDOCA** — prove totals and line items after posting · Example: The local and leading ledger show the same document number with their own valuation lines · Ref: reconciliation evidence pack; SE16H on ACDOCA.
+⚙️ CONFIG STEPS — counting-principle assignment · Example: Book, IFRS and local-tax areas value the same asset without duplicate asset masters · Ref: depreciation-area matrix; SPRO ▸ Financial Accounting ▸ Asset Accounting ▸ Valuation.
+3. **AO90** — maintain account determination for asset classes and depreciation areas · Example: Acquisition, accumulated depreciation and gain/loss accounts are separated by asset class · Ref: asset account-determination sheet; SPRO ▸ Financial Accounting ▸ Asset Accounting ▸ Integration with General Ledger Accounting.
+4. **AS01** — create the asset master from the correct asset class · Example: The class defaults useful life, depreciation key and account determination before the first posting · Ref: asset-master data standard; SAP GUI ▸ Accounting ▸ Financial Accounting ▸ Fixed Assets ▸ Asset.
+5. **AFAB** — execute the depreciation run for the period · Example: Planned depreciation RS 15 posts by depreciation area and updates the asset history · Ref: period-close checklist; SAP GUI ▸ Fixed Assets ▸ Periodic Processing ▸ Depreciation Run.
+6.
 
-### 🔧 DROP THESE OBJECT NAMES
-- **FINSC_LEDGER** — ledger and accounting-principle setup.
-- **ACDOCA** — Universal Journal line items.
-- **OB52** — posting-period control.
-- **FS00** — G/L master maintenance.
-
-⚙️ CONFIG STEPS — ACDOCA.
+⚙️ CONFIG STEPS — ciation run for the period · Example: Planned depreciation RS 15 posts by depreciation area and updates the asset history · Ref: period-close checklist; SAP GUI ▸ Fixed Assets ▸ Periodic Processing ▸ Depreciation Run.
+6. **AJAB** — close the asset fiscal year after depreciation and reconciliation are complete · Example: No year is closed while unposted depreciation or asset/GL differences remain · Ref: year-end close evidence; SAP GUI ▸ Fixed Assets ▸ Periodic Processing ▸ Year-End Closing.
 
 ### 🔧 DROP THESE OBJECT NAMES
-- **FINSC_LEDGER** — ledger and accounting-principle setup.
-- **ACDOCA** — Universal Journal line items.
-- **OB52** — posting-period control.
-- **FS00** — G/L master maintenance.
-- **FAGLL03** — ledger-specific line-item display.
-- **OBBH** — substitution rules when a field must be derived.
+- **OAOB** — chart of depreciation assignment.
+- **OADB** — depreciation-area definition.
+- **AO90** — asset account determination.
+- **AS01** — asset master creation.
+- **AFAB** — depreciation posting run.
+- **AW01N** — asset history and values.
+- **AJAB** — asset fiscal-year close.
 
 ### 🧾 ACCOUNTING ENTRIES
-- Dr Expense € 10,500 / Cr Vendor or bank € 10,500 — same document creates the required ledger lines.
-- Dr Depreciation expense € 10,500 / Cr Accumulated depreciation € 10,500 — asset depreciation posts by depreciation area and ledger.
-- Dr Foreign-currency revaluation € 10,500 / Cr Balance-sheet adjustment € 10,500 — FAGL_FCV at period end, reversed or carried by design.
+- Dr Fixed asset RS 15 / Cr Technical clearing account RS 15 — integrated acquisition before area-specific valuation is completed.
+- Dr Depreciation expense RS 15 / Cr Accumulated depreciation RS 15 — AFAB period posting.
+- Dr Accumulated depreciation and loss on disposal RS 15 / Cr Fixed asset RS 15 — retirement removes cost and reserves.
+
+🧾 ACCOUNTING ENTRIES — mpleted.
+- Dr Depreciation expense RS 15 / Cr Accumulated depreciation RS 15 — AFAB period posting.
+- Dr Accumulated depreciation and loss on disposal RS 15 / Cr Fixed asset RS 15 — retirement removes cost and reserves.
+- Dr Asset under construction RS 15 / Cr Vendor or internal activity RS 15 — capital project before settlement to the final asset.
 
 ### 🧪 HOW TO TEST IT
-1. Post FB50 with two ledgers active and inspect ACDOCA for document, ledger, account, profit center and segment.
-2. Run FAGLL03 for the non-leading ledger and agree it to the local trial balance.
-3. Post a document-splitting case and confirm every balance-sheet characteristic nets to zero.
-4. Close and reopen a test period in OB52 and prove user postings are blocked outside the allowed window.
+1. Create an asset in AS01, post an acquisition and inspect every depreciation area in AW01N.
+2. Run AFAB in test mode, correct any account or cost-object error, then post and prove the journal in ACDOCA.
+3. Transfer and retire one asset; reconcile asset history to the GL balances.
+4. Run the asset/GL reconciliation before AJAB and keep the signed difference list.
 
 ### 🪤 TRAPS
-- Trap: Calling a ledger an accounting principle.
-
-🧪 HOW TO TEST IT — m every balance-sheet characteristic nets to zero.
-4. Close and reopen a test period in OB52 and prove user postings are blocked outside the allowed window.
-
-### 🪤 TRAPS
-- Trap: Calling a ledger an accounting principle. → Winning line: Winning line: the principle is the valuation rule; the ledger is the book where that rule posts.
-- Trap: Saying S/4 still reconciles FI and CO at month-end. → Winning line: Winning line: ACDOCA carries both views in one line; close becomes review and valuation, not reconciliation.
+- Trap: Creating a new asset class for every asset. → Winning line: Winning line: classes group valuation and account rules; masters carry the individual asset.
+- Trap: Fixing depreciation only in the leading ledger. → Winning line: Winning line: check every depreciation area and its ledger assignment in AW01N.
 
 ### 🎯 IF MY MIND GOES BLANK
-One posting, every book. FINSC_LEDGER defines the ledgers, ACDOCA stores the lines, and local plus group reporting read the same document.
+Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+
+🪤 TRAPS — dger assignment in AW01N.
+
+### 🎯 IF MY MIND GOES BLANK
+Asset class drives the rules, AS01 creates the asset, AFAB posts depreciation, and AW01N proves the value by area.
 
 ### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
 - HGB vs IFRS — how do parallel ledgers answer both from one document?
