@@ -1,6 +1,6 @@
 {
-  "exportedAt": "2026-10-21T20:30:58.605Z",
-  "count": 121,
+  "exportedAt": "2026-10-21T20:56:20.245Z",
+  "count": 120,
   "answers": [
     {
       "q": "🖼️ Explain this screenshot",
@@ -841,13 +841,6 @@
       "topic": "GitHub sync",
       "model": "🤝 dual AI · gemini · openai/gpt-oss-120b",
       "updatedAt": "2026-10-21T06:44:13.783Z"
-    },
-    {
-      "q": "How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA",
-      "a": "### 💡 SAY THIS FIRST\nI need one line, 12-18 words, plain English. Something like: \"I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end.\"\n\n- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.\n- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.\n- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.\n\n### 🗣️ DIRECT ANSWER TO SPEAK NOW\nThree bullets:\n- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.\n- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.\n- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.\n\n### 📊 ARCHITECTURAL FLOW\nI need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:\n\n```\n1. MASTER DATA BP/CVI · MM01 · VK01\n business partner, material master, sales data\n ↓\n2. CONFIGURATION OBYC · VKOA · OMX1\n account determination, ML activation\n ↓\n3. MM POSTING ME21N → MIGO → MIRO\n PO, goods receipt, invoice verification\n ↓\n4. SD POSTING VA01 → VL01N → VF01\n sales order, delivery, goods issue, billing\n ↓\n5. STANDARD COST CK11N · CK24\n standard price released\n ↓\n6. DIFFERENCE COLLECT GR/IR, price differences, FX\n material ledger collects variances\n ↓\n7. ACTUAL COSTING CKMLCP\n close and settle differences\n ↓\n8. REPORTING CKM3 · ACDOCA · KE24\n actual prices, journal entries, profitability\n```\n\nLet's construct it carefully.\n\n### ⚙️ CONFIG STEPS\nI need to walk the configuration path in dependency order. The steps should cover:\n1. Organisational structure (company code, controlling area, etc.)\n2. Ledger design (FINSC_LEDGER, parallel ledgers)\n3. Master data (Business Partner, material master, etc.)\n4. Account determination (OBYC, VKOA)\n5. Material Ledger activation (OMX1)\n6. Standard cost estimation (CK11N, CK24)\n7. Actual costing close (CKMLCP)\n8. Integration settings (for MM and SD)\n9. Testing\n\n_The sections below come from the offline bank because they were missing above._\n\n### 🧾 ACCOUNTING ENTRIES\n- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)\n\n### 🧪 HOW TO TEST IT\n1. Run CKMLCP in test and read each step\n2. Show the actual cost component split\n3. Explain what the alternative valuation run is used for",
-      "topic": "",
-      "model": "openrouter/free",
-      "updatedAt": "2026-10-21T20:30:27.945Z"
     }
   ]
 }
