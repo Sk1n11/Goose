@@ -1,7 +1,13 @@
 {
-  "exportedAt": "2026-10-21T06:45:46.457Z",
-  "answers": 154,
+  "exportedAt": "2026-10-21T20:32:17.008Z",
+  "answers": 121,
   "documents": [
+    "offergoose-knowledge/documents/copa.md",
+    "offergoose-knowledge/documents/mm-fi-integration.md",
+    "offergoose-knowledge/documents/sd-fi.md",
+    "offergoose-knowledge/documents/complete-modules-summary.md",
+    "offergoose-knowledge/documents/contributing.md",
+    "offergoose-knowledge/documents/download-guide.md",
     "offergoose-knowledge/documents/file-manifest.md",
     "offergoose-knowledge/documents/framework.md",
     "offergoose-knowledge/documents/github-upload-guide.md",
@@ -35,12 +41,6 @@
     "offergoose-knowledge/documents/references-localizations-china-localization.md",
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
     "offergoose-knowledge/documents/references-localizations-germany-localization.md",
-    "offergoose-knowledge/documents/references-localizations-india-localization.md",
-    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
-    "offergoose-knowledge/documents/references-localizations-uk-localization.md",
-    "offergoose-knowledge/documents/references-localizations-usa-localization.md",
-    "offergoose-knowledge/documents/references-testing-integration-testing-guide.md",
-    "offergoose-knowledge/documents/references-testing-unit-testing-guide.md",
-    "offergoose-knowledge/documents/index.md"
+    "offergoose-knowledge/documents/references-localizations-india-localization.md"
   ]
 }
