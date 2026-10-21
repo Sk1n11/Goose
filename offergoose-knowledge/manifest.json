@@ -1,7 +1,8 @@
 {
-  "exportedAt": "2026-10-21T20:32:17.008Z",
-  "answers": 121,
+  "exportedAt": "2026-10-21T20:57:38.894Z",
+  "answers": 120,
   "documents": [
+    "offergoose-knowledge/documents/advanced-foreign-currency-valuation-fins-fxv-guide.md",
     "offergoose-knowledge/documents/copa.md",
     "offergoose-knowledge/documents/mm-fi-integration.md",
     "offergoose-knowledge/documents/sd-fi.md",
@@ -40,7 +41,6 @@
     "offergoose-knowledge/documents/references-localizations-canada-localization.md",
     "offergoose-knowledge/documents/references-localizations-china-localization.md",
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
-    "offergoose-knowledge/documents/references-localizations-germany-localization.md",
-    "offergoose-knowledge/documents/references-localizations-india-localization.md"
+    "offergoose-knowledge/documents/references-localizations-germany-localization.md"
   ]
 }
