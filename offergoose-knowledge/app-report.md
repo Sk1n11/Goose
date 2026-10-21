@@ -1,8 +1,8 @@
 # OfferGoose - automatic app report
 
-App version: 2.98.0
-Generated: 2026-10-21T20:30:55.617Z
-AI providers with a saved key: gemini, groq, openrouter, custom
+App version: 2.98.1
+Generated: 2026-10-21T20:56:17.397Z
+AI providers with a saved key: groq, gemini, openrouter, custom
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
 
@@ -4077,253 +4077,100 @@ A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 
 Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
 
-## 116. [2026-10-21T20:30:27.899Z] answer
+## 116. [2026-10-21T20:55:59.951Z] answer
 
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Q: controlling full config
 Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“Controlling full configuration means building CO in dependency order, not collecting transactions. One controlling area (**OKKP**) with a single chart of accounts and fiscal-year variant; cost elements carried as G/L accounts in S/4; cost centers, activity types and internal orders as the account-assignment objects; planning in **KP06/KP26**; allocations as cycles; product costing through the cost component structure and costing variant; then CO-PA and profit centers on top of the same Universal Journal, so every CO posting lands in **ACDOCA** and reconciles to FI by construction. I configure it in that order and I test each layer before the next one exists.”
 
 ### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
+```text
+1. STRUCTURE — OKKP controlling area · OX18 company-code assignment
+2. MASTER DATA — FS00 cost elements · KS01/KSH1 cost centres · KL01 activities · KO01 orders
+3. PLANNING — KP06 costs · KP26 activity prices · KPF6 orders
+4. ALLOCATION — KSU1/KSV1 cycles · OKB9 defaults
+5. PRODUCT COSTING & PROFITABILITY — OKTZ/OKKN · CKMLCP · KEA0/KE51
+6. CLOSE — KSII prices · KO88 settlement · KE27/KE30 reporting
+ORG: OKKP controlling area ─ OX18 company codes ─ FY variant / CoA
+ ↓
+MASTER: FS00 cost elements (G/L) · KS01 cost centers · KSH1 hierarchy
+ KL01 activity types · KO01 internal orders · OKB9 defaults
+ ↓
+PLAN: KP06 costs · KP26 activity prices · KPF6 order planning
+ ↓
+ALLOCATE: KSU1/KSV1 cycles ─► KSU5/KSV5 execution
+ ↓
+PRODUCT COSTING: OKTZ components · OKKN variant · CK11N/CK24
+ OMX1 material ledger · CKMLCP actual costing
+ ↓
+PROFITABILITY: KEA0 operating concern · KEDR derivation · KE51 profit centers
+ ↓
+PERIOD-END: KSII actual prices · CON2 revaluation · KO88/CO88 settlement · KE30/KE24 reports
+ ↓
+ACDOCA — one journal for FI and CO, no reconciliation ledger
 ```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
 
 ### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
+1. **OKKP** — create/maintain the controlling area: one chart of accounts, one fiscal-year variant, controlling-area currency; assign company codes in **OX18** (EC08) — cross-company-code controlling only works with the same fiscal-year variant and chart. Where: SPRO ▸ Controlling ▸ General Controlling ▸ Organization. Reference: enterprise-structure sign-off.
+2. **FS00** — cost elements are G/L accounts in S/4: primary cost/revenue elements carry a cost-element category on the G/L; secondary elements (categories 21 internal settlement, 31 order/project settlement, 41 overhead, 42 assessment, 43 internal activity allocation) are created as G/Ls — the ECC habit of **KA01/KA06** as a separate master is gone. Reference: chart-of-accounts design.
+3. **KS01 + KSH1** — cost centers and the standard hierarchy (every cost center must sit in the hierarchy or it is invisible to allocations and reports); **OKB9** default account assignment per cost element / valuation area so postings never fail for a missing object. Reference: cost-center design list.
+4. **KL01 + KP26** — activity types with unit, category and allocation cost element; plan activity prices in **KP26** (with **KP06** cost planning on the sender cost centers) — no price, no confirmation can value. Reference: activity-rate calculation from the planning round.
+5. **KOT2 + OKO7** — internal-order types with settlement profile and allocation structure: receiver categories (cost center, asset, CO-PA segment), settlement cost elements, and the order status model that decides when an order may settle (**KO01/KO88** execute it). Reference: order-type design matrix.
+6. **KSU1 / KSV1** — assessment and distribution cycles with segments: sender rules, receiver tracing factors (statistical key figures, percentages, actual costs), iteration switched on deliberately. Executed with **KSU5/KSV5**; cycle design is where month-end loops are prevented — ordered, non-overlapping segments, receivers validated before the run.
+7. **OKTZ + OKKN** — product costing: cost component structure (OKTZ) splits material/labour/overhead; costing variant (OKKN) ties costing type, valuation variant and quantity structure (BOM/routing via strategy); **CK11N** calculates, **CK24** marks and releases the standard price. Reference: costing-sheet and overhead design (KZZ2/KZM2 templates).
+8. **OMX1 + CKMLCP** — activate the Material Ledger per valuation area (mandatory in S/4) and configure actual costing: **CKMLCP** collects price and exchange-rate differences and posts them to consumption and ending inventory at period close. Reference: actual-costing position paper.
+9. **KEA0 + KEDR** — CO-PA operating concern: characteristics and (for costing-based) value fields; account-based margin analysis runs on G/L accounts in ACDOCA and is the S/4 default; derivation rules in **KEDR**, PA transfer structures **KEI1** (billing) and **KEI2** (direct FI/MM postings) decide what reaches the segment. Reference: profitability design.
+10. **KE51 + KCH1** — profit centers and the standard hierarchy; with document splitting, the profit center carries the segment for the segment balance sheet; **OKB9**/default assignments keep the profit center populated on every posting. Reference: segment-reporting requirement.
+11. Period-end parameters: **KSII
 
-_The sections below come from the offline bank because they were missing above._
+## 117. [2026-10-21T20:56:12.519Z] answer
 
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-## 117. [2026-10-21T20:30:38.217Z] answer
-
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Q: controlling full config
 Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“Controlling full configuration means building CO in dependency order, not collecting transactions. One controlling area (**OKKP**) with a single chart of accounts and fiscal-year variant; cost elements carried as G/L accounts in S/4; cost centers, activity types and internal orders as the account-assignment objects; planning in **KP06/KP26**; allocations as cycles; product costing through the cost component structure and costing variant; then CO-PA and profit centers on top of the same Universal Journal, so every CO posting lands in **ACDOCA** and reconciles to FI by construction. I configure it in that order and I test each layer before the next one exists.”
 
 ### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
+```text
+1. STRUCTURE — OKKP controlling area · OX18 company-code assignment
+2. MASTER DATA — FS00 cost elements · KS01/KSH1 cost centres · KL01 activities · KO01 orders
+3. PLANNING — KP06 costs · KP26 activity prices · KPF6 orders
+4. ALLOCATION — KSU1/KSV1 cycles · OKB9 defaults
+5. PRODUCT COSTING & PROFITABILITY — OKTZ/OKKN · CKMLCP · KEA0/KE51
+6. CLOSE — KSII prices · KO88 settlement · KE27/KE30 reporting
+ORG: OKKP controlling area ─ OX18 company codes ─ FY variant / CoA
+ ↓
+MASTER: FS00 cost elements (G/L) · KS01 cost centers · KSH1 hierarchy
+ KL01 activity types · KO01 internal orders · OKB9 defaults
+ ↓
+PLAN: KP06 costs · KP26 activity prices · KPF6 order planning
+ ↓
+ALLOCATE: KSU1/KSV1 cycles ─► KSU5/KSV5 execution
+ ↓
+PRODUCT COSTING: OKTZ components · OKKN variant · CK11N/CK24
+ OMX1 material ledger · CKMLCP actual costing
+ ↓
+PROFITABILITY: KEA0 operating concern · KEDR derivation · KE51 profit centers
+ ↓
+PERIOD-END: KSII actual prices · CON2 revaluation · KO88/CO88 settlement · KE30/KE24 reports
+ ↓
+ACDOCA — one journal for FI and CO, no reconciliation ledger
 ```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
 
 ### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
+1. **OKKP** — create/maintain the controlling area: one chart of accounts, one fiscal-year variant, controlling-area currency; assign company codes in **OX18** (EC08) — cross-company-code controlling only works with the same fiscal-year variant and chart. Where: SPRO ▸ Controlling ▸ General Controlling ▸ Organization. Reference: enterprise-structure sign-off.
+2. **FS00** — cost elements are G/L accounts in S/4: primary cost/revenue elements carry a cost-element category on the G/L; secondary elements (categories 21 internal settlement, 31 order/project settlement, 41 overhead, 42 assessment, 43 internal activity allocation) are created as G/Ls — the ECC habit of **KA01/KA06** as a separate master is gone. Reference: chart-of-accounts design.
+3. **KS01 + KSH1** — cost centers and the standard hierarchy (every cost center must sit in the hierarchy or it is invisible to allocations and reports); **OKB9** default account assignment per cost element / valuation area so postings never fail for a missing object. Reference: cost-center design list.
+4. **KL01 + KP26** — activity types with unit, category and allocation cost element; plan activity prices in **KP26** (with **KP06** cost planning on the sender cost centers) — no price, no confirmation can value. Reference: activity-rate calculation from the planning round.
+5. **KOT2 + OKO7** — internal-order types with settlement profile and allocation structure: receiver categories (cost center, asset, CO-PA segment), settlement cost elements, and the order status model that decides when an order may settle (**KO01/KO88** execute it). Reference: order-type design matrix.
+6. **KSU1 / KSV1** — assessment and distribution cycles with segments: sender rules, receiver tracing factors (statistical key figures, percentages, actual costs), iteration switched on deliberately. Executed with **KSU5/KSV5**; cycle design is where month-end loops are prevented — ordered, non-overlapping segments, receivers validated before the run.
+7. **OKTZ + OKKN** — product costing: cost component structure (OKTZ) splits material/labour/overhead; costing variant (OKKN) ties costing type, valuation variant and quantity structure (BOM/routing via strategy); **CK11N** calculates, **CK24** marks and releases the standard price. Reference: costing-sheet and overhead design (KZZ2/KZM2 templates).
+8. **OMX1 + CKMLCP** — activate the Material Ledger per valuation area (mandatory in S/4) and configure actual costing: **CKMLCP** collects price and exchange-rate differences and posts them to consumption and ending inventory at period close. Reference: actual-costing position paper.
+9. **KEA0 + KEDR** — CO-PA operating concern: characteristics and (for costing-based) value fields; account-based margin analysis runs on G/L accounts in ACDOCA and is the S/4 default; derivation rules in **KEDR**, PA transfer structures **KEI1** (billing) and **KEI2** (direct FI/MM postings) decide what reaches the segment. Reference: profitability design.
+10. **KE51 + KCH1** — profit centers and the standard hierarchy; with document splitting, the profit center carries the segment for the segment balance sheet; **OKB9**/default assignments keep the profit center populated on every posting. Reference: segment-reporting requirement.
+11. Period-end parameters: **KSII
 
-_The sections below come from the offline bank because they were missing above._
+## 118. [2026-10-21T20:56:17.383Z] free-database-fetch
 
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-### 🧠 GOING DEEPER - the architect cut
-
-
----
-
-**📊 BUSINESS DETAIL**  
-1. Our plant A buys raw steel (VENDOR 1000) → PO ME21N → GR MIGO → invoice MIRO → payment F‑110 30 days net, 2 % cash‑discount. We sell finished frames (CUSTOMER 2000) → sales order VA01 → delivery VL01N → billing VF01 → payment F‑110 Net 30. German law forces us to post 19 % VAT on sales (tax code V0) and claim input tax on purchases (tax code V1). Revenue, cost of goods sold and tax liability flow into the Universal Journal immediately.  
-
----
-
-**⚙️ NUMBERED CONFIG STEPS (BUILD ORDER)**  
-
-| # | T‑code | Setting (what) | Why business needs it | Example value |
-|---|--------|----------------|-----------------------|---------------|
-| 1 | **OX02** | Create *Company Code* 1000 | Legal entity for German GAAP & tax reporting | “DE1000” |
-| 2 | **OX10** | Define *Plant* 1000 & *Valuation Area* 1000 | Links inventory to the company code for FI‑MM posting | Plant 1000, ValArea 1000 |
-| 3 | **FS00** | Create GL accounts: 300000 Inv (Dr), 400000 COGS (Cr), 157000 VAT In (Cr) | Required for automatic posting of receipts, issues & tax | 300000 “Inventory” |
-| 4 | **OBYC** | Assign *Account Keys* → BSX = 300000, PRD = 400000, WRX = 157000 | Drives FI
-
-## 118. [2026-10-21T20:30:43.529Z] answer
-
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
-Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
-
-### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
-```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
-
-### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
-
-_The sections below come from the offline bank because they were missing above._
-
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-### 🧠 GOING DEEPER - the architect cut
-
----
-
-**📊 BUSINESS DETAIL**  
-1. Our plant A buys raw steel (VENDOR 1000) → PO ME21N → GR MIGO → invoice MIRO → payment F‑110 30 days net, 2 % cash‑discount. We sell finished frames (CUSTOMER 2000) → sales order VA01 → delivery VL01N → billing VF01 → payment F‑110 Net 30. German law forces us to post 19 % VAT on sales (tax code V0) and claim input tax on purchases (tax code V1). Revenue, cost of goods sold and tax liability flow into the Universal Journal immediately.  
-
----
-
-**⚙️ NUMBERED CONFIG STEPS (BUILD ORDER)**  
-
-| # | T‑code | Setting (what) | Why business needs it | Example value |
-|---|--------|----------------|-----------------------|---------------|
-| 1 | **OX02** | Create *Company Code* 1000 | Legal entity for German GAAP & tax reporting | “DE1000” |
-| 2 | **OX10** | Define *Plant* 1000 & *Valuation Area* 1000 | Links inventory to the company code for FI‑MM posting | Plant 1000, ValArea 1000 |
-| 3 | **FS00** | Create GL accounts: 300000 Inv (Dr), 400000 COGS (Cr), 157000 VAT In (Cr) | Required for automatic posting of receipts, issues & tax | 300000 “Inventory” |
-| 4 | **OBYC** | Assign *Account Keys* → BSX = 300000, PRD = 400000, WRX = 157000 | Drives FI 
-
-## 119. [2026-10-21T20:30:55.600Z] free-database-fetch
-
-Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 383 sources, 121 answers
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
