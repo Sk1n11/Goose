@@ -1,8 +1,8 @@
 # OfferGoose - automatic app report
 
 App version: 2.98.3
-Generated: 2026-10-21T22:15:57.188Z
-AI providers with a saved key: llm7, custom, sambanova, 
+Generated: 2026-10-21T23:49:40.005Z
+AI providers with a saved key: kilo, custom, sambanova, 
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
 
@@ -4101,9 +4101,9 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-21T22:15:33.431Z] answer
+## 118. [2026-10-21T23:49:02.991Z] answer
 
-Q: ppv
+Q: gvtr
 Scrutiny: ISSUES: SAP objects named with their t-codes (0 found)
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 - **Core Concept:** That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps.
@@ -4112,9 +4112,9 @@ A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 119. [2026-10-21T22:15:33.833Z] answer
+## 119. [2026-10-21T23:49:04.071Z] answer
 
-Q: ppv
+Q: gvtr
 Scrutiny: ISSUES: SAP objects named with their t-codes (0 found)
 A: ### 💡 SAY THIS FIRST
 > Core Concept: That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps
@@ -4125,44 +4125,6 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 120. [2026-10-21T22:15:37.938Z] answer
-
-Q: ppv
-Scrutiny: ISSUES: SAP objects named with their t-codes (2 found: FB03, ACDOCA)
-A: ### 💡 SAY THIS FIRST
-> Core Concept: That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **What I Can Answer Immediately:** SAP FICO configuration and postings, rollout and project evidence from my documents, and profile or behavioural questions grounded in my CV.
-
-### 🎯 IF MY MIND GOES BLANK
-Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
-
-### 🧠 GOING DEEPER — detail beyond the answer above
-
-**If the interviewer pushes further, I expect:** release/FPS differences for this topic and I name my installed release before quoting a screen; what breaks first in production and the log I open (application log, job log, FB03/ACDOCA); and how the result reconciles per ledger and accounting principle — answered from the journal entry, never from the job status alone.
-
-## 121. [2026-10-21T22:15:38.958Z] answer
-
-Q: ppv
-Scrutiny: ISSUES: SAP objects named with their t-codes (2 found: FB03, ACDOCA); Flow section carries its diagram
-A: ### 💡 SAY THIS FIRST
-> Core Concept: That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **What I Can Answer Immediately:** SAP FICO configuration and postings, rollout and project evidence from my documents, and profile or behavioural questions grounded in my CV.
-
-### 🎯 IF MY MIND GOES BLANK
-Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
-
-### 🧠 GOING DEEPER — detail beyond the answer above
-
-**If the interviewer pushes further, I expect:** release/FPS differences for this topic and I name my installed release before quoting a screen; what breaks first in production and the log I open (application log, job log, FB03/ACDOCA); and how the result reconciles per ledger and accounting principle — answered from the journal entry, never from the job status alone.
-
----
-🔍 **Self-check** · ✅ answers the question · ❌ 2 t-codes named · ✅ numbers from the question · ✅ no padding · ✅ Dr/Cr entries · ✅ flow diagram · ✅ entries balance · ✅ every step named · ✅ speakable opener · ✅ no placeholders · ✅ clean ending · ❌ **not interview-ready yet**
-- 🔁 AI review unavailable right now - the deepened verified answer above stands.
-
-## 122. [2026-10-21T22:15:57.181Z] free-database-fetch
+## 120. [2026-10-21T23:49:39.984Z] free-database-fetch
 
 Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
