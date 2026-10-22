@@ -1,8 +1,8 @@
 # OfferGoose - automatic app report
 
-App version: 2.98.3
-Generated: 2026-10-21T23:49:40.005Z
-AI providers with a saved key: kilo, custom, sambanova, 
+App version: 2.98.4
+Generated: 2026-10-22T04:43:30.679Z
+AI providers with a saved key: custom, sambanova, , pollinations
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
 
@@ -4101,30 +4101,150 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-21T23:49:02.991Z] answer
+## 118. [2026-10-22T04:43:14.595Z] answer
 
-Q: gvtr
-Scrutiny: ISSUES: SAP objects named with their t-codes (0 found)
+Q: gl to company code assignment
+Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps.
-- **What I Can Answer Immediately:** SAP FICO configuration and postings, rollout and project evidence from my documents, and profile or behavioural questions grounded in my CV.
+- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
+- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
+- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
+**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill 
+**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
+**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+
+### 🪤 TRAPS
+- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
+- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
+- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
 
 ### 🎯 IF MY MIND GOES BLANK
-Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
+Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
 
-## 119. [2026-10-21T23:49:04.071Z] answer
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
 
-Q: gvtr
-Scrutiny: ISSUES: SAP objects named with their t-codes (0 found)
+📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Ne
+
+## 119. [2026-10-22T04:43:15.301Z] answer
+
+Q: gl to company code assignment
+Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
 A: ### 💡 SAY THIS FIRST
-> Core Concept: That does not sound like an SAP FICO, project, profile or career question, so I will not pad it with configuration steps
+> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **What I Can Answer Immediately:** SAP FICO configuration and postings, rollout and project evidence from my documents, and profile or behavioural questions grounded in my CV.
+- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
+- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
+- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
+**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
+**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
+**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+
+### 🪤 TRAPS
+- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
+- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
+- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
 
 ### 🎯 IF MY MIND GOES BLANK
-Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
+Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
 
-## 120. [2026-10-21T23:49:39.984Z] free-database-fetch
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
 
-Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
+📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Q
+
+## 120. [2026-10-22T04:43:17.482Z] answer
+
+Q: gl to company code assignment
+Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
+A: ### 💡 SAY THIS FIRST
+> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
+- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
+- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
+**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
+**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
+**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+
+### 🪤 TRAPS
+- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
+- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
+- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
+
+### 🎯 IF MY MIND GOES BLANK
+Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Q
+
+## 121. [2026-10-22T04:43:17.502Z] answer
+
+Q: gl to company code assignment
+Scrutiny: ISSUES: Flow section carries its diagram; No placeholder garbage ([object Object], lorem, {{...}})
+A: ### 💡 SAY THIS FIRST
+> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
+- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
+- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+
+### 📎 FROM MY MATERIAL — EVIDENCE TO USE
+**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
+**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
+**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
+**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+
+### 🪤 TRAPS
+- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
+- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
+- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
+
+### 🎯 IF MY MIND GOES BLANK
+Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
+
+### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
+- HGB vs IFRS — how do parallel ledgers answer both from one document?
+- How will you set up a company code for a new-country rollout?
+- How does the Universal Journal (ACDOCA) change the month-end close?
+
+📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
+
+### 📎 PROJECT MATERIAL TO CROSS-CHECK
+- **[object Object]** — s Developer's Best Practices Questions and Answers On
+
+## 122. [2026-10-22T04:43:29.638Z] github-fetch
+
+Fetched from Sk1n11/Goose: {"owner":"Sk1n11","repo":"Goose","branch":"main","folder":"offergoose-knowledge","files":4,"answers":120,"catalog":1,"fetched":["offergoose-knowledge/answers.json (120 answers)","offergoose-knowledge/answers.md","offergoose-knowledge/app-report.md","offergoose-knowledge/documents/interview-screenshot-2026-10-17.md"],"skipped":63,"failed":[],"notes":[]} | KB now: 385 sources, 121 answers
+
+## 123. [2026-10-22T04:43:30.659Z] free-database-fetch
+
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 121 answers
