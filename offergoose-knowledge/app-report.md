@@ -1,7 +1,7 @@
 # OfferGoose - automatic app report
 
-App version: 2.98.7
-Generated: 2026-10-22T12:41:32.645Z
+App version: 2.98.8
+Generated: 2026-10-22T16:19:08.341Z
 AI providers with a saved key: custom, sambanova, , pollinations
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
@@ -4101,341 +4101,180 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-22T12:40:48.769Z] answer
+## 118. [2026-10-22T16:18:29.669Z] answer
 
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
-Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
-
-### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
-```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
-
-### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
-
-_The sections below come from the offline bank because they were missing above._
-
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-## 119. [2026-10-22T12:40:54.863Z] answer
-
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
-Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
-
-### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
-```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
-
-### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
-
-_The sections below come from the offline bank because they were missing above._
-
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-### 🧠 GOING DEEPER - the architect cut
-
-**I design FI‑MM and FI‑SD integration so every goods movement and sales invoice posts cleanly to the Universal Journal, and Material Ledger actual costing delivers true costs at month‑end.**  
-
----
-
-### 🧠 DEEPER CUT
-
-#### 1️⃣ BUSINESS DETAIL  
-- **Who sells**: Company Code 1000 sells finished goods to customer C001.  
-- **Who buys**: Vendor V001 supplies raw material MAT‑100.  
-- **Who pays whom**: Vendor receives payment via payment program; customer pays via automatic debit.  
-- **Document flows**: PO (ME21N) → GR (MIGO) → IR (MIRO) → vendor invoice; SO (VA01) → delivery (VL01N) → billing (VF01) → customer invoice.  
-- **Payment terms**: 30 days net for vendor, 45 days net for customer; impacts clearing in FB50.  
-- **Country/legal/tax**: Germany – VAT 19 % on sales, no VAT on purchases; tax code NT19 for sales, TAX0 for purchases.  
-
-#### 2️⃣ CONFIGURATION STEPS (build order)
-
-1. **Create company code & controlling area** – *OB01* (Company Code 1000), *OB52* (Controlling Area 1000).  
-2. **Set valuation area** – *OBV1* (Valuation Area 1000, same as company code).  
-3. **Define parallel ledgers** – *OBLV* (Parallel Ledger 1000, IFRS/GRS).  
-4. **Activate Material Le
-
-## 120. [2026-10-22T12:40:54.901Z] answer
-
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
-Scrutiny: all parameters pass
-A: ### 💡 SAY THIS FIRST
-I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
-
-- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
-- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
-- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-Three bullets:
-- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
-- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
-- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
-
-### 📊 ARCHITECTURAL FLOW
-I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
-
-```
-1. MASTER DATA BP/CVI · MM01 · VK01
- business partner, material master, sales data
- ↓
-2. CONFIGURATION OBYC · VKOA · OMX1
- account determination, ML activation
- ↓
-3. MM POSTING ME21N → MIGO → MIRO
- PO, goods receipt, invoice verification
- ↓
-4. SD POSTING VA01 → VL01N → VF01
- sales order, delivery, goods issue, billing
- ↓
-5. STANDARD COST CK11N · CK24
- standard price released
- ↓
-6. DIFFERENCE COLLECT GR/IR, price differences, FX
- material ledger collects variances
- ↓
-7. ACTUAL COSTING CKMLCP
- close and settle differences
- ↓
-8. REPORTING CKM3 · ACDOCA · KE24
- actual prices, journal entries, profitability
-```
-
-Let's construct it carefully.
-
-### ⚙️ CONFIG STEPS
-I need to walk the configuration path in dependency order. The steps should cover:
-1. Organisational structure (company code, controlling area, etc.)
-2. Ledger design (FINSC_LEDGER, parallel ledgers)
-3. Master data (Business Partner, material master, etc.)
-4. Account determination (OBYC, VKOA)
-5. Material Ledger activation (OMX1)
-6. Standard cost estimation (CK11N, CK24)
-7. Actual costing close (CKMLCP)
-8. Integration settings (for MM and SD)
-9. Testing
-
-_The sections below come from the offline bank because they were missing above._
-
-### 🧾 ACCOUNTING ENTRIES
-- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
-
-### 🧪 HOW TO TEST IT
-1. Run CKMLCP in test and read each step
-2. Show the actual cost component split
-3. Explain what the alternative valuation run is used for
-
-### 🧠 GOING DEEPER - the architect cut
-
-**I design FI‑MM and FI‑SD integration so every goods movement and sales invoice posts cleanly to the Universal Journal, and Material Ledger actual costing delivers true costs at month‑end.**  
-
----
-
-### 🧠 DEEPER CUT
-
-#### 1️⃣ BUSINESS DETAIL  
-- **Who sells**: Company Code 1000 sells finished goods to customer C001.  
-- **Who buys**: Vendor V001 supplies raw material MAT‑100.  
-- **Who pays whom**: Vendor receives payment via payment program; customer pays via automatic debit.  
-- **Document flows**: PO (ME21N) → GR (MIGO) → IR (MIRO) → vendor invoice; SO (VA01) → delivery (VL01N) → billing (VF01) → customer invoice.  
-- **Payment terms**: 30 days net for vendor, 45 days net for customer; impacts clearing in FB50.  
-- **Country/legal/tax**: Germany – VAT 19 % on sales, no VAT on purchases; tax code NT19 for sales, TAX0 for purchases.  
-
-#### 2️⃣ CONFIGURATION STEPS (build order)
-
-1. **Create company code & controlling area** – *OB01* (Company Code 1000), *OB52* (Controlling Area 1000).  
-2. **Set valuation area** – *OBV1* (Valuation Area 1000, same as company code).  
-3. **Define parallel ledgers** – *OBLV* (Parallel Ledger 1000, IFRS/GRS).  
-4. **Activate Material Le
-
-## 121. [2026-10-22T12:41:00.954Z] answer
-
-Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
-Scrutiny: ISSUES: SAP objects named with their t-codes (0 found); Flow section carries its diagram; Answer ends cleanly - nothing cut off mid-word
-A: Create a landing page
-Create a sleek, modern landing page
-Build a dashboard
-Turn data into interactive charts
-Make a game
-Build a playable browser game
-Design to Code
-Upload an image and have AI build it
-Build a fullstack app
-Create a templated full-stack app
-Launch a storefront
-Create a beautiful online shop
-
----
-🔍 **Self-check** · ✅ answers the question · ❌ 0 t-codes named · ✅ numbers from the question · ✅ no padding · ✅ Dr/Cr entries · ✅ flow diagram · ✅ CO config named · ✅ entries balance · ✅ every step named · ✅ speakable opener · ✅ no placeholders · ✅ clean ending · ❌ **not interview-ready yet**
-
-_🌉 Answered by Arena via your in-app login, mirrored into OfferGoose and checked locally. Your own answer remains in History if you prefer it._
-
-## 122. [2026-10-22T12:41:22.970Z] answer
-
-Q: fi mm
-Scrutiny: all parameters pass
+Q: gl
+Scrutiny: ISSUES: No repeated padding
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** FI-MM integration is automatic account determination: every goods movement and invoice in MM posts to FI without anyone typing a G/L account. OBYC holds the matrix — valuation class from the material master decides which G/L accounts a movement hits: BSX for inventory, WRX for GR/IR clearing, GBB for goods-issue offsets, PRD for price differences. MIGO creates the FI document at goods receipt, MIRO clears GR/IR at invoice receipt, and the three-way match (PO = GR = IR) is the control that makes it auditable.
-- **Key System Benefit:** Because the posting logic is deterministic, inventory values in FI and MM agree by design in ACDOCA — period-end becomes GR/IR review (MRBR, MB5S), not reconciliation between two modules.
-- **Execution Strategy:** Design order: chart of accounts and valuation grouping code, valuation classes on material masters, OBYC transaction keys per valuation class, then test the full chain PO → GR → IR → payment with one material of each valuation class before rollout sign-off.
+“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
 
 ### 📊 ARCHITECTURAL FLOW
 ```text
-1. PURCHASE ORDER ME21N
- 100 pcs @ EUR 10 — no FI posting yet
+Interview question
  ↓
-2. GOODS RECEIPT MIGO
- Dr Inventory 1,000 / Cr GR/IR 1,000 (BSX/WRX)
+Retrieve matching file + heading
  ↓
-3. INVOICE RECEIPT MIRO
- Dr GR/IR 1,000 / Cr Vendor 1,000 — three-way match
+Check the cited step/object in SAP
  ↓
-4. PAYMENT F110
- Dr Vendor / Cr Bank — AP subledger clears
- ↓
-5. PROVE MB5S · FBL3N
- GR/IR balance agrees to the G/L; remaining lines are explained timing differences
+Reconcile resulting document and sign off
 ```
 
 ### ⚙️ CONFIG STEPS
-1. **OBYC** — maintain the account determination matrix per transaction key and valuation class — this is the heart of FI-MM · Example: BSX: inventory account for the example valuation class 3000 (configured for raw materials in this design — class numbers are project values, not SAP standards); WRX: one GR/IR clearing account; GBB-VBR: consumption account for goods issue to production · Ref: FI-MM design in the rollout config workbook; SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination.
-2. **OMWD** — set the valuation grouping code per valuation area so plants that share one determination are grouped deliberately, not by accident · Example: All German plants group under one code and share the OBYC matrix; the Turkish plant groups separately with its own accounts · Ref: enterprise-structure matrix; SPRO ▸ Materials Management ▸ Valuation and Account Assignment.
-3. **MM03** — assign the correct valuation class and price control (S standard or V moving average) on every material master — wrong class, wrong account, every time · Example: A raw material on the example class 3000 posts to its raw-material inventory account; a trading good on 3100 posts to its own — the class numbers are this design's values · Ref: material-master governance list; SAP GUI ▸ Logistics ▸ Materials Management ▸ Material Master.
-4. **MIGO** — post goods receipt against the PO and read the FI document it creates automatically · Example: 100 pcs @ EUR 10: Dr Inventory (BSX) 1,000 / Cr GR/IR (WRX) 1,000 — quantity and value enter together · Ref: P2P test script; Logistics ▸ Materials Management ▸ Inventory Management ▸ Goods Movement.
-5. **MIRO** — post the vendor invoice against the same PO and let the three-way match clear GR/IR · Example: Invoice at EUR 10.20: Dr GR/IR 1,000 + Dr Price difference (PRD) 20 / Cr Vendor 1,020 — the difference is visible, never buried · Ref: invoice-verification test cases; Logistics ▸ Materials Management ▸ Logistics Invoice Verification.
-6. **MRBR** — release blocked invoices only after the block reason (price, quantity, date) is resolved at source · Example: A quantity-blocked invoice stays out of F110 until the GR is corrected — the block is the control working, not an error · Ref: AP/MM exception procedure; Logistics Invoice Verification ▸ Release Blocked Invoices.
-7. **MB5S** — run the GR/IR account balance list at period end and clear or explain every aged line · Example: The month-end GR/IR list shows only genuine open receipts; anything old gets a named owner. Goods received but not yet invoiced, partial deliveries and blocked invoices are legitimate timing differences — explained line by line, never forced to zero · Ref: period-close checklist, GR/IR step; Logistics ▸ Materials Management ▸ Purchasing ▸ Purchase Order ▸ List Displays.
+1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
 
 ### 🔧 DROP THESE OBJECT NAMES
-- **OBYC** — MM→FI account determination matrix.
-- **BSX** — transaction key: inventory posting.
-- **WRX** — transaction key: GR/IR clearing.
-- **GBB** — transaction key: offsetting for goods movements.
-- **PRD** — transaction key: price differences.
-- **OMWD** — valuation grouping code.
-- **MIGO** — goods receipt / movement.
-- **MIRO** — invoice verification.
-- **MRBR** — release blocked invoices.
-- **MB5S** — GR/IR balance list.
+- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
 
 ### 🧾 ACCOUNTING ENTRIES
-- Goods receipt (MIGO): Dr Inventory (BSX) EUR 1,000 / Cr GR/IR (WRX) EUR 1,000 — 100 pcs @ EUR 10, no vendor line yet.
-- Invoice (MIRO) at agreed price: Dr GR/IR EUR 1,000 / Cr Vendor EUR 1,000 — three-way match complete, GR/IR back to zero for this PO.
-- Invoice with price increase to EUR 10.20: Dr GR/IR 1,000 + Dr P
+- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
+- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- - Credit Control Area: TR10
+- - Credit Control Area: TR10
 
-## 123. [2026-10-22T12:41:31.435Z] github-fetch
+### 🧪 HOW TO TEST IT
+1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
+2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
+3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
 
-Fetched from Sk1n11/Goose: {"owner":"Sk1n11","repo":"Goose","branch":"main","folder":"offergoose-knowledge","files":3,"answers":121,"catalog":1,"fetched":["offergoose-knowledge/answers.json (121 answers)","offergoose-knowledge/answers.md","offergoose-knowledge/app-report.md"],"skipped":64,"failed":[],"notes":[]} | KB now: 385 sources, 122 answers
+### 🪤 TRAPS
+- Do not pr
 
-## 124. [2026-10-22T12:41:32.627Z] free-database-fetch
+## 119. [2026-10-22T16:18:41.469Z] answer
 
-Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 122 answers
+Q: gl
+Scrutiny: ISSUES: No repeated padding
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+Interview question
+ ↓
+Retrieve matching file + heading
+ ↓
+Check the cited step/object in SAP
+ ↓
+Reconcile resulting document and sign off
+```
+
+### ⚙️ CONFIG STEPS
+1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+
+### 🧾 ACCOUNTING ENTRIES
+- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
+- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- - Credit Control Area: TR10
+- - Credit Control Area: TR10
+
+### 🧪 HOW TO TEST IT
+1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
+2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
+3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+
+### 🪤 TRAPS
+- Do not pr
+
+## 120. [2026-10-22T16:18:41.517Z] answer
+
+Q: gl
+Scrutiny: ISSUES: No repeated padding
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+
+### 📊 ARCHITECTURAL FLOW
+```text
+Interview question
+ ↓
+Retrieve matching file + heading
+ ↓
+Check the cited step/object in SAP
+ ↓
+Reconcile resulting document and sign off
+```
+
+### ⚙️ CONFIG STEPS
+1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+
+### 🧾 ACCOUNTING ENTRIES
+- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
+- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
+- - Credit Control Area: TR10
+- - Credit Control Area: TR10
+
+### 🧪 HOW TO TEST IT
+1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
+2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
+3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+
+### 🪤 TRAPS
+- Do not pr
+
+## 121. [2026-10-22T16:19:08.336Z] free-database-fetch
+
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
