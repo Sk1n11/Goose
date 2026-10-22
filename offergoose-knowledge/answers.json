@@ -1,6 +1,6 @@
 {
-  "exportedAt": "2026-10-22T10:43:28.183Z",
-  "count": 121,
+  "exportedAt": "2026-10-22T16:19:11.676Z",
+  "count": 120,
   "answers": [
     {
       "q": "🖼️ Explain this screenshot",
@@ -841,13 +841,6 @@
       "topic": "GitHub sync",
       "model": "🤝 dual AI · gemini · openai/gpt-oss-120b",
       "updatedAt": "2026-10-21T06:44:13.783Z"
-    },
-    {
-      "q": "asset account",
-      "a": "### 💡 SAY THIS FIRST\n> The reconciliation between the asset subledger and the G/L is ABST2 in S/4, and in a healthy system it is zero because asset postings are general…\n\n### ⚡ READY NOW — offline answer\nThe reconciliation between the asset subledger and the G/L is ABST2 in S/4, and in a healthy system it is zero because asset postings are general ledger postings. When it is not zero, the cause is almost always a legacy load problem, a direct posting to an asset reconciliation account, or a posting in a period that is closed. My monthly routine: run ABST2, investigate every difference the same day, and never post directly to an asset reconciliation account.\n\n### 🧭 FLOW DIAGRAM\n```\n[FI-AA values] vs [G/L reconciliation accounts]\n        |\n        v\n[ABST2: differences listed by account and company code]\n        |\n        v\n[Zero difference = healthy]\n```\n\n### ⚙️ CONFIG STEPS\n1. ABST2 - reconciliation\n2. FS00 - asset reconciliation accounts must not allow direct posting\n3. AS03 / AR01 - asset values\n4. FAGLB03 - G/L balances\n\n### 🧪 HOW TO TEST IT\n1. Run ABST2 in test and introduce a deliberate difference\n2. Fix it and re-run to zero\n3. Explain the three usual causes\n\n### 📎 FROM MY MATERIAL\nequipment master ensures that when you create or update information about an asset in the asset master, it automatically synchronizes with the corresponding equipment master in asset management. The synchronization can also be set up in reverse order so that whenever an equipment master in asset management is created or changed, the corresponding asset master is created or changed respectively in finance’s asset accounting. This synchronization helps maint…\n⚠️ Any project value marked To Be Confirmed is provisional; validate it against the signed-off design.\n\n### 🎯 HOW TO CRACK THIS QUESTION\nSay the difference should be zero by design in S/4 and list the three causes. That is a real close conversation.\n\nReference: offline documents + online knowledge\n\n### 🧮 FORMULAS — THE ONE-LINE LAWS\n- Equity = Assets - Liabilities\n- Assets = Liabilities + Equity (the identity every posting preserves)",
-      "topic": "ilide.info-sap-s-4hana-asset-management-configure-equip-and-manage-2023-pr_4217548f31b913fad1be05c7b275c048.pdf",
-      "model": "offline SAP architect · indexed knowledge · AI text failed scrutiny — verified offline answer shown",
-      "updatedAt": "2026-10-22T10:42:44.607Z"
     }
   ]
 }
