@@ -1,7 +1,7 @@
 # OfferGoose - automatic app report
 
 App version: 2.98.10
-Generated: 2026-10-22T17:41:34.770Z
+Generated: 2026-10-22T18:22:10.705Z
 AI providers with a saved key: custom, sambanova, , pollinations
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
@@ -4101,225 +4101,339 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-22T17:41:04.486Z] answer
+## 118. [2026-10-22T18:21:31.188Z] answer
 
-Q: gl
-Scrutiny: ISSUES: No repeated padding
+Q: fi gl
+Scrutiny: all parameters pass
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
 
 ### 📊 ARCHITECTURAL FLOW
 ```text
-Interview question
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
  ↓
-Retrieve matching file + heading
+ ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
  ↓
-Check the cited step/object in SAP
- ↓
-Reconcile resulting document and sign off
+ VF03 + VKOA + ACDOCA
 ```
 
 ### ⚙️ CONFIG STEPS
-1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
 
 ### 🔧 DROP THESE OBJECT NAMES
-- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
 
 ### 🧾 ACCOUNTING ENTRIES
-- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
-- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- - Credit Control Area: TR10
-- - Credit Control Area: TR10
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
 
 ### 🧪 HOW TO TEST IT
-1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
-2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
-3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
 
 ### 🪤 TRAPS
-- Do not pr
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
 
-## 119. [2026-10-22T17:41:14.296Z] answer
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversa
 
-Q: gl
+## 119. [2026-10-22T18:21:44.504Z] answer
+
+Q: fi gl
 Scrutiny: ISSUES: No repeated padding
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
 
 ### 📊 ARCHITECTURAL FLOW
 ```text
-Interview question
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
  ↓
-Retrieve matching file + heading
+ ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
  ↓
-Check the cited step/object in SAP
- ↓
-Reconcile resulting document and sign off
+ VF03 + VKOA + ACDOCA
 ```
 
 ### ⚙️ CONFIG STEPS
-1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
 
 ### 🔧 DROP THESE OBJECT NAMES
-- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
 
 ### 🧾 ACCOUNTING ENTRIES
-- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
-- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- - Credit Control Area: TR10
-- - Credit Control Area: TR10
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
 
 ### 🧪 HOW TO TEST IT
-1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
-2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
-3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
 
 ### 🪤 TRAPS
-- Do not pr
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
 
-## 120. [2026-10-22T17:41:14.326Z] answer
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one
 
-Q: gl
+## 120. [2026-10-22T18:21:44.545Z] answer
+
+Q: fi gl
 Scrutiny: ISSUES: No repeated padding
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-“I searched the indexed material for this question. The supported evidence is below; I will not invent a project-specific setting or posting that the cited source does not show. I would walk the documented process in QAS, verify the FI/CO result, and leave any unsigned design value To Be Confirmed.”
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
 
 ### 📊 ARCHITECTURAL FLOW
 ```text
-Interview question
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
  ↓
-Retrieve matching file + heading
+ ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
  ↓
-Check the cited step/object in SAP
- ↓
-Reconcile resulting document and sign off
+ VF03 + VKOA + ACDOCA
 ```
 
 ### ⚙️ CONFIG STEPS
-1. **F110** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-2. **MIRO** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-3. **FK01** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-4. **F150** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-5. **FB50** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-6. **F-48** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-7. **LFA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-8. **LFB1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
-9. **KNA1** — verify only the setting documented for this question; capture its current QAS value and expected example before transport. Reference: ilide.info-sap-fi-document-pr_20110aa61a097f28b904f3b61d44c276.pdf.
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
 
 ### 🔧 DROP THESE OBJECT NAMES
-- **F110** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **MIRO** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FK01** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F150** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **FB50** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **F-48** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFA1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **LFB1** — explicitly detected in the retrieved indexed material; validate its role in context.
-- **KNA1** — explicitly detected in the retrieved indexed material; validate its role in context.
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
 
 ### 🧾 ACCOUNTING ENTRIES
-- 📋 NI01 pays €10,000 advance to vendor for custom machinery. F-48 → Special GL A → Dr Advance
-- Payments 159000 €10,000 | Cr Bank 100000 €10,000. Invoice arrives: MIRO €50,000. F-54: clears
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- **Coverage:** Customer Account Groups, Customer Master (FD01, KNA1/KNB1), Business Partner Migration, SAP Credit Management (UKM_*), Dunning (FBMP, F150), Cash Application, Lockbox (FF_5, FLB1), Down Payments, Interest Calculation, Doubtful Receivables, Aging Reports
-- - Credit Control Area: TR10
-- - Credit Control Area: TR10
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
 
 ### 🧪 HOW TO TEST IT
-1. Reproduce the document/process named in the cited source in QAS; record the source document and transaction/Fiori app.
-2. Compare the configured value and expected example with the approved source; verify the generated FI/CO document in FB03 and ACDOCA.
-3. Reconcile the subledger/control total and test one reversal or negative case before sign-off.
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
 
 ### 🪤 TRAPS
-- Do not pr
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
 
-## 121. [2026-10-22T17:41:31.968Z] answer
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one
 
-Q: recurring
-Scrutiny: ISSUES: Answer ends cleanly - nothing cut off mid-word
-A: ### 💡 SAY THIS FIRST
-> If the spend is genuinely recurring and known - rent, utilities, subscriptions - I push for a PO or a framework agreement so it goes through the…
+## 121. [2026-10-22T18:22:03.740Z] answer
 
-### ⚡ READY NOW — offline answer
-If the spend is genuinely recurring and known - rent, utilities, subscriptions - I push for a PO or a framework agreement so it goes through the controlled chain; if the business will not do that, I use a recurring entry or a service entry sheet. Either way I make sure the cost object and approval are captured, because a no-PO invoice with no approval is exactly the gap auditors write up. The design principle: every recurring cost gets an owner, a cost object and an approval.
+Q: fi gl
+Scrutiny: all parameters pass
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
 
-### 🧭 FLOW DIAGRAM
-```
-[Recurring cost identified]
- |
- +--> Preferred: framework PO / service PO -> MIRO or ML81N
- +--> Alternative: recurring entry FBD1 with approval
- |
- v
-[Cost centre / cost object always filled]
+### 📊 ARCHITECTURAL FLOW
+```text
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
+ ↓
+ ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
+ ↓
+ VF03 + VKOA + ACDOCA
 ```
 
 ### ⚙️ CONFIG STEPS
-1. ME31K / ME21N - framework or service PO
-2. ML81N - service entry sheet
-3. FBD1 / FBD2 - recurring entries
-4. OBYC / OKB9 - account assignment
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
 
 ### 🧾 ACCOUNTING ENTRIES
-- Dr Rent expense 5000 / Cr Vendor 5000 (recurring, cost centre mandatory)
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
 
 ### 🧪 HOW TO TEST IT
-1. Set up a service PO and post against it
-2. Create a recurring entry and run FBD2
-3. Show what an auditor would ask to see for a no-PO invoice
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
 
-### 📎 FROM MY MATERIAL
-SAP FICO — triggered and again mail will be sent to initiator with comments T-Code for Workflow creation or maintain SWDD Recurring Documents Recurring Documents are called as template documents and periodically accounting entries will be generated with reference to template document. Based on the frequency maintain in the recurring document we will execute and post Accounting Entries. All recurring nature transactions will be maintain under this document …
+### 🪤 TRAPS
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
 
-### 🎯 HOW TO CRACK THIS QUESTION
-Show you care about the control gap, not just the posting: owner, cost object, approval.
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversa
 
-Reference: offline documents + online knowledge
+## 122. [2026-10-22T18:22:03.794Z] answer
 
-_⚡ complete offline answer — offline SAP architect + my indexed material + saved Q&A_
+Q: fi gl
+Scrutiny: all parameters pass
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+“I test integration as a business-document chain, not as a list of transactions. I start from the approved organizational/configuration mapping, post the source document, then reconcile the subledger, G/L and controlling impact at each hand-off. For FI–MM that is PO → GR → invoice → payment; for FI–SD it is order → delivery/PGI → billing → receipt; for FI–PP it is component issue → confirmation → finished-goods receipt → settlement. I prove each FI document in **FB03/ACDOCA** and trace failures to account determination, master data, pricing/tax, period or authorization. Project org values stay To Be Confirmed unless the uploaded signed-off document confirms them.”
 
-## 122. [2026-10-22T17:41:34.748Z] free-database-fetch
+### 📊 ARCHITECTURAL FLOW
+```text
+FI-MM · procure to pay
+ME21N PO → MIGO 101 GR → MIRO invoice → F110 payment
+ ↓
+ ME23N + WRX reconciliation
+FI-SD · order to cash
+VA01 order → VL02N PGI → VF01 billing → F-28 receipt
+ ↓
+ VF03 + VKOA + ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBYC** — map valuation class/transaction keys **BSX, WRX, GBB, PRD** to approved G/Ls. Example: stock GR debits inventory and credits GR/IR. Where: SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination ▸ Configure Automatic Postings. Reference: MM account-determination workbook; test with **ME21N/MIGO/MIRO**.
+2. **OMR6** — set invoice quantity/price tolerance and block behavior. Example: an out-of-tolerance MIRO invoice is blocked for AP/buyer review. Reference: signed LIV tolerance matrix; exact thresholds remain To Be Confirmed until approved.
+3. **VKOA** — determine revenue G/L from chart of accounts, sales organization, customer/material account-assignment groups and account key (for example **ERL**). Where: SPRO ▸ Sales and Distribution ▸ Basic Functions ▸ Account Assignment/Costing ▸ Revenue Account Determination. Reference: SD revenue-account mapping; validate through **VF01/VF03**.
+4. **OB40** — map tax account keys to input/output-tax G/Ls for the configured tax procedure. Example: the billing tax line credits the approved output-tax account. Reference: country tax design / tax-account matrix; rates and accounts are jurisdiction-specific.
+6. **OX10 / OX17 / OBY6** — verify the approved plant, plant-to-company-code assignment and company-code parameters before testing. Example: plant/company-code pairing must match the signed-off organization structure. Reference: project organization-structure section; never copy another blueprint’s values.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC · BSX / WRX / GBB / PRD** — MM stock, clearing, consumption and price-difference postings.
+- **VKOA · ERL / account key** — SD revenue account determination at billing.
+- **OB40 · tax account key** — tax G/L assignment; rate comes from the tax procedure/code.
+- **ACDOCA** — S/4HANA Universal Journal evidence for FI/CO line items and account assignments.
+
+### 🧾 ACCOUNTING ENTRIES
+**FI–MM · illustrative stock PO, €100 net + €19 input VAT:**
+- MIGO 101: Dr Inventory (BSX) €100 / Cr GR/IR (WRX) €100.
+- MIRO: Dr GR/IR €100 + Dr Input VAT €19 / Cr Vendor €119.
+- F110 payment: Dr Vendor €119 / Cr Bank-clearing €119.
+**FI–SD · illustrative €100 sale + €19 output VAT; €70 cost:**
+- PGI 601: Dr COGS €70 / Cr Inventory €70 (account determination per OBYC).
+- VF01 billing: Dr Customer €119 / Cr Revenue €100 / Cr Output VAT €19 (VKOA plus tax account determination).
+- F-28 receipt: Dr Bank €119 / Cr Customer €119.
+
+### 🧪 HOW TO TEST IT
+1. **P2P:** ME21N create a controlled PO → MIGO 101 → MIRO → F110. At each step capture document number; inspect **ME23N**, **MIR4**, **FB03**, **FBL3N (WRX)** and vendor items in **FBL1N**. Reconcile GR/IR; test partial GR, partial invoice, price variance, reversal and blocked invoice (**MRBR**).
+2. **O2C:** VA01 order → delivery/PGI in **VL02N** → billing **VF01** → incoming receipt **F-28**. Inspect document flow **VA03**, billing **VF03**, FI document **FB03**, customer items **FBL5N**, revenue/tax/COGS lines and profit center in **ACDOCA**. Test returns/credit memo and tax/pricing edge cases.
+4. For every chain, reconcile source quantity/value to the FI/CO totals, capture evidence, test one negative case and reversal, and trace any failure through **SLG1**, **ST22**, **SU53** and the relevant document flow before sign-off.
+
+### 🪤 TRAPS
+- **VA01** and a production-order creation do not themselves guarantee an FI posting; billing, PGI, goods movements and settlement are the accounting triggers.
+- Do not confuse **GR/IR (WRX)** with the vendor reconciliation account, or revenue determination (**VKOA**) with tax determination (**OB40**).
+- Reconcile partial quantities, tax, currency, pricing, account assignment and period status; do not force-clear a variance to make a test pass.
+- Org units, tax rates, G/L numbers, settlement receivers and project-specific design values must come from the signed-off documents; otherwise mark To Be Confirmed.
+
+### 🎯 IF MY MIND GOES BLANK
+“I follow the source document to its accounting trigger, verify OBYC or VKOA, inspect the FI/CO lines in FB03 and ACDOCA, then reconcile subledger to G/L with one negative test and one reversa
+
+## 123. [2026-10-22T18:22:09.479Z] answer
+
+Q: fi mm
+Scrutiny: all parameters pass
+A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
+- **Core Concept:** FI-MM integration is automatic account determination: every goods movement and invoice in MM posts to FI without anyone typing a G/L account. OBYC holds the matrix — valuation class from the material master decides which G/L accounts a movement hits: BSX for inventory, WRX for GR/IR clearing, GBB for goods-issue offsets, PRD for price differences. MIGO creates the FI document at goods receipt, MIRO clears GR/IR at invoice receipt, and the three-way match (PO = GR = IR) is the control that makes it auditable.
+- **Key System Benefit:** Because the posting logic is deterministic, inventory values in FI and MM agree by design in ACDOCA — period-end becomes GR/IR review (MRBR, MB5S), not reconciliation between two modules.
+- **Execution Strategy:** Design order: chart of accounts and valuation grouping code, valuation classes on material masters, OBYC transaction keys per valuation class, then test the full chain PO → GR → IR → payment with one material of each valuation class before rollout sign-off.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. PURCHASE ORDER ME21N
+ 100 pcs @ EUR 10 — no FI posting yet
+ ↓
+2. GOODS RECEIPT MIGO
+ Dr Inventory 1,000 / Cr GR/IR 1,000 (BSX/WRX)
+ ↓
+3. INVOICE RECEIPT MIRO
+ Dr GR/IR 1,000 / Cr Vendor 1,000 — three-way match
+ ↓
+4. PAYMENT F110
+ Dr Vendor / Cr Bank — AP subledger clears
+ ↓
+5. PROVE MB5S · FBL3N
+ GR/IR balance agrees to the G/L; remaining lines are explained timing differences
+```
+
+### ⚙️ CONFIG STEPS
+1. **OBYC** — maintain the account determination matrix per transaction key and valuation class — this is the heart of FI-MM · Example: BSX: inventory account for the example valuation class 3000 (configured for raw materials in this design — class numbers are project values, not SAP standards); WRX: one GR/IR clearing account; GBB-VBR: consumption account for goods issue to production · Ref: FI-MM design in the rollout config workbook; SPRO ▸ Materials Management ▸ Valuation and Account Assignment ▸ Account Determination.
+2. **OMWD** — set the valuation grouping code per valuation area so plants that share one determination are grouped deliberately, not by accident · Example: All German plants group under one code and share the OBYC matrix; the Turkish plant groups separately with its own accounts · Ref: enterprise-structure matrix; SPRO ▸ Materials Management ▸ Valuation and Account Assignment.
+3. **MM03** — assign the correct valuation class and price control (S standard or V moving average) on every material master — wrong class, wrong account, every time · Example: A raw material on the example class 3000 posts to its raw-material inventory account; a trading good on 3100 posts to its own — the class numbers are this design's values · Ref: material-master governance list; SAP GUI ▸ Logistics ▸ Materials Management ▸ Material Master.
+4. **MIGO** — post goods receipt against the PO and read the FI document it creates automatically · Example: 100 pcs @ EUR 10: Dr Inventory (BSX) 1,000 / Cr GR/IR (WRX) 1,000 — quantity and value enter together · Ref: P2P test script; Logistics ▸ Materials Management ▸ Inventory Management ▸ Goods Movement.
+5. **MIRO** — post the vendor invoice against the same PO and let the three-way match clear GR/IR · Example: Invoice at EUR 10.20: Dr GR/IR 1,000 + Dr Price difference (PRD) 20 / Cr Vendor 1,020 — the difference is visible, never buried · Ref: invoice-verification test cases; Logistics ▸ Materials Management ▸ Logistics Invoice Verification.
+6. **MRBR** — release blocked invoices only after the block reason (price, quantity, date) is resolved at source · Example: A quantity-blocked invoice stays out of F110 until the GR is corrected — the block is the control working, not an error · Ref: AP/MM exception procedure; Logistics Invoice Verification ▸ Release Blocked Invoices.
+7. **MB5S** — run the GR/IR account balance list at period end and clear or explain every aged line · Example: The month-end GR/IR list shows only genuine open receipts; anything old gets a named owner. Goods received but not yet invoiced, partial deliveries and blocked invoices are legitimate timing differences — explained line by line, never forced to zero · Ref: period-close checklist, GR/IR step; Logistics ▸ Materials Management ▸ Purchasing ▸ Purchase Order ▸ List Displays.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OBYC** — MM→FI account determination matrix.
+- **BSX** — transaction key: inventory posting.
+- **WRX** — transaction key: GR/IR clearing.
+- **GBB** — transaction key: offsetting for goods movements.
+- **PRD** — transaction key: price differences.
+- **OMWD** — valuation grouping code.
+- **MIGO** — goods receipt / movement.
+- **MIRO** — invoice verification.
+- **MRBR** — release blocked invoices.
+- **MB5S** — GR/IR balance list.
+
+### 🧾 ACCOUNTING ENTRIES
+- Goods receipt (MIGO): Dr Inventory (BSX) EUR 1,000 / Cr GR/IR (WRX) EUR 1,000 — 100 pcs @ EUR 10, no vendor line yet.
+- Invoice (MIRO) at agreed price: Dr GR/IR EUR 1,000 / Cr Vendor EUR 1,000 — three-way match complete, GR/IR back to zero for this PO.
+- Invoice with price increase to EUR 10.20: Dr GR/IR 1,000 + Dr P
+
+## 124. [2026-10-22T18:22:10.689Z] free-database-fetch
 
 Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
