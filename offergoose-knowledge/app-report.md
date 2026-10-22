@@ -1,7 +1,7 @@
 # OfferGoose - automatic app report
 
-App version: 2.98.8
-Generated: 2026-10-22T16:19:08.341Z
+App version: 2.98.10
+Generated: 2026-10-22T17:41:34.770Z
 AI providers with a saved key: custom, sambanova, , pollinations
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
@@ -4101,7 +4101,7 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-22T16:18:29.669Z] answer
+## 118. [2026-10-22T17:41:04.486Z] answer
 
 Q: gl
 Scrutiny: ISSUES: No repeated padding
@@ -4159,7 +4159,7 @@ Reconcile resulting document and sign off
 ### 🪤 TRAPS
 - Do not pr
 
-## 119. [2026-10-22T16:18:41.469Z] answer
+## 119. [2026-10-22T17:41:14.296Z] answer
 
 Q: gl
 Scrutiny: ISSUES: No repeated padding
@@ -4217,7 +4217,7 @@ Reconcile resulting document and sign off
 ### 🪤 TRAPS
 - Do not pr
 
-## 120. [2026-10-22T16:18:41.517Z] answer
+## 120. [2026-10-22T17:41:14.326Z] answer
 
 Q: gl
 Scrutiny: ISSUES: No repeated padding
@@ -4275,6 +4275,51 @@ Reconcile resulting document and sign off
 ### 🪤 TRAPS
 - Do not pr
 
-## 121. [2026-10-22T16:19:08.336Z] free-database-fetch
+## 121. [2026-10-22T17:41:31.968Z] answer
+
+Q: recurring
+Scrutiny: ISSUES: Answer ends cleanly - nothing cut off mid-word
+A: ### 💡 SAY THIS FIRST
+> If the spend is genuinely recurring and known - rent, utilities, subscriptions - I push for a PO or a framework agreement so it goes through the…
+
+### ⚡ READY NOW — offline answer
+If the spend is genuinely recurring and known - rent, utilities, subscriptions - I push for a PO or a framework agreement so it goes through the controlled chain; if the business will not do that, I use a recurring entry or a service entry sheet. Either way I make sure the cost object and approval are captured, because a no-PO invoice with no approval is exactly the gap auditors write up. The design principle: every recurring cost gets an owner, a cost object and an approval.
+
+### 🧭 FLOW DIAGRAM
+```
+[Recurring cost identified]
+ |
+ +--> Preferred: framework PO / service PO -> MIRO or ML81N
+ +--> Alternative: recurring entry FBD1 with approval
+ |
+ v
+[Cost centre / cost object always filled]
+```
+
+### ⚙️ CONFIG STEPS
+1. ME31K / ME21N - framework or service PO
+2. ML81N - service entry sheet
+3. FBD1 / FBD2 - recurring entries
+4. OBYC / OKB9 - account assignment
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Rent expense 5000 / Cr Vendor 5000 (recurring, cost centre mandatory)
+
+### 🧪 HOW TO TEST IT
+1. Set up a service PO and post against it
+2. Create a recurring entry and run FBD2
+3. Show what an auditor would ask to see for a no-PO invoice
+
+### 📎 FROM MY MATERIAL
+SAP FICO — triggered and again mail will be sent to initiator with comments T-Code for Workflow creation or maintain SWDD Recurring Documents Recurring Documents are called as template documents and periodically accounting entries will be generated with reference to template document. Based on the frequency maintain in the recurring document we will execute and post Accounting Entries. All recurring nature transactions will be maintain under this document …
+
+### 🎯 HOW TO CRACK THIS QUESTION
+Show you care about the control gap, not just the posting: owner, cost object, approval.
+
+Reference: offline documents + online knowledge
+
+_⚡ complete offline answer — offline SAP architect + my indexed material + saved Q&A_
+
+## 122. [2026-10-22T17:41:34.748Z] free-database-fetch
 
 Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 120 answers
