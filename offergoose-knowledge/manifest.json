@@ -1,11 +1,7 @@
 {
-  "exportedAt": "2026-10-21T21:48:29.184Z",
-  "answers": 120,
+  "exportedAt": "2026-10-22T04:44:44.811Z",
+  "answers": 121,
   "documents": [
-    "offergoose-knowledge/documents/advanced-foreign-currency-valuation-fins-fxv-guide.md",
-    "offergoose-knowledge/documents/copa.md",
-    "offergoose-knowledge/documents/mm-fi-integration.md",
-    "offergoose-knowledge/documents/sd-fi.md",
     "offergoose-knowledge/documents/complete-modules-summary.md",
     "offergoose-knowledge/documents/contributing.md",
     "offergoose-knowledge/documents/download-guide.md",
@@ -41,6 +37,10 @@
     "offergoose-knowledge/documents/references-localizations-canada-localization.md",
     "offergoose-knowledge/documents/references-localizations-china-localization.md",
     "offergoose-knowledge/documents/references-localizations-france-localization.md",
-    "offergoose-knowledge/documents/references-localizations-germany-localization.md"
+    "offergoose-knowledge/documents/references-localizations-germany-localization.md",
+    "offergoose-knowledge/documents/references-localizations-india-localization.md",
+    "offergoose-knowledge/documents/references-localizations-japan-localization.md",
+    "offergoose-knowledge/documents/references-localizations-uk-localization.md",
+    "offergoose-knowledge/documents/references-localizations-usa-localization.md"
   ]
 }
