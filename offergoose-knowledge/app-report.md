@@ -1,7 +1,7 @@
 # OfferGoose - automatic app report
 
 App version: 2.98.4
-Generated: 2026-10-22T04:43:30.679Z
+Generated: 2026-10-22T10:07:38.850Z
 AI providers with a saved key: custom, sambanova, , pollinations
 
 Every question, answer, AI-review verdict and app event below is exactly what the app produced. API keys are redacted and never leave the phone.
@@ -4101,150 +4101,441 @@ A: ### 💡 SAY THIS FIRST
 ### 🎯 IF MY MIND GOES BLANK
 Name the SAP topic, document or project behind the question and I will answer it with the configuration, posting and test evidence.
 
-## 118. [2026-10-22T04:43:14.595Z] answer
+## 118. [2026-10-22T10:07:07.486Z] answer
 
-Q: gl to company code assignment
-Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+## 119. [2026-10-22T10:07:19.733Z] answer
+
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+### 🧠 GOING DEEPER — detail beyond the answer above
+
+**Proof I would walk through in the system:**
+1. Buy one material above standard in QAS and trace the difference in CKM3 from receipt to period end.
+2. Run CKMLCP in order and prove no material is left in error status before post closing.
+3. Compare ending inventory at standard vs periodic unit price and agree the delta to the ML closing postings in ACDOCA.
+4. Prove a multilevel case: component difference rolls into the finished product actual cost.
+
+**Where candidates get caught on this topic:**
+- Trap: Running CKMLCP steps out of order. → Winning line: the closing sequence is the control; settlement before preparation allocates nothing correctly.
+- Trap: Expecting actual costing to change daily prices. → Winning line: standard steers the month, actual costing corrects at close; that separation is deliberate.
+- Trap: Treating ML as optional reporting in S/4. → Winning line: Material Ledger is the inventory subledger in S/4HANA; actual costing is the optional layer on top.
+
+**If the interviewer pushes further, I expect:** release/FPS differences for this topic and I name my installed release before quoting a screen; what breaks first in production and the l
+
+## 120. [2026-10-22T10:07:19.756Z] answer
+
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+### 🧠 GOING DEEPER — detail beyond the answer above
+
+**Proof I would walk through in the system:**
+1. Buy one material above standard in QAS and trace the difference in CKM3 from receipt to period end.
+2. Run CKMLCP in order and prove no material is left in error status before post closing.
+3. Compare ending inventory at standard vs periodic unit price and agree the delta to the ML closing postings in ACDOCA.
+4. Prove a multilevel case: component difference rolls into the finished product actual cost.
+
+**Where candidates get caught on this topic:**
+- Trap: Running CKMLCP steps out of order. → Winning line: the closing sequence is the control; settlement before preparation allocates nothing correctly.
+- Trap: Expecting actual costing to change daily prices. → Winning line: standard steers the month, actual costing corrects at close; that separation is deliberate.
+- Trap: Treating ML as optional reporting in S/4. → Winning line: Material Ledger is the inventory subledger in S/4HANA; actual costing is the optional layer on top.
+
+**If the interviewer pushes further, I expect:** release/FPS differences for this topic and I name my installed release before quoting a screen; what breaks first in production and the l
+
+## 121. [2026-10-22T10:07:30.315Z] answer
+
+Q: How do you design FI-MM and FI-SD integration and Material Ledger actual costing in S/4HANA
+Scrutiny: all parameters pass
+A: ### 💡 SAY THIS FIRST
+I need one line, 12-18 words, plain English. Something like: "I design FI-MM and FI-SD integration so every goods movement and sales invoice hits the Universal Journal cleanly, and Material Ledger actual costing delivers true costs at month-end."
+
+- **Core Concept:** I integrate FI-MM and FI-SD so that every goods movement, invoice verification, and sales billing automatically posts to the correct G/L accounts in real time, and I activate Material Ledger actual costing to settle price differences to inventory and consumption at month-end, delivering true costs.
+- **Key System Benefit:** S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents into a single line-item table, eliminating the ECC reconciliation (KALC) and enabling real-time margin analysis, while Material Ledger provides a single source of truth for inventory valuation across legal, group, and profit center perspectives.
+- **Execution Strategy:** The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD for MM), VKOA (account keys ERB, ERL, MWS for SD), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner (CVI), material master, and cost objects.
+
+### 🗣️ DIRECT ANSWER TO SPEAK NOW
+Three bullets:
+- Core Concept: I integrate FI-MM and FI-SD by configuring automatic account determination (OBYC for MM, VKOA for SD) so that operational transactions post to the correct G/L accounts in real time, and I activate Material Ledger to capture price differences and run actual costing to settle them.
+- Key System Benefit: S/4HANA's Universal Journal (ACDOCA) merges FI and CO documents, eliminating the reconciliation that ECC required, and Material Ledger provides a single source of truth for inventory valuation that feeds margin analysis directly.
+- Execution Strategy: The configuration drivers are OBYC (account keys BSX, WRX, GBB, PRD), VKOA (account determination for billing), OMX1 (ML activation), CK11N/CK24 (standard cost release), and CKMLCP (actual costing close), all built on master data like Business Partner, material master, and cost objects.
+
+### 📊 ARCHITECTURAL FLOW
+I need to draw the flow as a fenced code block with stages and arrows. The flow should cover the integration and ML actual costing. Something like:
+
+```
+1. MASTER DATA BP/CVI · MM01 · VK01
+ business partner, material master, sales data
+ ↓
+2. CONFIGURATION OBYC · VKOA · OMX1
+ account determination, ML activation
+ ↓
+3. MM POSTING ME21N → MIGO → MIRO
+ PO, goods receipt, invoice verification
+ ↓
+4. SD POSTING VA01 → VL01N → VF01
+ sales order, delivery, goods issue, billing
+ ↓
+5. STANDARD COST CK11N · CK24
+ standard price released
+ ↓
+6. DIFFERENCE COLLECT GR/IR, price differences, FX
+ material ledger collects variances
+ ↓
+7. ACTUAL COSTING CKMLCP
+ close and settle differences
+ ↓
+8. REPORTING CKM3 · ACDOCA · KE24
+ actual prices, journal entries, profitability
+```
+
+Let's construct it carefully.
+
+### ⚙️ CONFIG STEPS
+I need to walk the configuration path in dependency order. The steps should cover:
+1. Organisational structure (company code, controlling area, etc.)
+2. Ledger design (FINSC_LEDGER, parallel ledgers)
+3. Master data (Business Partner, material master, etc.)
+4. Account determination (OBYC, VKOA)
+5. Material Ledger activation (OMX1)
+6. Standard cost estimation (CK11N, CK24)
+7. Actual costing close (CKMLCP)
+8. Integration settings (for MM and SD)
+9. Testing
+
+_The sections below come from the offline bank because they were missing above._
+
+### 🧾 ACCOUNTING ENTRIES
+- Price difference: Dr Inventory / Cr Price difference account (rolled up to consumption by period end)
+
+### 🧪 HOW TO TEST IT
+1. Run CKMLCP in test and read each step
+2. Show the actual cost component split
+3. Explain what the alternative valuation run is used for
+
+## 122. [2026-10-22T10:07:36.062Z] answer
+
+Q: fsv
+Scrutiny: all parameters pass
 A: ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
-- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
-- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+- **Core Concept:** A Financial Statement Version is the reporting tree of the general ledger: in OB58 I build the balance-sheet and P&L hierarchy — assets, liabilities, equity, income, expenses — assign every G/L account to a node, and that one hierarchy is what F.01 and the S/4HANA Balance Sheet / Income Statement apps read from ACDOCA. It classifies postings; it never posts.
+- **Key System Benefit:** One maintained hierarchy serves statutory, group and management reporting from the same ACDOCA balances, and in S/4HANA the same FSV nodes carry semantic tags, so Advanced Valuation (FINS_FXV) can scope its monetary accounts from the tree instead of hand-kept ranges.
+- **Execution Strategy:** Design the nodes to the legal disclosure first (HGB/IFRS presentation), assign accounts and check the unassigned-accounts list to zero, assign the FSV to the accounting principle so each ledger reports on its own version, then prove it with F.01 against the trial balance before any valuation run uses its tags.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. DESIGN OB58
+ build the balance-sheet and P&L node hierarchy
+ ↓
+2. ASSIGN ACCOUNTS OB58
+ every G/L account onto a node; unassigned list to zero
+ ↓
+3. ASSIGN FSV SPRO
+ FSV to accounting principle and company code
+ ↓
+4. REPORT F.01 · Fiori B/S app
+ statutory statement read from ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OB58** — create the FSV and its items (assets, liabilities, equity, P&L) with the node texts the auditors expect · Example: FSV DE01 carries 10 asset items and 8 liability items mirroring the HGB balance-sheet structure · undefined.
+2. **OB58** — assign G/L accounts to each item and work the unassigned-accounts check until it is empty · Example: A new reconciliation account left unassigned simply disappears from F.01 — the check is the control · undefined.
+3. **SPRO** — assign the FSV to the accounting principle so leading and non-leading ledgers report on the right version · Example: 0L reports on the IFRS FSV while the local ledger keeps the HGB-shaped version · undefined.
+4. **OB58** — maintain semantic tags on monetary nodes where Advanced Valuation should scope from the tree · Example: The FX tag on the receivables/payables nodes is what FINS_FXV reads — a scoping aid, not the purpose of the FSV · undefined.
+5. **F.01** — execute the financial statements on the FSV and agree totals to the trial balance (FAGLB03) · Example: F.01 balance must equal the ACDOCA trial balance to the cent before sign-off · undefined.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OB58** — FSV definition and account assignment.
+- **F.01** — financial statements on the FSV.
+- **FAGLB03** — G/L balance display for proof.
+- **ACDOCA** — the balances the FSV classifies.
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Travel expense 50,000 / Cr Cash 50,000 — the posting lands in ACDOCA; the FSV only decides under which P&L node F.01 presents it.
+- Dr Accounts receivable 50,000 / Cr Revenue 50,000 — presented under the assets node the account is assigned to in OB58.
+
+### 🧪 HOW TO TEST IT
+1. Create one new G/L account, post to it, and show it appears in F.01 only after the OB58 assignment — proving the hierarchy is the reporting control.
+2. Run F.01 on two FSVs (HGB and IFRS) over the same ACDOCA data and show the different presentations.
 
 ### 📎 FROM MY MATERIAL — EVIDENCE TO USE
-**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
-**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill 
-**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
-**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+1 Design the accounting scope Choose legal accounting principle, le — dger, company code, currencies and eligible monetary accounts. Decide the method before building. 2 Maintain exchange rates and ratios Maintain required key-date rates/rate types (for example, OB08 in classic on-premise currency maintenance) and translation ratios/cross-rate setup where applicable. Confirm direct/indirect quotation. 3 Define the financial statement version (FSV) Use the FSV appropriate to the chart of accounts and accounting prin
 
 ### 🪤 TRAPS
-- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
-- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
-- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
+- Trap: Treating the FSV as a print layout. → Winning line: it is the reporting control — an unassigned account is invisible in the statements, however correct the posting is.
+- Trap: Letting the FX semantic tag swamp the design. → Winning line: tags serve valuation scoping; the hierarchy is designed to the legal disclosure first.
 
 ### 🎯 IF MY MIND GOES BLANK
-Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
+OB58 hierarchy, every account assigned, FSV to accounting principle, F.01 agrees to the trial balance. The FSV classifies — ACDOCA provides the numbers.
 
 ### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
 - HGB vs IFRS — how do parallel ledgers answer both from one document?
 - How will you set up a company code for a new-country rollout?
 - How does the Universal Journal (ACDOCA) change the month-end close?
 
-📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
-### 📎 PROJECT MATERIAL TO CROSS-CHECK
-- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Ne
+Reference: offline documents + online knowledge
 
-## 119. [2026-10-22T04:43:15.301Z] answer
+## 123. [2026-10-22T10:07:38.684Z] answer
 
-Q: gl to company code assignment
-Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
+Q: fsv
+Scrutiny: all parameters pass
 A: ### 💡 SAY THIS FIRST
-> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
+> Core Concept: A Financial Statement Version is the reporting tree of the general ledger: in OB58 I build the balance-sheet and P&L hierarchy —…
 
 ### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
-- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
-- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
+- **Core Concept:** A Financial Statement Version is the reporting tree of the general ledger: in OB58 I build the balance-sheet and P&L hierarchy — assets, liabilities, equity, income, expenses — assign every G/L account to a node, and that one hierarchy is what F.01 and the S/4HANA Balance Sheet / Income Statement apps read from ACDOCA. It classifies postings; it never posts.
+- **Key System Benefit:** One maintained hierarchy serves statutory, group and management reporting from the same ACDOCA balances, and in S/4HANA the same FSV nodes carry semantic tags, so Advanced Valuation (FINS_FXV) can scope its monetary accounts from the tree instead of hand-kept ranges.
+- **Execution Strategy:** Design the nodes to the legal disclosure first (HGB/IFRS presentation), assign accounts and check the unassigned-accounts list to zero, assign the FSV to the accounting principle so each ledger reports on its own version, then prove it with F.01 against the trial balance before any valuation run uses its tags.
+
+### 📊 ARCHITECTURAL FLOW
+```text
+1. DESIGN OB58
+ build the balance-sheet and P&L node hierarchy
+ ↓
+2. ASSIGN ACCOUNTS OB58
+ every G/L account onto a node; unassigned list to zero
+ ↓
+3. ASSIGN FSV SPRO
+ FSV to accounting principle and company code
+ ↓
+4. REPORT F.01 · Fiori B/S app
+ statutory statement read from ACDOCA
+```
+
+### ⚙️ CONFIG STEPS
+1. **OB58** — create the FSV and its items (assets, liabilities, equity, P&L) with the node texts the auditors expect · Example: FSV DE01 carries 10 asset items and 8 liability items mirroring the HGB balance-sheet structure · undefined.
+2. **OB58** — assign G/L accounts to each item and work the unassigned-accounts check until it is empty · Example: A new reconciliation account left unassigned simply disappears from F.01 — the check is the control · undefined.
+3. **SPRO** — assign the FSV to the accounting principle so leading and non-leading ledgers report on the right version · Example: 0L reports on the IFRS FSV while the local ledger keeps the HGB-shaped version · undefined.
+4. **OB58** — maintain semantic tags on monetary nodes where Advanced Valuation should scope from the tree · Example: The FX tag on the receivables/payables nodes is what FINS_FXV reads — a scoping aid, not the purpose of the FSV · undefined.
+5. **F.01** — execute the financial statements on the FSV and agree totals to the trial balance (FAGLB03) · Example: F.01 balance must equal the ACDOCA trial balance to the cent before sign-off · undefined.
+
+### 🔧 DROP THESE OBJECT NAMES
+- **OB58** — FSV definition and account assignment.
+- **F.01** — financial statements on the FSV.
+- **FAGLB03** — G/L balance display for proof.
+- **ACDOCA** — the balances the FSV classifies.
+
+### 🧾 ACCOUNTING ENTRIES
+- Dr Travel expense 50,000 / Cr Cash 50,000 — the posting lands in ACDOCA; the FSV only decides under which P&L node F.01 presents it.
+- Dr Accounts receivable 50,000 / Cr Revenue 50,000 — presented under the assets node the account is assigned to in OB58.
+
+### 🧪 HOW TO TEST IT
+1. Create one new G/L account, post to it, and show it appears in F.01 only after the OB58 assignment — proving the hierarchy is the reporting control.
+2. Run F.01 on two FSVs (HGB and IFRS) over the same ACDOCA data and show the different presentations.
 
 ### 📎 FROM MY MATERIAL — EVIDENCE TO USE
-**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
-**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
-**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
-**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
+1 Design the accounting scope Choose legal accounting principle, le — dger, company code, currencies and eligible monetary accounts. Decide the method before building. 2 Maintain exchange rates and ratios Maintain required key-date rates/rate types (for example, OB08 in classic on-premise currency maintenance) and translation ratios/cross-rate setup where applicable. Confirm direct/indirect quotation. 3 Define the financial statement version (FSV) Use the FSV appropriate to the chart of accounts and accounting prin
 
 ### 🪤 TRAPS
-- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
-- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
-- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
+- Trap: Treating the FSV as a print layout. → Winning line: it is the reporting control — an unassigned account is invisible in the statements, however correct the posting is.
+- Trap: Letting the FX semantic tag swamp the design. → Winning line: tags serve valuation scoping; the hierarchy is designed to the legal disclosure first.
 
 ### 🎯 IF MY MIND GOES BLANK
-Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
+OB58 hierarchy, every account assigned, FSV to accounting principle, F.01 agrees to the trial balance. The FSV classifies — ACDOCA provides the numbers.
 
 ### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
 - HGB vs IFRS — how do parallel ledgers answer both from one document?
 - How will you set up a company code for a new-country rollout?
 - How does the Universal Journal (ACDOCA) change the month-end close?
 
-📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
+## 124. [2026-10-22T10:07:38.844Z] free-database-fetch
 
-### 📎 PROJECT MATERIAL TO CROSS-CHECK
-- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Q
-
-## 120. [2026-10-22T04:43:17.482Z] answer
-
-Q: gl to company code assignment
-Scrutiny: ISSUES: No placeholder garbage ([object Object], lorem, {{...}})
-A: ### 💡 SAY THIS FIRST
-> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
-- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
-- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
-
-### 📎 FROM MY MATERIAL — EVIDENCE TO USE
-**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
-**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
-**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
-**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
-
-### 🪤 TRAPS
-- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
-- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
-- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
-
-### 🎯 IF MY MIND GOES BLANK
-Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
-
-### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
-- HGB vs IFRS — how do parallel ledgers answer both from one document?
-- How will you set up a company code for a new-country rollout?
-- How does the Universal Journal (ACDOCA) change the month-end close?
-
-📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
-
-### 📎 PROJECT MATERIAL TO CROSS-CHECK
-- **[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Q
-
-## 121. [2026-10-22T04:43:17.502Z] answer
-
-Q: gl to company code assignment
-Scrutiny: ISSUES: Flow section carries its diagram; No placeholder garbage ([object Object], lorem, {{...}})
-A: ### 💡 SAY THIS FIRST
-> Core Concept: I treat a new company code as a legal reporting entity, not as a copied code
-
-### 🗣️ DIRECT ANSWER TO SPEAK NOW
-- **Core Concept:** I treat a new company code as a legal reporting entity, not as a copied code. I freeze the local legal, tax, banking and reporting requirements first, copy the closest approved template, localize only what the country changes, integrate the selling/purchasing channels and the advanced intercompany supply between company codes, then prove the first invoice, payment, asset, close and statutory report before cutover. That is the pattern behind my five CYBEX rollouts — Paris, Berlin and New York stores, IMEA and the UK entity.
-- **Key System Benefit:** In S/4HANA the company code posts into ACDOCA by ledger and accounting principle, so HGB/local books and IFRS group reporting can be produced from the same document instead of reconciling a second local system at month-end.
-- **Execution Strategy:** The build order is enterprise structure, controlling assignment, global parameters, chart of accounts and tax, master data, integration determination, banking, intercompany clearing and billing, cutover balances and period controls — in that order, because every later object inherits the company-code currency, fiscal year and ledger design. Advanced intercompany is designed at rollout time, not bolted on: cross-company stock transfer, OBYA clearing, intercompany billing and FBICR3 reconciliation are part of the template.
-
-### 📎 FROM MY MATERIAL — EVIDENCE TO USE
-**[object Object]** — s Developer's Best Practices Questions and Answers Online Resume Builder HR Interview Questions Computer Glossary Who is Who Home Sap_fico SAP FI - Company Basics SAP FI - Company Basics Previous Quiz Next A company is defined as the smallest unit for which financial statements can be created in accordance with commercial legal regulations. In SAP FI, a company can comprise of multiple codes, however it acts as a single unit for which financial statements are available. All the company codes must use the same chart
-**[object Object]** — // Repository: https://github.com/ninadtrivedi-finance/sap-s4hana-fico-implementation // File: CONTRIBUTING.md # Contributing to SAP S/4HANA FICO Implementation Skill Thank you for your interest in improving this skill! This is used by SAP FICO consultants, finance transformation teams, and IT architects worldwide. --- ## Ways to Contribute ### 🐛 Report Issues Found an inaccuracy? Missing transaction code? Outdated SPRO path? Open a GitHub Issue with: - Module affected (FI-GL, FI-AP, CO-PA, etc.) - What the skill
-**[object Object]** — SAP FI - Company Basics Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login [Image description
-**[object Object]** — t AP Cleared Items SAP FI - Automatic Payment Run SAP FI - Posting Rounding Differences SAP FI - Month End Closing SAP FI - Dunning SAP FI - Exchange Rates SAP FI - Tables in Module SAP FI - AR Invoice Processes SAP FI - AR Account Analysis SAP FI - AR Reporting SAP FI - AA Overview SAP FI - AA Asset Explorer SAP FI - Cash Management SAP CO - Overview SAP CO - Submodules SAP CO - Cost Center SAP CO - Create Cost Center SAP CO – Post to a Cost Center SAP CO - Internal Orders SAP CO - Settlement of IO SAP CO - Profit
-
-### 🪤 TRAPS
-- Trap: Copying a company code copies the design. → Winning line: Winning line: copy is only the skeleton; tax, bank, language, number ranges, payment formats and statutory reports are localized and retested.
-- Trap: Treating a blueprint value marked To Be Confirmed as final. → Winning line: Winning line: I keep it provisional, name the business owner and close it before transport release.
-- Trap: Testing FI alone. → Winning line: Winning line: the rollout passes only when POS/order, purchasing, inventory, tax, bank and close all post into the same company code.
-
-### 🎯 IF MY MIND GOES BLANK
-Legal entity first, template second, localization third. Structure, global parameters, tax, integration and bank — then cutover balances and a full first close in QAS.
-
-### 🔗 CROSS-RELATED — FIXED, READY TO ASK NEXT
-- HGB vs IFRS — how do parallel ledgers answer both from one document?
-- How will you set up a company code for a new-country rollout?
-- How does the Universal Journal (ACDOCA) change the month-end close?
-
-📎 From my material: sap_fi_company_basics.htm, CONTRIBUTING.md, sap-fico-training-tutorials.html, NI01_FICO_Greenfield_Complete_v2-1.pdf, references/fi-modules/fi-gl-general-ledger.md
-
-### 📎 PROJECT MATERIAL TO CROSS-CHECK
-- **[object Object]** — s Developer's Best Practices Questions and Answers On
-
-## 122. [2026-10-22T04:43:29.638Z] github-fetch
-
-Fetched from Sk1n11/Goose: {"owner":"Sk1n11","repo":"Goose","branch":"main","folder":"offergoose-knowledge","files":4,"answers":120,"catalog":1,"fetched":["offergoose-knowledge/answers.json (120 answers)","offergoose-knowledge/answers.md","offergoose-knowledge/app-report.md","offergoose-knowledge/documents/interview-screenshot-2026-10-17.md"],"skipped":63,"failed":[],"notes":[]} | KB now: 385 sources, 121 answers
-
-## 123. [2026-10-22T04:43:30.659Z] free-database-fetch
-
-Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 384 sources, 121 answers
+Online free sources fetched: {"total":18,"fetched":0,"skipped":16,"failed":["SAP Community — Financial Management board","SAP Community — SAP S/4HANA Finance board"],"details":[{"name":"GitHub — S/4HANA FICO implementation notes (45 module files)","ok":true,"cached":true},{"name":"GitHub — SAP interview questions, open-source (all modules incl. FICO)","ok":true,"cached":true},{"name":"GitHub — SAP functional skills incl. FICO, open-source","ok":true,"cached":true},{"name":"SAP FICO tutorials — full index (TutorialsPoint)"," | KB now: 382 sources, 121 answers
